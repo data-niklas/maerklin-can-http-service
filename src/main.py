@@ -12,4 +12,5 @@ async def root():
 
 @app.post("/can", response_model=CANMessage)
 async def can_message(message: CANMessage):
-    return CANMessage.from_bytes(send_recv_udp(message.to_bytes()))
+    data = await send_recv_udp(message.to_bytes())
+    return CANMessage.from_bytes(data)
