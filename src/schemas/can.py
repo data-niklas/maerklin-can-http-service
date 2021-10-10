@@ -1,9 +1,35 @@
+# TODO: throw useful errors when asserts don't match
+
 from enum import Enum
 
 from pydantic import BaseModel
 
 
-class Command(int, Enum):
+class CommandSchema(str, Enum):
+    SystemCommand = "SystemCommand"
+    LocomotiveDiscovery = "LocomotiveDiscovery"
+    MFXBind = "MFXBind"
+    MFXVerify = "MFXVerify"
+    LocomotiveSpeed = "LocomotiveSpeed"
+    LocomotiveDirection = "LocomotiveDirection"
+    LocomotiveFunction = "LocomotiveFunction"
+    ReadConfig = "ReadConfig"
+    WriteConfig = "WriteConfig"
+    SwitchingAccessories = "SwitchingAccessories"
+    AccessoriesConfig = "AccessoriesConfig"
+    S88Polling = "S88Polling"
+    S88Event = "S88Event"
+    SX1Event = "SX1Event"
+    ParticipantPing = "ParticipantPing"
+    UpdateOffer = "UpdateOffer"
+    ReadConfigData = "ReadConfigData"
+    BootloaderCANBound = "BootloaderCANBound"
+    ServiceStatusDataConfiguration = "ServiceStatusDataConfiguration"
+    RequestConfigData = "RequestConfigData"
+    Stream = "Stream"
+    DataStream60128 = "DataStream60128"
+
+class Command(Enum):
     SystemCommand = 0x00
     LocomotiveDiscovery = 0x02
     MFXBind = 0x04
@@ -29,7 +55,7 @@ class Command(int, Enum):
 
 class MessageIdentifier(BaseModel):
     priority: int
-    command: Command
+    command: CommandSchema
     response: bool
     hash_value: int
 
@@ -37,7 +63,7 @@ class MessageIdentifier(BaseModel):
         ret = bytearray(2)
 
         assert self.priority < 5
-        assert self.command.value < 256
+        assert self.get_command().value < 256
         assert self.hash_value < (1 << 16)
 
         ret[0] = self.get_first_byte()
@@ -47,18 +73,21 @@ class MessageIdentifier(BaseModel):
 
         return bytes(ret)
     
+    def get_command(self) -> Command:
+        return Command[self.command.value]
+    
     def get_first_byte(self) -> int:
         ret = int(0)
 
         ret |= self.priority << 4
-        ret |= self.command.value >> 4
+        ret |= self.get_command().value >> 4
 
         return ret
     
     def get_second_byte(self) -> int:
         ret = int(0)
 
-        ret |= (self.command.value << 4) & 0b11110000
+        ret |= (self.get_command().value << 4) & 0b11110000
         ret |= (1 if self.response else 0) << 3 # padded with zeros here before hash
         # TODO: test if works
 
@@ -69,6 +98,7 @@ class MessageIdentifier(BaseModel):
         command = (data[0] & 0b1111) << 4
         command |= data[1] >> 4
         command = Command(command)
+        command = CommandSchema[command.name]
         response = (data[1] & 0b1000) > 0
         hash_value = int.from_bytes(data[2:], "big")
 
@@ -86,6 +116,7 @@ class CANMessage(BaseModel):
         assert self.length < 16
         ret += self.length.to_bytes(1, "big")
         data = self.data
+        assert self.length == len(data)
         assert len(data) < 9
         if len(data) < 8:
             new_data = bytearray(8)
