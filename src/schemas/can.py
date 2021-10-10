@@ -129,6 +129,6 @@ class CANMessage(BaseModel):
     def from_bytes(data: bytes):
         message_id = MessageIdentifier.from_bytes(data[:4])
         length = data[4]
-        data = data[5:]
+        data = data[5:5+length]
 
         return CANMessage(message_id=message_id, length=length, data=data)
