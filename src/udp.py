@@ -1,3 +1,5 @@
+# TODO: Swap to TCP
+
 import socket
 from asyncio import Lock
 

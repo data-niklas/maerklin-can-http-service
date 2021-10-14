@@ -24,34 +24,36 @@ class CommandSchema(str, Enum):
     UpdateOffer = "UpdateOffer"
     ReadConfigData = "ReadConfigData"
     BootloaderCANBound = "BootloaderCANBound"
+    BootloaderRailBound = "BootloaderRailBound"
     ServiceStatusDataConfiguration = "ServiceStatusDataConfiguration"
     RequestConfigData = "RequestConfigData"
-    Stream = "Stream"
+    ConfigDataStream = "ConfigDataStream"
     DataStream60128 = "DataStream60128"
 
 class Command(Enum):
     SystemCommand = 0x00
-    LocomotiveDiscovery = 0x02
-    MFXBind = 0x04
-    MFXVerify = 0x06
-    LocomotiveSpeed = 0x08
-    LocomotiveDirection = 0x0A
-    LocomotiveFunction = 0x0C
-    ReadConfig = 0x0E
-    WriteConfig = 0x10
-    SwitchingAccessories = 0x16
-    AccessoriesConfig = 0x18
-    S88Polling = 0x20
-    S88Event = 0x22
-    SX1Event = 0x24
-    ParticipantPing = 0x30
-    UpdateOffer = 0x32
-    ReadConfigData = 0x34
-    BootloaderCANBound = 0x36
-    ServiceStatusDataConfiguration = 0x38
-    RequestConfigData = 0x40
-    Stream = 0x42
-    DataStream60128 = 0x44
+    LocomotiveDiscovery = 0x01
+    MFXBind = 0x02
+    MFXVerify = 0x03
+    LocomotiveSpeed = 0x04
+    LocomotiveDirection = 0x05
+    LocomotiveFunction = 0x06
+    ReadConfig = 0x07
+    WriteConfig = 0x08
+    SwitchingAccessories = 0x0B
+    AccessoriesConfig = 0x0C
+    S88Polling = 0x10
+    S88Event = 0x11
+    SX1Event = 0x12
+    ParticipantPing = 0x18
+    UpdateOffer = 0x19
+    ReadConfigData = 0x1A
+    BootloaderCANBound = 0x1B
+    BootloaderRailBound = 0x1C
+    ServiceStatusDataConfiguration = 0x1D
+    RequestConfigData = 0x20
+    ConfigDataStream = 0x21
+    DataStream60128 = 0x22
 
 class MessageIdentifier(BaseModel):
     priority: int
@@ -80,26 +82,25 @@ class MessageIdentifier(BaseModel):
         ret = int(0)
 
         ret |= self.priority << 4
-        ret |= self.get_command().value >> 4
+        ret |= self.get_command().value >> 7
 
         return ret
     
     def get_second_byte(self) -> int:
         ret = int(0)
 
-        ret |= (self.get_command().value << 4) & 0b11110000
-        ret |= (1 if self.response else 0) << 3 # padded with zeros here before hash
-        # TODO: test if works
+        ret |= (self.get_command().value << 1) & 0b1111_1110
+        ret |= (1 if self.response else 0)
 
         return ret
     
     def from_bytes(data: bytes):
         priority = data[0] >> 4
-        command = (data[0] & 0b1111) << 4
-        command |= data[1] >> 4
+        command = (data[0] & 0b1) << 7
+        command |= data[1] >> 1
         command = Command(command)
         command = CommandSchema[command.name]
-        response = (data[1] & 0b1000) > 0
+        response = (data[1] & 0b1) > 0
         hash_value = int.from_bytes(data[2:], "big")
 
         return MessageIdentifier(priority=priority, command=command, response=response, hash_value=hash_value)
@@ -107,7 +108,7 @@ class MessageIdentifier(BaseModel):
 class CANMessage(BaseModel):
     message_id: MessageIdentifier
     length: int
-    data: bytes
+    data: str # TODO: description
 
     def to_bytes(self) -> bytes:
         ret = bytearray()
@@ -115,7 +116,8 @@ class CANMessage(BaseModel):
         ret += self.message_id.to_bytes()
         assert self.length < 16
         ret += self.length.to_bytes(1, "big")
-        data = self.data
+        # todo: get bytes of data
+        data = self.get_data_bytes()
         assert self.length == len(data)
         assert len(data) < 9
         if len(data) < 8:
@@ -126,9 +128,13 @@ class CANMessage(BaseModel):
 
         return bytes(ret)
     
+    def get_data_bytes(self) -> bytes:
+        return bytes.fromhex(self.data)
+    
     def from_bytes(data: bytes):
         message_id = MessageIdentifier.from_bytes(data[:4])
         length = data[4]
         data = data[5:5+length]
+        data = " ".join(f"{byte:02x}" for byte in data)
 
         return CANMessage(message_id=message_id, length=length, data=data)
