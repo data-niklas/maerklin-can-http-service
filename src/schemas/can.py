@@ -107,19 +107,19 @@ class MessageIdentifier(BaseModel):
 
 class CANMessage(BaseModel):
     message_id: MessageIdentifier
-    length: int
     data: str = Field("DE AD BE EF", description="String of hex values interpreted as bytes")
 
     def to_bytes(self) -> bytes:
         ret = bytearray()
 
         ret += self.message_id.to_bytes()
-        assert self.length < 16
-        ret += self.length.to_bytes(1, "big")
-        # todo: get bytes of data
+        
         data = self.get_data_bytes()
-        assert self.length == len(data)
-        assert len(data) < 9
+        
+        length = len(data)
+        assert length < 9
+        ret += length.to_bytes(1, "big")
+        
         if len(data) < 8:
             new_data = bytearray(8)
             new_data[:len(data)] = data
@@ -137,4 +137,4 @@ class CANMessage(BaseModel):
         data = data[5:5+length]
         data = " ".join(f"{byte:02x}" for byte in data)
 
-        return CANMessage(message_id=message_id, length=length, data=data)
+        return CANMessage(message_id=message_id, data=data)
