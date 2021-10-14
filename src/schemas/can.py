@@ -2,7 +2,7 @@
 
 from enum import Enum
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class CommandSchema(str, Enum):
@@ -108,7 +108,7 @@ class MessageIdentifier(BaseModel):
 class CANMessage(BaseModel):
     message_id: MessageIdentifier
     length: int
-    data: str # TODO: description
+    data: str = Field("DE AD BE EF", description="String of hex values interpreted as bytes")
 
     def to_bytes(self) -> bytes:
         ret = bytearray()
