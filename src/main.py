@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from udp import send_recv_udp
+from tcp import send
 from schemas.can import CANMessage
 
 app = FastAPI()
@@ -10,7 +10,7 @@ app = FastAPI()
 async def root():
     return {"message": "Testing"}
 
-@app.post("/can", response_model=CANMessage)
+@app.post("/can")
 async def can_message(message: CANMessage):
-    data = await send_recv_udp(message.to_bytes())
-    return CANMessage.from_bytes(data)
+    await send(message.to_bytes())
+    return {"send_status": "success"}
