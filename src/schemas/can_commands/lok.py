@@ -73,3 +73,46 @@ class LocomotiveFunctionCommand(AbstractLocIDCommand):
             ret += self.function_value.to_bytes(2, "big")
 
         return ret
+
+class LocomotiveReadConfigCommand(AbstractLocIDCommand):
+    index: int # 6 bit
+    number: int # 10 bit
+    count: int = None
+    value: int = None
+
+    def get_command(self) -> CommandSchema:
+        return CommandSchema.ReadConfig
+    
+    def get_other_data(self) -> bytes:
+        ret = bytes()
+
+        byte4 = self.index.to_bytes(1, "big") << 2
+        byte4 |= self.number.to_bytes(2, "big") >> 8
+        ret += byte4
+        ret += self.number.to_bytes(2, "big") & 0b11111111
+
+        if self.count is not None:
+            assert self.value is None
+            ret += self.count.to_bytes(1, "big")
+        elif self.value is not None:
+            assert self.count is None
+            ret += self.value.to_bytes(1, "big")
+        return ret
+
+
+class SwitchingAccessoriesCommand(AbstractLocIDCommand):
+    position: int
+    power: int
+    value: int = None # time or special value. Time: t*10 ms
+
+
+    def get_command(self) -> CommandSchema:
+        return CommandSchema.SwitchingAccessories
+    
+    def get_other_data(self) -> bytes:
+        ret = bytes()
+        ret += position.to_bytes(1, "big")
+        ret += power.to_bytes(1, "big")
+        if value is not None:
+            ret += value.to_bytes(2, "big")
+        return ret

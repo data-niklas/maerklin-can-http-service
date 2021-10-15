@@ -101,20 +101,20 @@ class SystemHaltCommand(AbstractSystemCommand):
     def get_other_data(self) -> bytes:
         return bytes()
 
-class LocomotiveEmergencyStop(AbstractSystemCommand):
+class LocomotiveEmergencyStopCommand(AbstractSystemCommand):
     def get_subcommand(self) -> SystemSubcommandSchema:
         return SystemSubcommandSchema.LocomotiveEmergencyStop
     
     def get_other_data(self) -> bytes:
         return bytes()
 
-class LocomotiveCycleStop(AbstractSystemCommand):
+class LocomotiveCycleStopCommand(AbstractSystemCommand):
     def get_subcommand(self) -> SystemSubcommandSchema:
         return SystemSubcommandSchema.LocomotiveCycleStop
     
     def get_other_data(self) -> bytes:
         return bytes()
-class LocomotiveDataProtocol(AbstractSystemCommand):
+class LocomotiveDataProtocolCommand(AbstractSystemCommand):
     protocol: RailProtocolSchema
 
     def get_subcommand(self) -> SystemSubcommandSchema:
@@ -122,7 +122,7 @@ class LocomotiveDataProtocol(AbstractSystemCommand):
     
     def get_other_data(self) -> bytes:
         return RailProtocol[self.protocol.value].value.to_bytes(1, "big")
-class AccessoryDecoderSwitchingTime(AbstractSystemCommand):
+class AccessoryDecoderSwitchingTimeCommand(AbstractSystemCommand):
     # time * 10ms
     time: int
 
@@ -130,16 +130,16 @@ class AccessoryDecoderSwitchingTime(AbstractSystemCommand):
         return SystemSubcommandSchema.AccessoryDecoderSwitchingTime
     
     def get_other_data(self) -> bytes:
-        return time.to_bytes(2, "big")
-class MfxFastRead(AbstractSystemCommand):
+        return self.time.to_bytes(2, "big")
+class MfxFastReadCommand(AbstractSystemCommand):
     mfx_sid: int
 
     def get_subcommand(self) -> SystemSubcommandSchema:
         return SystemSubcommandSchema.MfxFastRead
     
     def get_other_data(self) -> bytes:
-        return mfx_sid.to_bytes(2, "big")
-class EnableRailProtocol(AbstractSystemCommand):
+        return self.mfx_sid.to_bytes(2, "big")
+class EnableRailProtocolCommand(AbstractSystemCommand):
     # only bits 0-2 are relevant. Bit enables or disables protocol
     # 0: MM2
     # 1: MFX
@@ -150,18 +150,18 @@ class EnableRailProtocol(AbstractSystemCommand):
         return SystemSubcommandSchema.EnableRailProtocol
     
     def get_other_data(self) -> bytes:
-        return bitset.to_bytes(1, "big")
-class SetMfxRegisterCounter(AbstractSystemCommand):
+        return self.bitset.to_bytes(1, "big")
+class SetMfxRegisterCounterCommand(AbstractSystemCommand):
     counter: int
 
     def get_subcommand(self) -> SystemSubcommandSchema:
         return SystemSubcommandSchema.SetMfxRegisterCounter
     
     def get_other_data(self) -> bytes:
-        return counter.to_bytes(2, "big")
+        return self.counter.to_bytes(2, "big")
 
 # Should always be a response
-class SystemOverload(AbstractSystemCommand):
+class SystemOverloadCommand(AbstractSystemCommand):
     # Who is responsible for overload
     channel: int
 
@@ -169,8 +169,8 @@ class SystemOverload(AbstractSystemCommand):
         return SystemSubcommandSchema.SystemOverload
     
     def get_other_data(self) -> bytes:
-        return channel.to_bytes(1, "big")
-class SystemStatus(AbstractSystemCommand):
+        return self.channel.to_bytes(1, "big")
+class SystemStatusCommand(AbstractSystemCommand):
     # Who is responsible for overload
     channel: int
     measured_value: int = None
@@ -181,11 +181,11 @@ class SystemStatus(AbstractSystemCommand):
         return SystemSubcommandSchema.SystemStatus
     
     def get_other_data(self) -> bytes:
-        data = channel.to_bytes(1, "big")
-        if measured_value:
-            data += measured_value.to_bytes(2, "big")
+        data = self.channel.to_bytes(1, "big")
+        if self.measured_value is not None:
+            data += self.measured_value.to_bytes(2, "big")
         return data
-class SetSystemIdentifier(AbstractSystemCommand):
+class SetSystemIdentifierCommand(AbstractSystemCommand):
     system_id: int = None
 
 
@@ -193,24 +193,24 @@ class SetSystemIdentifier(AbstractSystemCommand):
         return SystemSubcommandSchema.SetSystemIdentifier
     
     def get_other_data(self) -> bytes:
-        if system_id:
-            return system_id.to_bytes(2, "big")
+        if self.system_id is not None:
+            return self.system_id.to_bytes(2, "big")
         return bytes()
 
 # Mfx Seek is a lie...
 # There is no Mfx Seek
-class MfxSeek(AbstractSystemCommand):
+class MfxSeekCommand(AbstractSystemCommand):
 
     def get_subcommand(self) -> SystemSubcommandSchema:
         return SystemSubcommandSchema.MfxSeek
     
     def get_other_data(self) -> bytes:
         return bytes()
-class SystemReset(AbstractSystemCommand):
+class SystemResetCommand(AbstractSystemCommand):
     target: int
 
     def get_subcommand(self) -> SystemReset:
         return SystemSubcommandSchema.MfxSeek
     
     def get_other_data(self) -> bytes:
-        return target.to_bytes(1, "big")
+        return self.target.to_bytes(1, "big")
