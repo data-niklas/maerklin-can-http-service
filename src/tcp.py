@@ -2,7 +2,7 @@ import socket
 from asyncio import Lock
 
 
-IP = "127.0.0.1"
+IP = "10.0.0.2"
 PORT = 15731
 
 udp_lock = Lock()

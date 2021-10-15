@@ -8,9 +8,9 @@ from schemas.can import CANMessage
 from fastapi.encoders import jsonable_encoder
 
 
-IS_DEBUG_SERVER = True
+IS_DEBUG_SERVER = False
 
-IP = "127.0.0.1"
+IP = "10.0.0.2"
 PORT = 15731
 WS_IP = "127.0.0.1"
 WS_PORT = 8888
