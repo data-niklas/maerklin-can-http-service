@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.utils.tcp import send
+from app.utils.tcp import send_async
 from app.schemas.can import CANMessage
 from app.schemas.can_commands import LocomotiveSpeedCommand, LocomotiveDirectionCommand, LocomotiveFunctionCommand
 from app.schemas.can_commands import SystemStopCommand, SystemGoCommand
@@ -16,50 +16,50 @@ async def root():
 
 @app.post("/can")
 async def can_message(message: CANMessage):
-    await send(message.to_bytes())
+    await send_async(message.to_bytes())
     return {"send_status": "success"}
 
 @app.post("/api/loc_speed")
 async def loc_speed(message: LocomotiveSpeedCommand):
-    await send(message.to_can_message().to_bytes())
+    await send_async(message.to_can_message().to_bytes())
     return {"send_status": "success"}
 
 @app.post("/api/loc_direction")
 async def loc_speed(message: LocomotiveDirectionCommand):
-    await send(message.to_can_message().to_bytes())
+    await send_async(message.to_can_message().to_bytes())
     return {"send_status": "success"}
 
 @app.post("/api/loc_function")
 async def loc_speed(message: LocomotiveFunctionCommand):
-    await send(message.to_can_message().to_bytes())
+    await send_async(message.to_can_message().to_bytes())
     return {"send_status": "success"}
 
 @app.post("/api/start")
 async def system_start(message: SystemGoCommand):
-    await send(message.to_can_message().to_bytes())
+    await send_async(message.to_can_message().to_bytes())
     return {"send_status": "success"}
 
 @app.post("/api/stop")
 async def system_start(message: SystemStopCommand):
-    await send(message.to_can_message().to_bytes())
+    await send_async(message.to_can_message().to_bytes())
     return {"send_status": "success"}
 
 @app.post("/api/halt")
 async def system_start(message: SystemHaltCommand):
-    await send(message.to_can_message().to_bytes())
+    await send_async(message.to_can_message().to_bytes())
     return {"send_status": "success"}
 
 @app.post("/api/locomotive_emergency_stop")
 async def system_start(message: LocomotiveEmergencyStopCommand):
-    await send(message.to_can_message().to_bytes())
+    await send_async(message.to_can_message().to_bytes())
     return {"send_status": "success"}
 
 @app.post("/api/locomotive_cycle_stop")
 async def system_start(message: LocomotiveCycleStopCommand):
-    await send(message.to_can_message().to_bytes())
+    await send_async(message.to_can_message().to_bytes())
     return {"send_status": "success"}
 
 @app.post("/api/participant_ping")
 async def participant_ping(message: ParticipantPingCommand):
-    await send(message.to_can_message().to_bytes())
+    await send_async(message.to_can_message().to_bytes())
     return {"send_status": "success"}
