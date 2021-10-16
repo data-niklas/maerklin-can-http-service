@@ -4,14 +4,14 @@ from .base import AbstractCANMessage
 from ..can import CommandSchema
 
 class AbstractLocIDCommand(AbstractCANMessage):
-    lok_id: int
+    loc_id: int
 
     def get_other_data(self) -> bytes:
         raise NotImplentedError()
 
     def get_data(self) -> bytes:
         data = bytes()
-        data += self.lok_id.to_bytes(4, "big")
+        data += self.loc_id.to_bytes(4, "big")
         data += self.get_other_data()
         return data
 
@@ -74,7 +74,7 @@ class LocomotiveFunctionCommand(AbstractLocIDCommand):
 
         return ret
 
-class LocomotiveReadConfigCommand(AbstractLocIDCommand):
+class ReadConfigCommand(AbstractLocIDCommand):
     index: int # 6 bit
     number: int # 10 bit
     count: int = None
