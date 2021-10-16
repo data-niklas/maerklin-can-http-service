@@ -25,21 +25,27 @@ async def recv():
     return data
 
 async def send_async(message, writer=None):
+    got_writer = True
     if writer is None:
+        got_writer = False
         _, writer = await asyncio.open_connection(IP, PORT)
 
     writer.write(message)
     await writer.drain()
     
-    writer.close()
+    if not got_writer:
+        writer.close()
     await writer.wait_closed()
 
 async def recv_async(message, reader=None):
+    got_reader = True
     if reader is None:
+        got_reader = False
         reader, _ = await asyncio.open_connection(IP, PORT)
 
     data = await reader.read(13)
 
-    reader.close()
+    if not got_reader:
+        reader.close()
 
     return data
