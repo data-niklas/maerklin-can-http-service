@@ -37,7 +37,7 @@ async def send_async(message, writer=None):
         writer.close()
     await writer.wait_closed()
 
-async def recv_async(message, reader=None):
+async def recv_async(reader=None):
     got_reader = True
     if reader is None:
         got_reader = False

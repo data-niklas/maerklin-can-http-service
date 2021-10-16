@@ -2,10 +2,11 @@ import json
 
 import asyncio
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from fastapi.encoders import jsonable_encoder
 
-from app.schemas.can import CANMessage
+from ...schemas.can import CANMessage
+from ...utils.communication import ConnectionManager, recv_raw_can_message
 
 IS_DEBUG_SERVER = True
 
@@ -13,22 +14,7 @@ IP = "127.0.0.1"
 PORT = 15731
 
 
-app = FastAPI()
-
-class ConnectionManager:
-    def __init__(self):
-        self.active_connections: List[WebSocket] = []
-
-    async def connect(self, websocket: WebSocket):
-        await websocket.accept()
-        self.active_connections.append(websocket)
-
-    def disconnect(self, websocket: WebSocket):
-        self.active_connections.remove(websocket)
-
-    async def broadcast(self, message: str):
-        for connection in self.active_connections:
-            await connection.send_text(message)
+router = APIRouter()
 
 manager = ConnectionManager()
 
@@ -38,16 +24,16 @@ class BackgroundReader(object):
     
     async def __handle_client(self, reader, writer):
         while True:
-            data = await reader.read(13)
-            if len(data) != 13:
-                if len(data) == 0 and IS_DEBUG_SERVER:
-                    # connection is closed
+            can_message = await recv_raw_can_message(reader)
+            if can_message is None:
+                if IS_DEBUG_SERVER:
+                    # connection was closed
                     return
-                print(f"got wrong message {data} with len {len(data)}")
+                # received wrong message
                 continue
             
-            can_message = CANMessage.from_bytes(data)
             str_data = json.dumps(jsonable_encoder(can_message))
+            
             print(f"got message {str_data}")
             await manager.broadcast(str_data)
     
@@ -63,11 +49,11 @@ class BackgroundReader(object):
 
 reader = BackgroundReader()
 
-@app.on_event("startup")
+@router.on_event("startup")
 async def app_startup():
     asyncio.create_task(reader.run_main())
 
-@app.websocket("/")
+@router.websocket("/")
 async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
     try:
