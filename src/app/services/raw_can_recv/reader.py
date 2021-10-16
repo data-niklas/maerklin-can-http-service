@@ -1,10 +1,9 @@
-import json
 import asyncio
 
-from fastapi.encoders import jsonable_encoder
 
 from ...schemas.can import CANMessage
 from ...utils.communication import recv_raw_can_message
+from ...utils.coding import obj_to_json
 
 
 IP = "127.0.0.1"
@@ -23,7 +22,7 @@ class BackgroundReader(object):
                 # received wrong message
                 continue
             
-            str_data = json.dumps(jsonable_encoder(can_message))
+            str_data = obj_to_json(can_message)
             
             print(f"got message {str_data}")
             await self.broadcaster.broadcast(str_data)

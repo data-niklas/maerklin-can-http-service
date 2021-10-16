@@ -2,6 +2,7 @@ from enum import Enum
 
 from .base import AbstractCANMessage
 from ..can import CommandSchema
+from ...utils.coding import int_to_bytes
 
 
 class SystemSubcommandSchema(str, Enum):
@@ -74,9 +75,9 @@ class AbstractSystemCommand(AbstractCANMessage):
 
     def get_data(self) -> bytes:
         data = bytes()
-        data += self.id.to_bytes(4, "big")
+        data += int_to_bytes(self.id.to_bytes, 4)
         subcommand = SystemSubcommand[self.get_subcommand().value]
-        data += subcommand.value.to_bytes(1, "big")
+        data += int_to_bytes(subcommand.value, 1)
         data += self.get_other_data()
         return data
 
@@ -121,7 +122,7 @@ class LocomotiveDataProtocolCommand(AbstractSystemCommand):
         return SystemSubcommandSchema.LocomotiveDataProtocol
     
     def get_other_data(self) -> bytes:
-        return RailProtocol[self.protocol.value].value.to_bytes(1, "big")
+        return int_to_bytes(RailProtocol[self.protocol.value].value, 1)
 class AccessoryDecoderSwitchingTimeCommand(AbstractSystemCommand):
     # time * 10ms
     time: int
@@ -130,7 +131,7 @@ class AccessoryDecoderSwitchingTimeCommand(AbstractSystemCommand):
         return SystemSubcommandSchema.AccessoryDecoderSwitchingTime
     
     def get_other_data(self) -> bytes:
-        return self.time.to_bytes(2, "big")
+        return int_to_bytes(self.time, 2)
 class MfxFastReadCommand(AbstractSystemCommand):
     mfx_sid: int
 
@@ -138,7 +139,7 @@ class MfxFastReadCommand(AbstractSystemCommand):
         return SystemSubcommandSchema.MfxFastRead
     
     def get_other_data(self) -> bytes:
-        return self.mfx_sid.to_bytes(2, "big")
+        return int_to_bytes(self.mfx_sid, 2)
 class EnableRailProtocolCommand(AbstractSystemCommand):
     # only bits 0-2 are relevant. Bit enables or disables protocol
     # 0: MM2
@@ -150,7 +151,7 @@ class EnableRailProtocolCommand(AbstractSystemCommand):
         return SystemSubcommandSchema.EnableRailProtocol
     
     def get_other_data(self) -> bytes:
-        return self.bitset.to_bytes(1, "big")
+        return int_to_bytes(self.bitset, 1)
 class SetMfxRegisterCounterCommand(AbstractSystemCommand):
     counter: int
 
@@ -158,7 +159,7 @@ class SetMfxRegisterCounterCommand(AbstractSystemCommand):
         return SystemSubcommandSchema.SetMfxRegisterCounter
     
     def get_other_data(self) -> bytes:
-        return self.counter.to_bytes(2, "big")
+        return int_to_bytes(self.counter, 2)
 
 # Should always be a response
 class SystemOverloadCommand(AbstractSystemCommand):
@@ -169,7 +170,7 @@ class SystemOverloadCommand(AbstractSystemCommand):
         return SystemSubcommandSchema.SystemOverload
     
     def get_other_data(self) -> bytes:
-        return self.channel.to_bytes(1, "big")
+        return int_to_bytes(self.channel, 1)
 class SystemStatusCommand(AbstractSystemCommand):
     # Who is responsible for overload
     channel: int
@@ -181,9 +182,9 @@ class SystemStatusCommand(AbstractSystemCommand):
         return SystemSubcommandSchema.SystemStatus
     
     def get_other_data(self) -> bytes:
-        data = self.channel.to_bytes(1, "big")
+        data = int_to_bytes(self.channel, 1)
         if self.measured_value is not None:
-            data += self.measured_value.to_bytes(2, "big")
+            data += int_to_bytes(self.measured_value, 2)
         return data
 class SetSystemIdentifierCommand(AbstractSystemCommand):
     system_id: int = None
@@ -194,7 +195,7 @@ class SetSystemIdentifierCommand(AbstractSystemCommand):
     
     def get_other_data(self) -> bytes:
         if self.system_id is not None:
-            return self.system_id.to_bytes(2, "big")
+            return int_to_bytes(self.system_id, 2)
         return bytes()
 
 # Mfx Seek is a lie...
@@ -213,4 +214,4 @@ class SystemResetCommand(AbstractSystemCommand):
         return SystemSubcommandSchema.SystemReset
     
     def get_other_data(self) -> bytes:
-        return self.target.to_bytes(1, "big")
+        return int_to_bytes(self.target, 1)

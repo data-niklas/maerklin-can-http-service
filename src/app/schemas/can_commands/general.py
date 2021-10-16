@@ -1,6 +1,6 @@
 from .base import AbstractCANMessage
 from ..can import CommandSchema
-
+from ...utils.coding import int_to_bytes
 
 class ParticipantPingCommand(AbstractCANMessage):
     sender_id: int = None
@@ -20,8 +20,8 @@ class ParticipantPingCommand(AbstractCANMessage):
         assert self.software_version is not None
         assert self.device_id is not None
 
-        ret += self.sender_id.to_bytes(4, "big")
-        ret += self.software_version.to_bytes(2, "big")
-        ret += self.device_id.to_bytes(2, "big")
+        ret += int_to_bytes(self.sender_id, 4)
+        ret += int_to_bytes(self.software_version, 2)
+        ret += int_to_bytes(self.device_id, 2)
 
         return ret

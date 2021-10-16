@@ -1,5 +1,6 @@
 from .base import AbstractCANMessage
 from ..can import CommandSchema
+from ...utils.coding import int_to_bytes
 
 class AbstractMfxCommand(AbstractCANMessage):
     mfx_uid: int
@@ -9,8 +10,8 @@ class AbstractMfxCommand(AbstractCANMessage):
     
     def get_data(self) -> bytes:
         data = bytes()
-        data += mfx_uid.to_bytes(4, "big")
-        data += mfx_sid.to_bytes(2, "big")
+        data += int_to_bytes(mfx_uid, 4)
+        data += int_to_bytes(mfx_sid, 2)
         data += self.get_other_data()
         return data
 
@@ -28,5 +29,5 @@ class MfxVerifyCommand(AbstractMfxCommand):
 
     def get_other_data(self) -> bytes:
         if ask_ratio:
-            return ask_ratio.to_bytes(1, "big")
+            return int_to_bytes(ask_ratio, 1)
         return bytes()

@@ -4,6 +4,8 @@ from enum import Enum
 
 from pydantic import BaseModel, Field
 
+from ..utils.coding import bytes_to_str, int_to_bytes
+
 
 class CommandSchema(str, Enum):
     SystemCommand = "SystemCommand"
@@ -71,7 +73,7 @@ class MessageIdentifier(BaseModel):
         ret[0] = self.get_first_byte()
         ret[1] = self.get_second_byte()
 
-        ret += self.hash_value.to_bytes(2, "big")
+        ret += int_to_bytes(self.hash_value, 2)
 
         return bytes(ret)
     
@@ -118,7 +120,7 @@ class CANMessage(BaseModel):
         
         length = len(data)
         assert length < 9
-        ret += length.to_bytes(1, "big")
+        ret += int_to_bytes(length, 1)
         
         if len(data) < 8:
             new_data = bytearray(8)
@@ -135,6 +137,6 @@ class CANMessage(BaseModel):
         message_id = MessageIdentifier.from_bytes(data[:4])
         length = data[4]
         data = data[5:5+length]
-        data = " ".join(f"{byte:02x}" for byte in data)
+        data = bytes_to_str(data)
 
         return CANMessage(message_id=message_id, data=data)

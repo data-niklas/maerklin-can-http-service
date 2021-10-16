@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 
 from ..can import CANMessage, MessageIdentifier, CommandSchema
+from ...utils.coding import bytes_to_str
 
 
 class AbstractCANMessage(BaseModel):
@@ -15,5 +16,5 @@ class AbstractCANMessage(BaseModel):
 
     def to_can_message(self) -> CANMessage:
         message_identifier = MessageIdentifier(priority=0, command=self.get_command(), response=self.response, hash_value=self.hash_value)
-        data = " ".join(f"{byte:02x}" for byte in self.get_data())
+        data = bytes_to_str(self.get_data())
         return CANMessage(message_id = message_identifier, data = data)
