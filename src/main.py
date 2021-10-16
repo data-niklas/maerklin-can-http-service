@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 
-from tcp import send
+from app.utils.tcp import send
 from app.schemas.can import CANMessage
 from app.schemas.can_commands import LocomotiveSpeedCommand, LocomotiveDirectionCommand, LocomotiveFunctionCommand
 from app.schemas.can_commands import SystemStopCommand, SystemGoCommand
 from app.schemas.can_commands import ParticipantPingCommand
-from app.schemas.can_commands import SystemHaltCommand, LocomotiveEmergencyStop, LocomotiveCycleStop
+from app.schemas.can_commands import SystemHaltCommand, LocomotiveEmergencyStopCommand, LocomotiveCycleStopCommand
 
 app = FastAPI()
 
@@ -50,12 +50,12 @@ async def system_start(message: SystemHaltCommand):
     return {"send_status": "success"}
 
 @app.post("/api/locomotive_emergency_stop")
-async def system_start(message: LocomotiveEmergencyStop):
+async def system_start(message: LocomotiveEmergencyStopCommand):
     await send(message.to_can_message().to_bytes())
     return {"send_status": "success"}
 
 @app.post("/api/locomotive_cycle_stop")
-async def system_start(message: LocomotiveCycleStop):
+async def system_start(message: LocomotiveCycleStopCommand):
     await send(message.to_can_message().to_bytes())
     return {"send_status": "success"}
 

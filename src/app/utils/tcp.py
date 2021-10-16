@@ -1,11 +1,7 @@
 import socket
-from asyncio import Lock
 
-
-IP = "10.0.0.2"
+IP = "127.0.0.1"
 PORT = 15731
-
-udp_lock = Lock()
 
 async def send(message):
     sock = socket.socket(socket.AF_INET,

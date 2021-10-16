@@ -209,7 +209,7 @@ class MfxSeekCommand(AbstractSystemCommand):
 class SystemResetCommand(AbstractSystemCommand):
     target: int
 
-    def get_subcommand(self) -> SystemReset:
+    def get_subcommand(self) -> SystemSubcommandSchema:
         return SystemSubcommandSchema.SystemReset
     
     def get_other_data(self) -> bytes:
