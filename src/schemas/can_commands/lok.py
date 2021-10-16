@@ -86,10 +86,10 @@ class LocomotiveReadConfigCommand(AbstractLocIDCommand):
     def get_other_data(self) -> bytes:
         ret = bytes()
 
-        byte4 = self.index.to_bytes(1, "big") << 2
-        byte4 |= self.number.to_bytes(2, "big") >> 8
-        ret += byte4
-        ret += self.number.to_bytes(2, "big") & 0b11111111
+        byte4 = self.index << 2
+        byte4 |= (self.number >> 8) & 0b0000_0011
+        ret += byte4.to_bytes(1, "big")
+        ret += (self.number & 0b11111111).to_bytes(1, "big")
 
         if self.count is not None:
             assert self.value is None

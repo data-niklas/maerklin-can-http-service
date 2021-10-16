@@ -210,7 +210,7 @@ class SystemResetCommand(AbstractSystemCommand):
     target: int
 
     def get_subcommand(self) -> SystemReset:
-        return SystemSubcommandSchema.MfxSeek
+        return SystemSubcommandSchema.SystemReset
     
     def get_other_data(self) -> bytes:
         return self.target.to_bytes(1, "big")
