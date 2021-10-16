@@ -4,7 +4,7 @@ import socket
 
 import websockets
 
-from schemas.can import CANMessage
+from app.schemas.can import CANMessage
 from fastapi.encoders import jsonable_encoder
 
 

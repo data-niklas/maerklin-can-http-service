@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 
 from tcp import send
-from schemas.can import CANMessage
-from schemas.can_commands import LocomotiveSpeedCommand, LocomotiveDirectionCommand, LocomotiveFunctionCommand
-from schemas.can_commands import SystemStopCommand, SystemGoCommand
-from schemas.can_commands import ParticipantPingCommand
-from schemas.can_commands import SystemHaltCommand, LocomotiveEmergencyStop, LocomotiveCycleStop
+from app.schemas.can import CANMessage
+from app.schemas.can_commands import LocomotiveSpeedCommand, LocomotiveDirectionCommand, LocomotiveFunctionCommand
+from app.schemas.can_commands import SystemStopCommand, SystemGoCommand
+from app.schemas.can_commands import ParticipantPingCommand
+from app.schemas.can_commands import SystemHaltCommand, LocomotiveEmergencyStop, LocomotiveCycleStop
 
 app = FastAPI()
 
