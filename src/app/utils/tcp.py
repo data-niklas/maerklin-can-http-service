@@ -41,11 +41,12 @@ async def recv_async(reader=None):
     got_reader = True
     if reader is None:
         got_reader = False
-        reader, _ = await asyncio.open_connection(IP, PORT)
+        reader, writer = await asyncio.open_connection(IP, PORT)
 
     data = await reader.read(13)
 
     if not got_reader:
-        reader.close()
+        writer.close()
+        await writer.wait_closed()
 
     return data

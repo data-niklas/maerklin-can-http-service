@@ -12,7 +12,9 @@ reader = BackgroundReader(manager)
 
 @router.on_event("startup")
 async def app_startup():
-    asyncio.create_task(reader.run_main())
+    await reader.startup()
+    loop = asyncio.get_event_loop()
+    loop.create_task(reader.run_main())
 
 @router.websocket("/")
 async def websocket_endpoint(websocket: WebSocket):

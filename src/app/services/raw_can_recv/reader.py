@@ -12,18 +12,22 @@ PORT = 15731
 class BackgroundReader(object):
     def __init__(self, broadcaster):
         self.broadcaster = broadcaster
+        self.reader = None
+        self.writer = None
     
-    async def run_main(self):
+    async def startup(self):
         print("starting BackgroundReader")
-        reader, writer = await asyncio.open_connection(IP, PORT)
+        self.reader, self.writer = await asyncio.open_connection(IP, PORT)
         print("Connected")
+
+    async def run_main(self):
         while True:
-            can_message = await recv_raw_can_message(reader)
+            can_message = await recv_raw_can_message(self.reader)
             if can_message is None:
                 # received wrong message
                 continue
-            
+
             str_data = obj_to_json(can_message)
-            
+
             print(f"got message {str_data}")
             await self.broadcaster.broadcast(str_data)
