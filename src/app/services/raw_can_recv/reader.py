@@ -16,6 +16,7 @@ class BackgroundReader(object):
     async def run_main(self):
         print("starting BackgroundReader")
         reader, writer = await asyncio.open_connection(IP, PORT)
+        print("Connected")
         while True:
             can_message = await recv_raw_can_message(reader)
             if can_message is None:
