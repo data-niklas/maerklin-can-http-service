@@ -100,6 +100,32 @@ class ReadConfigCommand(AbstractLocIDCommand):
             ret += int_to_bytes(self.value, 1)
         return ret
 
+""" class WriteConfigCommand(AbstractLocIDCommand):
+    index: int # 6 bit
+    number: int # 10 bit
+    value: int = None
+    stuff: int = None
+
+    def get_command(self) -> CommandSchema:
+        return CommandSchema.ReadConfig
+    
+    def get_other_data(self) -> bytes:
+        ret = bytes()
+
+        byte4 = self.index << 2
+        byte4 |= (self.number >> 8) & 0b0000_0011
+        ret += int_to_bytes(byte4, 1)
+        ret += int_to_bytes(self.number & 0b11111111, 1)
+
+        if self.count is not None:
+            assert self.value is None
+            ret += int_to_bytes(self.count, 1)
+        elif self.value is not None:
+            assert self.count is None
+            ret += int_to_bytes(self.value, 1)
+        return ret """
+
+
 
 class SwitchingAccessoriesCommand(AbstractLocIDCommand):
     position: int
@@ -117,3 +143,27 @@ class SwitchingAccessoriesCommand(AbstractLocIDCommand):
         if self.value is not None:
             ret += int_to_bytes(self.value, 2)
         return ret
+class S88PollingCommand(AbstractLocIDCommand):
+    module_count: int = None
+    module: int = None
+    state: int = None 
+
+
+    def get_command(self) -> CommandSchema:
+        return CommandSchema.S88Polling
+    
+    def get_other_data(self) -> bytes:
+        ret = bytes()
+        if not self.module_count is None:
+            ret += int_to_bytes(self.module_count, 1)
+            assert self.module is None
+            assert self.state is None
+            return ret
+
+        assert not self.module is None
+        assert not self.state is None
+        ret += int_to_bytes(self.module, 1)
+        ret += int_to_bytes(self.state, 2)
+        return ret
+
+

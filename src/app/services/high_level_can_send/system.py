@@ -1,32 +1,23 @@
 from fastapi import APIRouter
 
-from ...utils.communication import send_can_message
-from ...schemas.can_commands import SystemStopCommand, SystemGoCommand
-from ...schemas.can_commands import SystemHaltCommand, LocomotiveEmergencyStopCommand, LocomotiveCycleStopCommand
+from ...schemas.can_commands.system import *
+from .helper import create_endpoint
 
 router = APIRouter()
 
-@router.post("/start")
-async def system_start(message: SystemGoCommand):
-    await send_can_message(message)
-    return {"send_status": "success"}
 
-@router.post("/stop")
-async def system_start(message: SystemStopCommand):
-    await send_can_message(message)
-    return {"send_status": "success"}
-
-@router.post("/halt")
-async def system_start(message: SystemHaltCommand):
-    await send_can_message(message)
-    return {"send_status": "success"}
-
-@router.post("/locomotive_emergency_stop")
-async def system_start(message: LocomotiveEmergencyStopCommand):
-    await send_can_message(message)
-    return {"send_status": "success"}
-
-@router.post("/locomotive_cycle_stop")
-async def system_start(message: LocomotiveCycleStopCommand):
-    await send_can_message(message)
-    return {"send_status": "success"}
+create_endpoint(router, "stop", SystemStopCommand)
+create_endpoint(router, "halt", SystemHaltCommand)
+create_endpoint(router, "go", SystemGoCommand)
+create_endpoint(router, "locomotive_emergency_stop", LocomotiveEmergencyStopCommand)
+create_endpoint(router, "locomotive_cycle_stop", LocomotiveCycleStopCommand)
+create_endpoint(router, "locomotive_data_protocol", LocomotiveDataProtocolCommand)
+create_endpoint(router, "accessory_decoder_switching_time", AccessoryDecoderSwitchingTimeCommand)
+create_endpoint(router, "mfx_fast_read", MfxFastReadCommand)
+create_endpoint(router, "enable_rail_protocol", EnableRailProtocolCommand)
+create_endpoint(router, "set_mfx_register_counter", SetMfxRegisterCounterCommand)
+create_endpoint(router, "overload", SystemOverloadCommand)
+create_endpoint(router, "status", SystemStatusCommand)
+create_endpoint(router, "set_system_identifier", SetSystemIdentifierCommand)
+create_endpoint(router, "mfx_seek", MfxSeekCommand)
+create_endpoint(router, "reset", SystemResetCommand)

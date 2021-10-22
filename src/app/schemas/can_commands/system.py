@@ -41,23 +41,23 @@ class SystemSubcommand(Enum):
 
 
 class RailProtocolSchema(str, Enum):
-    MM2_2040 = "MM2_2040",
-    MM2_20 = "MM2_20",
-    MM2_40 = "MM2_40",
-    DCC_short_28 = "DCC_short_28",
-    DCC_short_14 = "DCC_short_14",
-    DCC_short_126 = "DCC_short_126",
-    DCC_long_28 = "DCC_long_28",
+    MM2_2040 = "MM2_2040"
+    MM2_20 = "MM2_20"
+    MM2_40 = "MM2_40"
+    DCC_short_28 = "DCC_short_28"
+    DCC_short_14 = "DCC_short_14"
+    DCC_short_126 = "DCC_short_126"
+    DCC_long_28 = "DCC_long_28"
     DCC_long_126 = "DCC_long_126"
 
 class RailProtocol(Enum):
-    MM2_2040 = 0x00,
-    MM2_20 =  0x01,
-    MM2_40 =  0x02,
-    DCC_short_28 = 0x00,
-    DCC_short_14 = 0x01,
-    DCC_short_126 = 0x02,
-    DCC_long_28 = 0x03,
+    MM2_2040 = 0x00
+    MM2_20 =  0x01
+    MM2_40 =  0x02
+    DCC_short_28 = 0x00
+    DCC_short_14 = 0x01
+    DCC_short_126 = 0x02
+    DCC_long_28 = 0x03
     DCC_long_126 = 0x04 
 
 
@@ -75,7 +75,7 @@ class AbstractSystemCommand(AbstractCANMessage):
 
     def get_data(self) -> bytes:
         data = bytes()
-        data += int_to_bytes(self.id.to_bytes, 4)
+        data += int_to_bytes(self.id, 4)
         subcommand = SystemSubcommand[self.get_subcommand().value]
         data += int_to_bytes(subcommand.value, 1)
         data += self.get_other_data()

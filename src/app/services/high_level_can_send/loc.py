@@ -1,21 +1,13 @@
 from fastapi import APIRouter
 
-from ...utils.communication import send_can_message
-from ...schemas.can_commands import LocomotiveSpeedCommand, LocomotiveDirectionCommand, LocomotiveFunctionCommand
+from ...schemas.can_commands.loc import *
+from .helper import create_endpoint
 
 router = APIRouter()
 
-@router.post("/speed")
-async def loc_speed(message: LocomotiveSpeedCommand):
-    await send_can_message(message)
-    return {"send_status": "success"}
-
-@router.post("/direction")
-async def loc_speed(message: LocomotiveDirectionCommand):
-    await send_can_message(message)
-    return {"send_status": "success"}
-
-@router.post("/function")
-async def loc_speed(message: LocomotiveFunctionCommand):
-    await send_can_message(message)
-    return {"send_status": "success"}
+create_endpoint(router, "speed", LocomotiveSpeedCommand)
+create_endpoint(router, "direction", LocomotiveDirectionCommand)
+create_endpoint(router, "function", LocomotiveFunctionCommand)
+create_endpoint(router, "read_config", ReadConfigCommand)
+create_endpoint(router, "switch_accessory", SwitchingAccessoriesCommand)
+create_endpoint(router, "s88_polling", S88PollingCommand)

@@ -1,0 +1,12 @@
+from typing import Type
+from ...schemas.can_commands import AbstractCANMessage
+from ...utils.communication import send_can_message
+
+#def transform_name(name: str):
+#    return name.lower().replace("command", "")
+
+def create_endpoint(app, name: str, schema : Type[AbstractCANMessage]):
+    @app.post(f"/" + name)
+    async def post(message: schema):
+        await send_can_message(message)
+        return {"send_status": "success"}

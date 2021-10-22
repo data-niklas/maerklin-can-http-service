@@ -1,12 +1,12 @@
 from fastapi import APIRouter
 
 from ...utils.communication import send_can_message
-from app.schemas.can_commands import ParticipantPingCommand
+from app.schemas.can_commands.general import *
+from .helper import create_endpoint
 
 
 router = APIRouter()
-
-@router.post("/participant_ping")
-async def participant_ping(message: ParticipantPingCommand):
-    await send_can_message(message)
-    return {"send_status": "success"}
+create_endpoint(router, "participant_ping", ParticipantPingCommand)
+create_endpoint(router, "locomotive_discovery", LocomotiveDiscoveryCommand)
+create_endpoint(router, "s88_event", S88EventCommand)
+create_endpoint(router, "request_config_data", RequestConfigDataCommand)
