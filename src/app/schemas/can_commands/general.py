@@ -1,5 +1,5 @@
 from .base import AbstractCANMessage
-from ..can import CommandSchema
+from ..can import CommandSchema, CANMessage
 from ...utils.coding import int_to_bytes, str_to_bytes
 from enum import Enum
 
@@ -136,6 +136,18 @@ class RequestConfigDataCommand(AbstractCANMessage):
         ret += bytes(8 - ret_len)# Padding
 
         return ret
+    
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        abstract_message = AbstractCANMessage.from_can_message(message)
+        
+        if message.message_id.command != CommandSchema.RequestConfigData:
+            return None
+
+        data = message.get_data_bytes()
+        assert len(data) == 8
+        filename = bytes(filter(lambda b: b != 0, data)).decode("utf-8") # remove padding and decode
+
+        return RequestConfigDataCommand(filename=filename, **vars(abstract_message))
 
 class ServiceStatusDataConfigurationCommand(AbstractCANMessage):
     device_id: int = None

@@ -13,3 +13,6 @@ def int_to_bytes(val, length):
 
 def str_to_bytes(val):
     return val.encode("utf-8")
+
+def bytes_to_int(val):
+    return int.from_bytes(val, "big")

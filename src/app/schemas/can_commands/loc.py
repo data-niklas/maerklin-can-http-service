@@ -3,8 +3,8 @@ from enum import Enum
 from pydantic import BaseModel
 
 from .base import AbstractCANMessage
-from ..can import CommandSchema
-from ...utils.coding import int_to_bytes
+from ..can import CommandSchema, CANMessage
+from ...utils.coding import int_to_bytes, bytes_to_int
 
 class AbstractLocIDCommand(AbstractCANMessage):
     loc_id: int
@@ -17,6 +17,16 @@ class AbstractLocIDCommand(AbstractCANMessage):
         data += int_to_bytes(self.loc_id, 4)
         data += self.get_other_data()
         return data
+    
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        abstract_message = AbstractCANMessage.from_can_message(message)
+
+        data = message.get_data_bytes()
+        assert len(data) >= 4
+
+        loc_id = bytes_to_int(data[:4])
+
+        return AbstractLocIDCommand(loc_id=loc_id, **vars(abstract_message))
 
 class LocomotiveSpeedCommand(AbstractLocIDCommand):
     speed: int = None
@@ -30,6 +40,17 @@ class LocomotiveSpeedCommand(AbstractLocIDCommand):
             return bytes()
         assert self.speed <= 1000
         return int_to_bytes(self.speed, 2)
+    
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
+
+        command = message.message_id.command
+        if command != CommandSchema.LocomotiveSpeed:
+            return None
+        data = message.get_data_bytes()
+        speed = bytes_to_int(data[4:6])
+
+        return LocomotiveSpeedCommand(speed=speed, **vars(abstract_message))
 
 class LocomotiveDirection(str, Enum):
     Keep = "Keep"
@@ -55,6 +76,31 @@ class LocomotiveDirectionCommand(AbstractLocIDCommand):
             return int_to_bytes(2, 1)
         if self.direction == LocomotiveDirection.Toggle:
             return int_to_bytes(3, 1)
+    
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
+
+        command = message.message_id.command
+        if command != CommandSchema.LocomotiveDirection:
+            return None
+        data = message.get_data_bytes()
+        direction = None
+        assert len(data) < 6
+        if len(data) > 4:
+            direction = bytes_to_int(data[4:5])
+            if direction == 0:
+                direction = LocomotiveDirection.Keep
+            elif direction == 1:
+                direction = LocomotiveDirection.Forwards
+            elif direction == 2:
+                direction = LocomotiveDirection.Backwards
+            elif direction == 3:
+                direction = LocomotiveDirection.Toggle
+            else:
+                # wrong value
+                return None
+
+        return LocomotiveDirectionCommand(direction=direction, **vars(abstract_message))
 
 class LocomotiveFunctionCommand(AbstractLocIDCommand):
     function: int

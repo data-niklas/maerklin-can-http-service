@@ -18,3 +18,7 @@ class AbstractCANMessage(BaseModel):
         message_identifier = MessageIdentifier(priority=0, command=self.get_command(), response=self.response, hash_value=self.hash_value)
         data = bytes_to_str(self.get_data())
         return CANMessage(message_id = message_identifier, data = data)
+    
+    def from_can_message(message: CANMessage):
+        message_id = message.message_id
+        return AbstractCANMessage(hash_value=message_id.hash_value, response=message_id.response)
