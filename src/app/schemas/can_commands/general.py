@@ -137,7 +137,40 @@ class RequestConfigDataCommand(AbstractCANMessage):
 
         return ret
 
+class ServiceStatusDataConfigurationCommand(AbstractCANMessage):
+    device_id: int = None
+    index: int = None
+    count: int = None
+    data: str = None
 
+    def get_command(self) -> CommandSchema:
+        return CommandSchema.ServiceStatusDataConfiguration
+    
+    def get_data(self) -> bytes:
+        ret = bytes()
+        
+        if not self.data is None:
+            assert self.device_id is None
+            assert self.index is None
+            assert self.count is None
+            assert self.response
+            ret = bytes.fromhex(self.data)
+            assert len(ret) == 8
+            return ret
+
+        assert self.device_id is not None
+        assert self.index is not None
+        
+        ret += int_to_bytes(self.device_id, 4)
+        ret += int_to_bytes(self.index, 1)
+        
+        if self.count is not None:
+            assert self.response
+            ret += int_to_bytes(self.count, 1)
+        else:
+            assert not self.response
+
+        return ret
 
 class ConfigDataStreamCommand(AbstractCANMessage):
     file_length: int = None
