@@ -14,8 +14,22 @@ def convert_to_abstract(message: CANMessage) -> AbstractCANMessage:
             return abstract_message
     return None
 
+# general.py
 registered_types.append(RequestConfigDataCommand)
-registered_types.append(LocomotiveSpeedCommand)
-registered_types.append(LocomotiveDirectionCommand)
-registered_types.append(MfxBindCommand)
-registered_types.append(MfxVerifyCommand)
+
+# loc.py
+registered_types.extend([
+    LocomotiveSpeedCommand,
+    LocomotiveDirectionCommand,
+    LocomotiveFunctionCommand,
+    ReadConfigCommand,
+    WriteConfigCommand,
+    SwitchingAccessoriesCommand,
+    S88PollingCommand
+])
+
+# mfx.py
+registered_types.extend([
+    MfxBindCommand,
+    MfxVerifyCommand
+])

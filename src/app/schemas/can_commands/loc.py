@@ -122,6 +122,26 @@ class LocomotiveFunctionCommand(AbstractLocIDCommand):
             ret += int_to_bytes(self.function_value, 2)
 
         return ret
+    
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
+
+        command = message.message_id.command
+        if command != CommandSchema.LocomotiveFunction:
+            return None
+        data = message.get_data_bytes()
+        function = bytes_to_int(data[4:5])
+        
+        value = None
+        if len(data) > 5:
+            value = bytes_to_int(data[5:6])
+        
+        function_value = None
+        if len(data) > 6:
+            assert len(data) == 8
+            function_value = bytes_to_int(data[6:8])
+
+        return LocomotiveFunctionCommand(function=function, value=value, function_value=function_value, **vars(abstract_message))
 
 class ReadConfigCommand(AbstractLocIDCommand):
     index: int # 6 bit
@@ -142,11 +162,41 @@ class ReadConfigCommand(AbstractLocIDCommand):
 
         if self.count is not None:
             assert self.value is None
+            assert not self.response
             ret += int_to_bytes(self.count, 1)
         elif self.value is not None:
             assert self.count is None
+            assert self.response
             ret += int_to_bytes(self.value, 1)
         return ret
+    
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
+
+        command = message.message_id.command
+        if command != CommandSchema.ReadConfig:
+            return None
+        data = message.get_data_bytes()
+        
+        assert len(data) == 6 or len(data) == 7
+
+        byte4 = bytes_to_int(data[4:5])
+        byte5 = bytes_to_int(data[5:6])
+
+        index = byte4 >> 2
+        number = (byte4 & 0b0000_0011) << 8
+        number |= byte5
+
+        count = None
+        value = None
+        if len(data) == 7:
+            byte6 = bytes_to_int(data[6:7])
+            if message.message_id.response:
+                value = byte6
+            else:
+                count = byte6
+
+        return ReadConfigCommand(index=index, number=number, count=count, value=value, **vars(abstract_message))
 
 class DCCProgramming(str, Enum):
     DirectProgramming = "DirectProgramming"
@@ -176,6 +226,18 @@ class WriteConfigControlByte(BaseModel):
             raise NotImplentedError()
 
         return ret
+    
+    def from_value(value: int):
+        is_main = (value & 0b1000_0000) > 0
+        is_multi_byte = (value & 0b0100_0000) > 0
+        dcc_programming = DCCProgramming.DirectProgramming
+        if (value & 0b0001_0000) > 0:
+            dcc_programming = DCCProgramming.RegisterProgramming
+        if (value & 0b0010_0000) > 0:
+            dcc_programming = DCCProgramming.BitProgramming
+        assert bin(value).count("1") < 4 # either Register or BitProgramming
+
+        return WriteConfigControlByte(is_main=is_main, is_multi_byte=is_multi_byte, dcc_programming=dcc_programming)
 
 class WriteConfigResultByte(BaseModel):
     is_write_successful: bool
@@ -190,6 +252,12 @@ class WriteConfigResultByte(BaseModel):
             ret |= 1 << 6
 
         return ret
+    
+    def from_value(value):
+        is_write_successful = (value & 0b1000_0000) > 0
+        is_verify_successful = (value & 0b0100_0000) > 0
+
+        return WriteConfigResultByte(is_write_successful=is_write_successful, is_verify_successful=is_verify_successful)
 
 class WriteConfigCommand(AbstractLocIDCommand):
     index: int # 6 bit
@@ -222,7 +290,35 @@ class WriteConfigCommand(AbstractLocIDCommand):
             ret += int_to_bytes(self.result.get_value(), 1)
 
         return ret
+    
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
 
+        command = message.message_id.command
+        if command != CommandSchema.WriteConfig:
+            return None
+        data = message.get_data_bytes()
+        
+        assert len(data) == 8
+
+        byte4 = bytes_to_int(data[4:5])
+        byte5 = bytes_to_int(data[5:6])
+
+        index = byte4 >> 2
+        number = (byte4 & 0b0000_0011) << 8
+        number |= byte5
+
+        value = bytes_to_int(data[6:7])
+
+        control = None
+        result = None
+        byte7 = bytes_to_int(data[7:8])
+        if message.message_id.response:
+            result = WriteConfigResultByte.from_value(byte7)
+        else:
+            control = WriteConfigControlByte.from_value(byte7)
+
+        return WriteConfigCommand(index=index, number=number, value=value, control=control, result=result, **vars(abstract_message))
 
 
 class SwitchingAccessoriesCommand(AbstractLocIDCommand):
@@ -241,6 +337,26 @@ class SwitchingAccessoriesCommand(AbstractLocIDCommand):
         if self.value is not None:
             ret += int_to_bytes(self.value, 2)
         return ret
+
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
+
+        command = message.message_id.command
+        if command != CommandSchema.SwitchingAccessories:
+            return None
+        data = message.get_data_bytes()
+        assert len(data) in [6,8]
+
+        position = bytes_to_int(data[4:5])
+        power = bytes_to_int(data[5:6])
+
+        value = None
+        if len(data) == 8:
+            value = bytes_to_int(data[6:8])
+
+        return SwitchingAccessoriesCommand(position=position, power=power, value=value, **vars(abstract_message))
+
+
 class S88PollingCommand(AbstractLocIDCommand):
     module_count: int = None
     module: int = None
@@ -254,14 +370,35 @@ class S88PollingCommand(AbstractLocIDCommand):
         ret = bytes()
         if not self.module_count is None:
             ret += int_to_bytes(self.module_count, 1)
+            assert not self.response
             assert self.module is None
             assert self.state is None
             return ret
 
         assert not self.module is None
         assert not self.state is None
+        assert self.response
         ret += int_to_bytes(self.module, 1)
         ret += int_to_bytes(self.state, 2)
         return ret
 
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
 
+        command = message.message_id.command
+        if command != CommandSchema.S88Polling:
+            return None
+        data = message.get_data_bytes()
+        assert len(data) in [5,7]
+
+        module_count = None
+        module = None
+        state = None 
+
+        if len(data) == 5:
+            module_count = bytes_to_int(data[4:5])
+        else: # data has len 7
+            module = bytes_to_int(data[4:5])
+            state = bytes_to_int(data[5:7])
+
+        return S88PollingCommand(module_count=module_count, module=module, state=state, **vars(abstract_message))
