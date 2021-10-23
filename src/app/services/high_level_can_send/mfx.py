@@ -6,4 +6,3 @@ from .helper import create_endpoint
 router = APIRouter()
 create_endpoint(router, "bind", MfxBindCommand)
 create_endpoint(router, "verify", MfxVerifyCommand)
-create_endpoint(router, "config_data_stream", ConfigDataStream)

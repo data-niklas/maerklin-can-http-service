@@ -17,3 +17,5 @@ def convert_to_abstract(message: CANMessage) -> AbstractCANMessage:
 registered_types.append(RequestConfigDataCommand)
 registered_types.append(LocomotiveSpeedCommand)
 registered_types.append(LocomotiveDirectionCommand)
+registered_types.append(MfxBindCommand)
+registered_types.append(MfxVerifyCommand)
