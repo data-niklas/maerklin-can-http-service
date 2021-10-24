@@ -33,3 +33,22 @@ registered_types.extend([
     MfxBindCommand,
     MfxVerifyCommand
 ])
+
+# system.py
+registered_types.extend([
+    SystemStopCommand,
+    SystemGoCommand,
+    SystemHaltCommand,
+    LocomotiveEmergencyStopCommand,
+    LocomotiveCycleStopCommand,
+    LocomotiveDataProtocolCommand,
+    AccessoryDecoderSwitchingTimeCommand,
+    MfxFastReadCommand,
+    EnableRailProtocolCommand,
+    SetMfxRegisterCounterCommand,
+    SystemOverloadCommand,
+    SystemStatusCommand,
+    SetSystemIdentifierCommand,
+    MfxSeekCommand,
+    SystemResetCommand
+])

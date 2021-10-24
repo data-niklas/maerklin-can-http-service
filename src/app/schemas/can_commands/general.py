@@ -138,11 +138,11 @@ class RequestConfigDataCommand(AbstractCANMessage):
         return ret
     
     def from_can_message(message: CANMessage) -> AbstractCANMessage:
-        abstract_message = AbstractCANMessage.from_can_message(message)
-        
         if message.message_id.command != CommandSchema.RequestConfigData:
             return None
-
+        abstract_message = AbstractCANMessage.from_can_message(message)
+        
+        
         data = message.get_data_bytes()
         assert len(data) == 8
         filename = bytes(filter(lambda b: b != 0, data)).decode("utf-8") # remove padding and decode

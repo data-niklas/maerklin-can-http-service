@@ -42,11 +42,11 @@ class LocomotiveSpeedCommand(AbstractLocIDCommand):
         return int_to_bytes(self.speed, 2)
     
     def from_can_message(message: CANMessage) -> AbstractCANMessage:
-        abstract_message = AbstractLocIDCommand.from_can_message(message)
-
         command = message.message_id.command
         if command != CommandSchema.LocomotiveSpeed:
             return None
+
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
         data = message.get_data_bytes()
         speed = bytes_to_int(data[4:6])
 
@@ -78,11 +78,11 @@ class LocomotiveDirectionCommand(AbstractLocIDCommand):
             return int_to_bytes(3, 1)
     
     def from_can_message(message: CANMessage) -> AbstractCANMessage:
-        abstract_message = AbstractLocIDCommand.from_can_message(message)
-
         command = message.message_id.command
         if command != CommandSchema.LocomotiveDirection:
             return None
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
+
         data = message.get_data_bytes()
         direction = None
         assert len(data) < 6
@@ -124,11 +124,11 @@ class LocomotiveFunctionCommand(AbstractLocIDCommand):
         return ret
     
     def from_can_message(message: CANMessage) -> AbstractCANMessage:
-        abstract_message = AbstractLocIDCommand.from_can_message(message)
-
         command = message.message_id.command
         if command != CommandSchema.LocomotiveFunction:
             return None
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
+
         data = message.get_data_bytes()
         function = bytes_to_int(data[4:5])
         
@@ -171,11 +171,11 @@ class ReadConfigCommand(AbstractLocIDCommand):
         return ret
     
     def from_can_message(message: CANMessage) -> AbstractCANMessage:
-        abstract_message = AbstractLocIDCommand.from_can_message(message)
-
         command = message.message_id.command
         if command != CommandSchema.ReadConfig:
             return None
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
+
         data = message.get_data_bytes()
         
         assert len(data) == 6 or len(data) == 7
@@ -292,11 +292,11 @@ class WriteConfigCommand(AbstractLocIDCommand):
         return ret
     
     def from_can_message(message: CANMessage) -> AbstractCANMessage:
-        abstract_message = AbstractLocIDCommand.from_can_message(message)
-
         command = message.message_id.command
         if command != CommandSchema.WriteConfig:
             return None
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
+
         data = message.get_data_bytes()
         
         assert len(data) == 8
@@ -339,11 +339,11 @@ class SwitchingAccessoriesCommand(AbstractLocIDCommand):
         return ret
 
     def from_can_message(message: CANMessage) -> AbstractCANMessage:
-        abstract_message = AbstractLocIDCommand.from_can_message(message)
-
         command = message.message_id.command
         if command != CommandSchema.SwitchingAccessories:
             return None
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
+
         data = message.get_data_bytes()
         assert len(data) in [6,8]
 
@@ -383,11 +383,11 @@ class S88PollingCommand(AbstractLocIDCommand):
         return ret
 
     def from_can_message(message: CANMessage) -> AbstractCANMessage:
-        abstract_message = AbstractLocIDCommand.from_can_message(message)
-
         command = message.message_id.command
         if command != CommandSchema.S88Polling:
             return None
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
+
         data = message.get_data_bytes()
         assert len(data) in [5,7]
 

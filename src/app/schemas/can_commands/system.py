@@ -1,8 +1,8 @@
 from enum import Enum
 
 from .base import AbstractCANMessage
-from ..can import CommandSchema
-from ...utils.coding import int_to_bytes
+from ..can import CommandSchema, CANMessage
+from ...utils.coding import int_to_bytes, bytes_to_int
 
 
 class SystemSubcommandSchema(str, Enum):
@@ -81,6 +81,19 @@ class AbstractSystemCommand(AbstractCANMessage):
         data += self.get_other_data()
         return data
 
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        abstract_message = AbstractCANMessage.from_can_message(message)
+
+        data = message.get_data_bytes()
+        assert len(data) >= 5
+
+        id = bytes_to_int(data[:4])
+        return AbstractSystemCommand(id=id, **vars(abstract_message))
+
+    def get_subcommand_from_data(data: bytes) -> SystemSubcommandSchema: 
+        subcommand_number = bytes_to_int(data[4:5])
+        return SystemSubcommandSchema(SystemSubcommand(subcommand_number).name)
+
 class SystemStopCommand(AbstractSystemCommand):
     def get_subcommand(self) -> SystemSubcommandSchema:
         return SystemSubcommandSchema.SystemStop
@@ -95,12 +108,36 @@ class SystemGoCommand(AbstractSystemCommand):
     def get_other_data(self) -> bytes:
         return bytes()
 
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.SystemGo:
+            return None
+
+        return SystemGoCommand(**vars(abstract_message))
+
 class SystemHaltCommand(AbstractSystemCommand):
     def get_subcommand(self) -> SystemSubcommandSchema:
         return SystemSubcommandSchema.SystemHalt
     
     def get_other_data(self) -> bytes:
         return bytes()
+
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.SystemHalt:
+            return None
+
+        return SystemHaltCommand(**vars(abstract_message))
 
 class LocomotiveEmergencyStopCommand(AbstractSystemCommand):
     def get_subcommand(self) -> SystemSubcommandSchema:
@@ -109,12 +146,36 @@ class LocomotiveEmergencyStopCommand(AbstractSystemCommand):
     def get_other_data(self) -> bytes:
         return bytes()
 
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.LocomotiveEmergencyStop:
+            return None
+
+        return LocomotiveEmergencyStopCommand(**vars(abstract_message))
+
 class LocomotiveCycleStopCommand(AbstractSystemCommand):
     def get_subcommand(self) -> SystemSubcommandSchema:
         return SystemSubcommandSchema.LocomotiveCycleStop
     
     def get_other_data(self) -> bytes:
         return bytes()
+
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.LocomotiveCycleStop:
+            return None
+
+        return LocomotiveCycleStopCommand(**vars(abstract_message))
 class LocomotiveDataProtocolCommand(AbstractSystemCommand):
     protocol: RailProtocolSchema
 
@@ -123,6 +184,20 @@ class LocomotiveDataProtocolCommand(AbstractSystemCommand):
     
     def get_other_data(self) -> bytes:
         return int_to_bytes(RailProtocol[self.protocol.value].value, 1)
+
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.LocomotiveDataProtocol:
+            return None
+
+        protocol_number = bytes_to_int(data[5:6])
+        protocol = RailProtocolSchema(RailProtocol(protocol_number).name)
+        return LocomotiveDataProtocolCommand(protocol = protocol, **vars(abstract_message))
 class AccessoryDecoderSwitchingTimeCommand(AbstractSystemCommand):
     # time * 10ms
     time: int
@@ -132,6 +207,19 @@ class AccessoryDecoderSwitchingTimeCommand(AbstractSystemCommand):
     
     def get_other_data(self) -> bytes:
         return int_to_bytes(self.time, 2)
+
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.AccessoryDecoderSwitchingTime:
+            return None
+
+        time = bytes_to_int(data[5:6])
+        return AccessoryDecoderSwitchingTimeCommand(time = time, **vars(abstract_message))
 class MfxFastReadCommand(AbstractSystemCommand):
     mfx_sid: int
 
@@ -140,6 +228,19 @@ class MfxFastReadCommand(AbstractSystemCommand):
     
     def get_other_data(self) -> bytes:
         return int_to_bytes(self.mfx_sid, 2)
+
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.MfxFastRead:
+            return None
+
+        mfx_sid = bytes_to_int(data[5:7])
+        return MfxFastReadCommand(mfx_sid = mfx_sid, **vars(abstract_message))
 class EnableRailProtocolCommand(AbstractSystemCommand):
     # only bits 0-2 are relevant. Bit enables or disables protocol
     # 0: MM2
@@ -152,6 +253,19 @@ class EnableRailProtocolCommand(AbstractSystemCommand):
     
     def get_other_data(self) -> bytes:
         return int_to_bytes(self.bitset, 1)
+
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.EnableRailProtocol:
+            return None
+
+        bitset = bytes_to_int(data[5:6])
+        return EnableRailProtocolCommand(bitset = bitset, **vars(abstract_message))
 class SetMfxRegisterCounterCommand(AbstractSystemCommand):
     counter: int
 
@@ -160,6 +274,19 @@ class SetMfxRegisterCounterCommand(AbstractSystemCommand):
     
     def get_other_data(self) -> bytes:
         return int_to_bytes(self.counter, 2)
+
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.SetMfxRegisterCounter:
+            return None
+
+        counter = bytes_to_int(data[5:7])
+        return SetMfxRegisterCounterCommand(counter = counter, **vars(abstract_message))
 
 # Should always be a response
 class SystemOverloadCommand(AbstractSystemCommand):
@@ -171,6 +298,19 @@ class SystemOverloadCommand(AbstractSystemCommand):
     
     def get_other_data(self) -> bytes:
         return int_to_bytes(self.channel, 1)
+
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.SystemOverload:
+            return None
+
+        channel = bytes_to_int(data[5:6])
+        return SystemOverloadCommand(channel = channel, **vars(abstract_message))
 class SystemStatusCommand(AbstractSystemCommand):
     # Who is responsible for overload
     channel: int
@@ -186,6 +326,22 @@ class SystemStatusCommand(AbstractSystemCommand):
         if self.measured_value is not None:
             data += int_to_bytes(self.measured_value, 2)
         return data
+
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.SystemStatus:
+            return None
+
+        channel = bytes_to_int(data[5:6])
+        measured_value = None
+        if len(data) > 6:
+            measured_value = bytes_to_int(data[6:8])
+        return SystemStatusCommand(channel = channel, measured_value = measured_value, **vars(abstract_message))
 class SetSystemIdentifierCommand(AbstractSystemCommand):
     system_id: int = None
 
@@ -198,6 +354,21 @@ class SetSystemIdentifierCommand(AbstractSystemCommand):
             return int_to_bytes(self.system_id, 2)
         return bytes()
 
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.SetSystemIdentifier:
+            return None
+
+        system_id = None
+        if len(data) > 5:
+            system_id = bytes_to_int(data[5:7])
+        return SetSystemIdentifierCommand(system_id = system_id, **vars(abstract_message))
+
 # Mfx Seek is a lie...
 # There is no Mfx Seek
 class MfxSeekCommand(AbstractSystemCommand):
@@ -207,6 +378,18 @@ class MfxSeekCommand(AbstractSystemCommand):
     
     def get_other_data(self) -> bytes:
         return bytes()
+
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.MfxSeek:
+            return None
+
+        return MfxSeekCommand(**vars(abstract_message))
 class SystemResetCommand(AbstractSystemCommand):
     target: int
 
@@ -215,3 +398,17 @@ class SystemResetCommand(AbstractSystemCommand):
     
     def get_other_data(self) -> bytes:
         return int_to_bytes(self.target, 1)
+
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.SystemReset:
+            return None
+
+        
+        target = bytes_to_int(data[5:6])
+        return SystemResetCommand(target = target, **vars(abstract_message))

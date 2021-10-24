@@ -5,6 +5,7 @@ from ...utils.coding import int_to_bytes, bytes_to_int
 class AbstractMfxCommand(AbstractCANMessage):
     mfx_uid: int
     mfx_sid: int
+
     def get_other_data(self) -> bytes:
         raise NotImplentedError()
     
@@ -34,10 +35,10 @@ class MfxBindCommand(AbstractMfxCommand):
         return bytes()
     
     def from_can_message(message: CANMessage) -> AbstractCANMessage:
-        abstract_message = AbstractMfxCommand.from_can_message(message)
-
         if message.message_id.command != CommandSchema.MFXBind:
             return None
+        abstract_message = AbstractMfxCommand.from_can_message(message)
+
         
         return MfxBindCommand(**vars(abstract_message))
 
@@ -52,10 +53,10 @@ class MfxVerifyCommand(AbstractMfxCommand):
         return bytes()
     
     def from_can_message(message: CANMessage) -> AbstractCANMessage:
-        abstract_message = AbstractMfxCommand.from_can_message(message)
-
         if message.message_id.command != CommandSchema.MFXVerify:
             return None
+        abstract_message = AbstractMfxCommand.from_can_message(message)
+
         
         data = message.get_data_bytes()
         ask_ratio = None
