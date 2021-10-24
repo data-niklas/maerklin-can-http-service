@@ -1,6 +1,6 @@
 from .base import AbstractCANMessage
 from ..can import CommandSchema, CANMessage
-from ...utils.coding import int_to_bytes, str_to_bytes
+from ...utils.coding import int_to_bytes, str_to_bytes, bytes_to_int, bytes_to_str
 from enum import Enum
 
 class ParticipantPingCommand(AbstractCANMessage):
@@ -26,6 +26,28 @@ class ParticipantPingCommand(AbstractCANMessage):
         ret += int_to_bytes(self.device_id, 2)
 
         return ret
+
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.ParticipantPing:
+            return None
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
+
+        data = message.get_data_bytes()
+        sender_id = None
+        software_version = None
+        device_id = None
+
+        if len(data) > 0:
+            sender_id = bytes_to_int(data[:4])
+
+        if len(data) > 4:
+            software_version = bytes_to_int(data[4:6])
+
+        if len(data) > 6:
+            device_id = bytes_to_int(data[6:8])
+
+        return ParticipantPingCommand(sender_id=sender_id, software_version=software_version, device_id=device_id, **vars(abstract_message))
 
 class ProtocolSchema(str, Enum):
     MFX = "MFX"
@@ -86,6 +108,46 @@ class LocomotiveDiscoveryCommand(AbstractCANMessage):
 
         return ret
 
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.LocomotiveDiscovery:
+            return None
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
+
+        data = message.get_data_bytes()
+        loc_id = None
+        protocol = None
+        mfx_range = None # 0 or 64
+        ask_ratio = None
+
+        if len(data) == 1:
+            protocol_number = bytes_to_int(data[:1])
+            if protocol_number > 0 and protocol_number <= 32:
+                mfx_range = protocol_number
+                protocol_number = 0
+            elif protocol_number > 64 and protocol_number <= 96:
+                mfx_range = protocol_number - 64
+                protocol_number = 64
+            protocol = ProtocolSchema(Protocol(protocol_number).name)
+
+        if len(data) > 1:
+            loc_id = bytes_to_int(data[:4])
+
+            protocol_number = bytes_to_int(data[4:5])
+            if protocol_number > 0 and protocol_number <= 32:
+                mfx_range = protocol_number
+                protocol_number = 0
+            elif protocol_number > 64 and protocol_number <= 96:
+                mfx_range = protocol_number - 64
+                protocol_number = 64
+            protocol = ProtocolSchema(Protocol(protocol_number).name)
+
+        if len(data) > 5:
+            ask_ratio = bytes_to_int(data[5:6])
+
+        return LocomotiveDiscoveryCommand(loc_id=loc_id, protocol=protocol, mfx_range=mfx_range, ask_ratio=ask_ratio, **vars(abstract_message))
+
+
 class S88EventCommand(AbstractCANMessage):
     device_id: int
     contact_id: int
@@ -119,6 +181,31 @@ class S88EventCommand(AbstractCANMessage):
         ret += int_to_bytes(self.time, 2)
 
         return ret
+
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.S88Event:
+            return None
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
+
+        data = message.get_data_bytes()
+        device_id = bytes_to_int(data[:2])
+        contact_id = bytes_to_int(data[2:4])
+        parameter = None 
+        state_old = None 
+        state_new = None 
+        time = None 
+
+        if len(data) == 5:
+            parameter = bytes_to_int(data[4:5])
+        elif len(data) > 5:
+            state_old = bytes_to_int(data[4:5])
+            state_new = bytes_to_int(data[5:6])
+            time = bytes_to_int(data[6:8])
+
+
+        return S88EventCommand(data=data, device_id=device_id, contact_id=contact_id, parameter=parameter, state_old=state_old, state_new=state_new,time=time, **vars(abstract_message))
+
 
 
 class RequestConfigDataCommand(AbstractCANMessage):
@@ -184,6 +271,29 @@ class ServiceStatusDataConfigurationCommand(AbstractCANMessage):
 
         return ret
 
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.ServiceStatusDataConfiguration:
+            return None
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
+
+        device_id = None
+        index = None
+        count = None
+        data = None
+
+        if len(data) > 0 and len(data) < 8:
+            device_id = bytes_to_int(data[:4])
+            index = bytes_to_int(data[4:5])
+            if len(data) == 6:
+                count = bytes_to_int(data[5:6])
+        elif len(data) > 8:
+            data = bytes_to_str(data)
+
+
+        return ServiceStatusDataConfigurationCommand(device_id=device_id, index=index, count=count, data=data, **vars(abstract_message))
+
+
 class ConfigDataStreamCommand(AbstractCANMessage):
     file_length: int = None
     crc: int = None
@@ -211,3 +321,26 @@ class ConfigDataStreamCommand(AbstractCANMessage):
             ret += int_to_bytes(self.byte6, 1)
 
         return ret
+
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.RequestConfigData:
+            return None
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
+
+        file_length = None
+        crc = None
+        byte6 = None
+        data = None
+
+        if len(data) > 0 and len(data) < 8:
+            file_length = bytes_to_int(data[:4])
+            crc = bytes_to_int(data[4:6])
+            if len(data) == 7:
+                byte6 = bytes_to_int(data[6:7])
+        elif len(data) > 8:
+            data = bytes_to_str(data)
+
+
+        return ConfigDataStreamCommand(file_length=file_length, crc=crc, byte6=byte6, data=data, **vars(abstract_message))
+

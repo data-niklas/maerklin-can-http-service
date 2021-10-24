@@ -15,7 +15,14 @@ def convert_to_abstract(message: CANMessage) -> AbstractCANMessage:
     return None
 
 # general.py
-registered_types.append(RequestConfigDataCommand)
+registered_types.extends([
+    ParticipantPingCommand,
+    LocomotiveDiscoveryCommand,
+    S88EventCommand,
+    RequestConfigDataCommand,
+    ServiceStatusDataConfigurationCommand,
+    ConfigDataStreamCommand
+])
 
 # loc.py
 registered_types.extend([
