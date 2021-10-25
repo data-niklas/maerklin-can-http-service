@@ -28,12 +28,14 @@ class BackgroundReader(object):
                 async for message in self.connection:
                     can_message = CANMessage.parse_raw(message)
                     abstract_message = convert_to_abstract(can_message)
-                    
-                    type_name = type(abstract_message).__name__
-                    str_data = type_name + obj_to_json(abstract_message)
-                    print(f"got message {str_data}")
-                    
-                    await self.broadcaster.broadcast(str_data)
+                    if abstract_message is None:
+                        print(f"got wrong message {can_message}")
+                    else:
+                        type_name = type(abstract_message).__name__
+                        str_data = type_name + obj_to_json(abstract_message)
+                        print(f"got message {str_data}")
+
+                        await self.broadcaster.broadcast(str_data)
             except websockets.ConnectionClosed:
                 self.connection = await self.connect()
                 print("Reconnected")

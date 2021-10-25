@@ -1,7 +1,7 @@
 import socket
 import asyncio
 
-IP = "127.0.0.1"
+IP = "192.168.1.3"
 PORT = 15731
 
 async def send(message):

@@ -100,6 +100,19 @@ class SystemStopCommand(AbstractSystemCommand):
     
     def get_other_data(self) -> bytes:
         return bytes()
+    
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.SystemStop:
+            return None
+
+        return SystemGoCommand(**vars(abstract_message))
+
 
 class SystemGoCommand(AbstractSystemCommand):
     def get_subcommand(self) -> SystemSubcommandSchema:

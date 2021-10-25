@@ -31,7 +31,7 @@ class ParticipantPingCommand(AbstractCANMessage):
         command = message.message_id.command
         if command != CommandSchema.ParticipantPing:
             return None
-        abstract_message = AbstractLocIDCommand.from_can_message(message)
+        abstract_message = AbstractCANMessage.from_can_message(message)
 
         data = message.get_data_bytes()
         sender_id = None
@@ -112,7 +112,7 @@ class LocomotiveDiscoveryCommand(AbstractCANMessage):
         command = message.message_id.command
         if command != CommandSchema.LocomotiveDiscovery:
             return None
-        abstract_message = AbstractLocIDCommand.from_can_message(message)
+        abstract_message = AbstractCANMessage.from_can_message(message)
 
         data = message.get_data_bytes()
         loc_id = None
@@ -186,7 +186,7 @@ class S88EventCommand(AbstractCANMessage):
         command = message.message_id.command
         if command != CommandSchema.S88Event:
             return None
-        abstract_message = AbstractLocIDCommand.from_can_message(message)
+        abstract_message = AbstractCANMessage.from_can_message(message)
 
         data = message.get_data_bytes()
         device_id = bytes_to_int(data[:2])
@@ -275,20 +275,22 @@ class ServiceStatusDataConfigurationCommand(AbstractCANMessage):
         command = message.message_id.command
         if command != CommandSchema.ServiceStatusDataConfiguration:
             return None
-        abstract_message = AbstractLocIDCommand.from_can_message(message)
+        abstract_message = AbstractCANMessage.from_can_message(message)
+
+        raw_data = message.get_data_bytes()
 
         device_id = None
         index = None
         count = None
         data = None
 
-        if len(data) > 0 and len(data) < 8:
-            device_id = bytes_to_int(data[:4])
-            index = bytes_to_int(data[4:5])
-            if len(data) == 6:
-                count = bytes_to_int(data[5:6])
-        elif len(data) > 8:
-            data = bytes_to_str(data)
+        if len(raw_data) > 0 and len(raw_data) < 8:
+            device_id = bytes_to_int(raw_data[:4])
+            index = bytes_to_int(raw_data[4:5])
+            if len(raw_data) == 6:
+                count = bytes_to_int(raw_data[5:6])
+        elif len(raw_data) == 8:
+            data = bytes_to_str(raw_data)
 
 
         return ServiceStatusDataConfigurationCommand(device_id=device_id, index=index, count=count, data=data, **vars(abstract_message))
@@ -301,7 +303,7 @@ class ConfigDataStreamCommand(AbstractCANMessage):
     data: str = None
 
     def get_command(self) -> CommandSchema:
-        return CommandSchema.RequestConfigData
+        return CommandSchema.ConfigDataStream
     
     def get_data(self) -> bytes:
         ret = bytes()
@@ -324,23 +326,51 @@ class ConfigDataStreamCommand(AbstractCANMessage):
 
     def from_can_message(message: CANMessage) -> AbstractCANMessage:
         command = message.message_id.command
-        if command != CommandSchema.RequestConfigData:
+        if command != CommandSchema.ConfigDataStream:
             return None
-        abstract_message = AbstractLocIDCommand.from_can_message(message)
+        abstract_message = AbstractCANMessage.from_can_message(message)
+
+        raw_data = message.get_data_bytes()
 
         file_length = None
         crc = None
         byte6 = None
         data = None
 
-        if len(data) > 0 and len(data) < 8:
-            file_length = bytes_to_int(data[:4])
-            crc = bytes_to_int(data[4:6])
-            if len(data) == 7:
-                byte6 = bytes_to_int(data[6:7])
-        elif len(data) > 8:
-            data = bytes_to_str(data)
+        if len(raw_data) > 0 and len(raw_data) < 8:
+            file_length = bytes_to_int(raw_data[:4])
+            crc = bytes_to_int(raw_data[4:6])
+            if len(raw_data) == 7:
+                byte6 = bytes_to_int(raw_data[6:7])
+        elif len(raw_data) == 8:
+            data = bytes_to_str(raw_data)
 
 
         return ConfigDataStreamCommand(file_length=file_length, crc=crc, byte6=byte6, data=data, **vars(abstract_message))
 
+
+class BootloaderCANBoundCommand(AbstractCANMessage):
+    data: str = None
+
+    def get_command(self) -> CommandSchema:
+        return CommandSchema.BootloaderCANBound
+    
+    def get_data(self) -> bytes:
+        if self.data is None:
+            return bytes()
+        return bytes.fromhex(self.data)
+
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.BootloaderCANBound:
+            return None
+        abstract_message = AbstractCANMessage.from_can_message(message)
+
+        data = message.get_data_bytes()
+        if len(data) == 0:
+            data = None
+        else:
+            data = bytes_to_str(data)
+
+
+        return BootloaderCANBoundCommand(data=data, **vars(abstract_message))

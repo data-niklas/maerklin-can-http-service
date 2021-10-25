@@ -5,7 +5,8 @@ from ...schemas.can_commands.base import AbstractCANMessage
 from ...schemas.can_commands import *
 
 
-registered_types: list[Type[AbstractCANMessage]] = list()
+# registered_types: list[Type[AbstractCANMessage]] = list()
+registered_types = list()
 
 def convert_to_abstract(message: CANMessage) -> AbstractCANMessage:
     for t in registered_types:
@@ -15,13 +16,14 @@ def convert_to_abstract(message: CANMessage) -> AbstractCANMessage:
     return None
 
 # general.py
-registered_types.extends([
+registered_types.extend([
     ParticipantPingCommand,
     LocomotiveDiscoveryCommand,
     S88EventCommand,
     RequestConfigDataCommand,
     ServiceStatusDataConfigurationCommand,
-    ConfigDataStreamCommand
+    ConfigDataStreamCommand,
+    BootloaderCANBoundCommand
 ])
 
 # loc.py
