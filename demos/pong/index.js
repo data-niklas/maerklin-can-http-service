@@ -9,7 +9,7 @@ PONGCONFIG = {
     player_width: 30,
     ball_r: 12,
     text_size: 40,
-    ball_x_vel: 5,
+    ball_x_vel: 6,
     ball_y_vel: 1,
     interval: 10
 }
@@ -187,7 +187,7 @@ class Pong{
     }
 
     movePDown(p, y){
-        p.bounds.y = Math.min(this.bounds.h, p.bounds.y + y)
+        p.bounds.y = Math.min(this.bounds.h - p.bounds.h, p.bounds.y + y)
     }
 
     moveP1Up(y){
@@ -220,5 +220,38 @@ class Pong{
 
 window.onload = ()=>{
     window.pong = new Pong("screen", PONGCONFIG)
+
+    websocket = new WebSocket("ws://127.0.0.1:8889")
+
+    var speed1 = 500;
+    var speed2 = 500;
+
     pong.start()
+
+    websocket.addEventListener("message", (e) => {
+        let t = e.data.substring(0, e.data.indexOf("{"))
+        if (t !== "LocomotiveSpeedCommand") {
+            return
+        }
+        let data = e.data.substring(e.data.indexOf("{"))
+        data = JSON.parse(data)
+        let speed = data.speed;
+        if (data.loc_id === 16390) {
+            pong.p1.bounds.y = (speed / 1000) * (pong.bounds.h - pong.p1.bounds.h)
+            // if (speed < speed1 || speed === 0) {
+            //     pong.moveP1Down(Math.max(3, Math.abs(speed1 - speed)));
+            // } else {
+            //     pong.moveP1Up(Math.max(3, Math.abs(speed1 - speed)));
+            // }
+            // speed1 = speed;
+        } else if (data.loc_id === 16389) {
+            pong.p2.bounds.y = (1 - speed / 1000) * (pong.bounds.h - pong.p2.bounds.h)
+            // if (speed < speed2 || speed === 0) {
+            //     pong.moveP2Down(Math.max(3, Math.abs(speed2 - speed)));
+            // } else {
+            //     pong.moveP2Up(Math.max(3, Math.abs(speed2 - speed)));
+            // }
+            // speed2 = speed;
+        }
+    })
 }
