@@ -31,6 +31,7 @@ class CommandSchema(str, Enum):
     RequestConfigData = "RequestConfigData"
     ConfigDataStream = "ConfigDataStream"
     DataStream60128 = "DataStream60128"
+    UnknownCommand = "UnknownCommand"
 
 class Command(Enum):
     SystemCommand = 0x00
@@ -56,6 +57,7 @@ class Command(Enum):
     RequestConfigData = 0x20
     ConfigDataStream = 0x21
     DataStream60128 = 0x22
+    UnknownCommand = 0x80
 
 class MessageIdentifier(BaseModel):
     priority: int
