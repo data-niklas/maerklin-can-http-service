@@ -1,7 +1,10 @@
+from config_wrapper import get_settings
 import asyncio
 
-IP = "127.0.0.1"
-PORT = 15731
+settings = get_settings()
+
+IP = settings.raw_can_ip
+PORT = settings.raw_can_port
 
 writers = set()
 queue = asyncio.Queue()

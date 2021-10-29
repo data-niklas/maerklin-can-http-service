@@ -3,8 +3,11 @@ import websockets
 
 from datetime import datetime
 
-HOST = "localhost"
-PORT = 8889
+from config_wrapper import get_settings
+settings = get_settings()
+
+HOST = settings.websocket_logger_host
+PORT = settings.websocket_logger_port
 
 messages = list()
 

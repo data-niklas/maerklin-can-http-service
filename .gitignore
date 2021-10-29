@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+src/config.py
+
 # C extensions
 *.so
 **/node_modules/**

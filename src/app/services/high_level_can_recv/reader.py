@@ -5,9 +5,11 @@ from ...schemas.can import CANMessage
 from ...utils.coding import obj_to_json
 from .converter import convert_to_abstract
 
+from config import get_settings
+settings = get_settings()
 
-HOST = "127.0.0.1"
-PORT = 8888
+HOST = settings.raw_can_receiver_host
+PORT = settings.raw_can_receiver_port
 
 class BackgroundReader(object):
     def __init__(self, broadcaster):

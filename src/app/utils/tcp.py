@@ -1,8 +1,9 @@
 import socket
 import asyncio
-
-IP = "192.168.1.3"
-PORT = 15731
+from config import get_settings
+settings = get_settings()
+IP = settings.raw_can_ip
+PORT = settings.raw_can_port
 
 async def send(message):
     sock = socket.socket(socket.AF_INET,

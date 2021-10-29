@@ -5,9 +5,11 @@ from ...schemas.can import CANMessage
 from ...utils.communication import recv_raw_can_message
 from ...utils.coding import obj_to_json
 
+from config import get_settings
+settings = get_settings()
 
-IP = "192.168.1.3"
-PORT = 15731
+IP = settings.raw_can_ip
+PORT = settings.raw_can_port
 
 class BackgroundReader(object):
     def __init__(self, broadcaster):

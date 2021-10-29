@@ -1,0 +1,95 @@
+# Usage:
+# 1. Copy this file to config.py
+# 2. Change the DEFAULT_ values
+# 3. Enjoy and use the scripts / ASGI routers
+
+from pydantic import BaseSettings
+from functools import lru_cache
+
+# Router configs
+DEFAULT_ASGI_COMMAND = "uvicorn"
+DEFAULT_SCRIPT_COMMAND = "python"
+
+# IP from which packages are received and sent to
+DEFAULT_RAW_CAN_IP = "192.168.1.3"
+DEFAULT_RAW_CAN_PORT = 15731
+
+# On which the raw_can_recv is hosted
+DEFAULT_RAW_CAN_RECV_PORT = 8888
+DEFAULT_RAW_CAN_RECV_HOST = "127.0.0.1"
+
+# On which the raw_can_send is hosted
+DEFAULT_RAW_CAN_SEND_PORT = 8000
+DEFAULT_RAW_CAN_SEND_HOST = "127.0.0.1"
+
+# On which the can_recv is hosted
+DEFAULT_CAN_RECV_PORT = 8000
+DEFAULT_CAN_RECV_HOST = "127.0.0.1"
+
+# On which the can_send is hosted
+DEFAULT_CAN_SEND_PORT = 8000
+DEFAULT_CAN_SEND_HOST = "127.0.0.1"
+
+
+# Scripts config
+DEFAULT_WEBSOCKET_LOGGER_PORT = DEFAULT_CAN_RECV_PORT
+DEFAULT_WEBSOCKET_LOGGER_HOST = DEFAULT_CAN_RECV_HOST
+
+DEFAULT_WEBSOCKET_PRINTER_PORT = DEFAULT_CAN_RECV_PORT
+DEFAULT_WEBSOCKET_PRINTER_HOST = DEFAULT_CAN_RECV_HOST
+
+
+
+
+
+
+class Settings(BaseSettings):
+    asgi_command: str = DEFAULT_ASGI_COMMAND
+    script_command: str = DEFAULT_SCRIPT_COMMAND
+
+    raw_can_ip: str = DEFAULT_RAW_CAN_IP
+    raw_can_port: int = DEFAULT_RAW_CAN_PORT
+
+    raw_can_receiver_port: int = DEFAULT_RAW_CAN_RECV_PORT
+    raw_can_sender_port: int = DEFAULT_RAW_CAN_SEND_PORT
+    can_receiver_port: int = DEFAULT_CAN_RECV_PORT
+    can_sender_port: int = DEFAULT_CAN_SEND_PORT
+
+    raw_can_receiver_host: str = DEFAULT_RAW_CAN_RECV_HOST
+    raw_can_sender_host: str = DEFAULT_RAW_CAN_SEND_HOST
+    can_receiver_host: str = DEFAULT_CAN_RECV_HOST
+    can_sender_host: str = DEFAULT_CAN_SEND_HOST
+
+    websocket_printer_host: str = DEFAULT_WEBSOCKET_PRINTER_HOST
+    websocket_printer_port: int = DEFAULT_WEBSOCKET_PRINTER_PORT
+
+    websocket_logger_host: str = DEFAULT_WEBSOCKET_LOGGER_HOST
+    websocket_logger_port: int = DEFAULT_WEBSOCKET_LOGGER_PORT
+
+    class Config():
+        fields = {
+            'asgi_command': {'env': 'asgi_command'},
+            'script_command': {'env': 'script_command'},
+
+            'raw_can_ip': {'env': 'raw_can_ip'},
+            'raw_can_port': {'env': 'raw_can_port'},
+
+            'raw_can_receiver_port': {'env': 'raw_can_recv_port'},
+            'raw_can_sender_port': {'env': 'raw_can_sender_port'},
+            'can_receiver_port': {'env': 'can_receiver_port'},
+            'can_sender_port': {'env': 'can_sender_port'},
+            'raw_can_receiver_host': {'env': 'raw_can_recv_host'},
+            'raw_can_sender_host': {'env': 'raw_can_sender_host'},
+            'can_receiver_host': {'env': 'can_receiver_host'},
+            'can_sender_host': {'env': 'can_sender_host'},
+
+            'websocket_printer_host': {'env': 'websocket_printer_host'},
+            'websocket_printer_port': {'env': 'websocket_printer_port'},
+            'websocket_logger_host': {'env': 'websocket_logger_host'},
+            'websocket_logger_port': {'env': 'websocket_logger_port'}
+        }
+
+
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()
