@@ -1,10 +1,22 @@
 from fastapi import APIRouter
 
-from . import loc
+from . import lok
+from . import accessory
+from . import s88
 
 router = APIRouter()
 router.include_router(
-    loc.router,
-    prefix = "/loc",
-    tags = ["loc"]
+    lok.router,
+    prefix = "/lok",
+    tags = ["lok"]
+)
+router.include_router(
+    accessory.router,
+    prefix = "/accessory",
+    tags = ["accessory"]
+)
+router.include_router(
+    s88.router,
+    prefix = "/s88",
+    tags = ["s88"]
 )

@@ -4,7 +4,7 @@ import websockets
 from ...schemas.can_commands import AbstractCANMessage
 from ..high_level_can_recv.converter import type_map
 
-from fastapi import HTTPException
+from fastapi import HTTPException, Response
  
 
 from config import get_settings
@@ -38,4 +38,8 @@ async def get_single_response_timeout(connection, check, transform_result = None
             return result
         return transform_result(result)
     except Exception as e:
+        print(f"{e}")
         raise HTTPException(status_code=504, detail="CAN timeout exceeded")
+
+def return204(m):
+    return Response(status_code=204)

@@ -172,6 +172,8 @@ class S88EventCommand(AbstractCANMessage):
             ret += int_to_bytes(self.parameter, 1)
             return ret
         
+        if self.state_old is None and self.state_new is None and self.time is None:
+            return ret
 
         assert not self.state_old is None
         assert not self.state_new is None

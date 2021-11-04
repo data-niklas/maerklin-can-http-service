@@ -1,19 +1,18 @@
 from fastapi import APIRouter, Header
-
-from ...schemas.can_commands.loc import *
 from typing import Type
-from ...schemas.can_commands import AbstractCANMessage
+
 from ...utils.communication import send_can_message
-from .helper import *
+from .helper import connect, get_single_response_timeout, return204
 
-from .schemas.loc import *
+from ...schemas.can_commands.loc import LocomotiveSpeedCommand, LocomotiveDirectionCommand, LocomotiveFunctionCommand
+from ...schemas.can_commands import AbstractCANMessage, CommandSchema
 
-
+from .schemas.lok import FunctionValueModel, SpeedModel, DirectionModel
 
 
 router = APIRouter()
 
-@router.get("/{loc_id}/speed")
+@router.get("/{loc_id}/speed", response_model=SpeedModel)
 async def get_speed(loc_id: int, x_can_hash: str = Header(None)):
     message = LocomotiveSpeedCommand(loc_id = loc_id, hash_value = x_can_hash, response = False)
 
@@ -26,7 +25,7 @@ async def get_speed(loc_id: int, x_can_hash: str = Header(None)):
 
     async with connect() as connection:
         await send_can_message(message)
-        return await get_single_response_timeout(connection, check, lambda m: m.speed)
+        return await get_single_response_timeout(connection, check, lambda m: SpeedModel(speed=m.speed))
 
 @router.post("/{loc_id}/speed", status_code=204)
 async def set_speed(loc_id: int, speed: SpeedModel, x_can_hash: str = Header(None)):
@@ -41,10 +40,10 @@ async def set_speed(loc_id: int, speed: SpeedModel, x_can_hash: str = Header(Non
 
     async with connect() as connection:
         await send_can_message(message)
-        return await get_single_response_timeout(connection, check, lambda m: None)
+        return await get_single_response_timeout(connection, check, return204)
 
 
-@router.get("/{loc_id}/direction")
+@router.get("/{loc_id}/direction", response_model=DirectionModel)
 async def get_direction(loc_id: int, x_can_hash: str = Header(None)):
     message = LocomotiveDirectionCommand(loc_id = loc_id, hash_value = x_can_hash, response = False)
 
@@ -57,7 +56,7 @@ async def get_direction(loc_id: int, x_can_hash: str = Header(None)):
 
     async with connect() as connection:
         await send_can_message(message)
-        return await get_single_response_timeout(connection, check, lambda m: m.direction.value)
+        return await get_single_response_timeout(connection, check, lambda m: DirectionModel(direction=m.direction.value))
 
 
 @router.post("/{loc_id}/direction", status_code=204)
@@ -73,10 +72,10 @@ async def set_direction(loc_id: int, direction: DirectionModel, x_can_hash: str 
 
     async with connect() as connection:
         await send_can_message(message)
-        return await get_single_response_timeout(connection, check, lambda m: None)
+        return await get_single_response_timeout(connection, check, return204)
 
 
-@router.get("/{loc_id}/function/{function}")
+@router.get("/{loc_id}/function/{function}", response_model=FunctionValueModel)
 async def get_function(loc_id: int, function: int, x_can_hash: str = Header(None)):
     message = LocomotiveFunctionCommand(loc_id = loc_id, function = function, hash_value = x_can_hash, response = False)
 
@@ -89,7 +88,7 @@ async def get_function(loc_id: int, function: int, x_can_hash: str = Header(None
 
     async with connect() as connection:
         await send_can_message(message)
-        return await get_single_response_timeout(connection, check, lambda m: m.value)
+        return await get_single_response_timeout(connection, check, lambda m: FunctionValueModel(value=m.value))
 
 
 @router.post("/{loc_id}/function/{function}", status_code=204)
@@ -105,4 +104,4 @@ async def set_function(loc_id: int, function: int, value: FunctionValueModel, x_
 
     async with connect() as connection:
         await send_can_message(message)
-        return await get_single_response_timeout(connection, check, lambda m: None)
+        return await get_single_response_timeout(connection, check, return204)
