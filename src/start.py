@@ -8,7 +8,7 @@ FILE_DIR = os.path.dirname(os.path.realpath(__file__))
 SCRIPT_PREFIX = "./app/scripts/"
 SCRIPT_POSTFIX = ".py"
 
-ASGI_SERVICES = ["raw_can_receiver", "raw_can_sender", "can_receiver", "can_sender"]
+ASGI_SERVICES = ["raw_can_receiver", "raw_can_sender", "can_receiver", "can_sender", "can"]
 SCRIPTS = ["dummy_central_station", "websocket_logger", "websocket_printer"]
 
 HELP = """A start script to run various ASGI routers and scripts, which work with the Märklin CAN interface.

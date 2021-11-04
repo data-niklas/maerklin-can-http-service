@@ -5,7 +5,7 @@ from ...schemas.can import CANMessage
 
 router = APIRouter()
 
-@router.post("/")
+@router.post("/", status_code=204)
 async def can_message(message: CANMessage):
     await send_raw_can_message(message)
-    return {"send_status": "success"}
+    return None

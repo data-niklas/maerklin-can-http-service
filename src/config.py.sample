@@ -23,12 +23,17 @@ DEFAULT_RAW_CAN_SEND_PORT = 8000
 DEFAULT_RAW_CAN_SEND_HOST = "127.0.0.1"
 
 # On which the can_recv is hosted
-DEFAULT_CAN_RECV_PORT = 8000
+DEFAULT_CAN_RECV_PORT = 8001
 DEFAULT_CAN_RECV_HOST = "127.0.0.1"
 
 # On which the can_send is hosted
-DEFAULT_CAN_SEND_PORT = 8000
+DEFAULT_CAN_SEND_PORT = 8002
 DEFAULT_CAN_SEND_HOST = "127.0.0.1"
+
+DEFAULT_CAN_PORT = 8042
+DEFAULT_CAN_HOST = "127.0.0.1"
+# Timeout in millis
+DEFAULT_CAN_TIMEOUT = 300
 
 
 # Scripts config
@@ -54,11 +59,16 @@ class Settings(BaseSettings):
     raw_can_sender_port: int = DEFAULT_RAW_CAN_SEND_PORT
     can_receiver_port: int = DEFAULT_CAN_RECV_PORT
     can_sender_port: int = DEFAULT_CAN_SEND_PORT
+    can_port: int = DEFAULT_CAN_PORT
 
     raw_can_receiver_host: str = DEFAULT_RAW_CAN_RECV_HOST
     raw_can_sender_host: str = DEFAULT_RAW_CAN_SEND_HOST
     can_receiver_host: str = DEFAULT_CAN_RECV_HOST
     can_sender_host: str = DEFAULT_CAN_SEND_HOST
+    can_host: str = DEFAULT_CAN_HOST
+
+    can_timeout: int = DEFAULT_CAN_TIMEOUT
+    
 
     websocket_printer_host: str = DEFAULT_WEBSOCKET_PRINTER_HOST
     websocket_printer_port: int = DEFAULT_WEBSOCKET_PRINTER_PORT
@@ -78,10 +88,15 @@ class Settings(BaseSettings):
             'raw_can_sender_port': {'env': 'raw_can_sender_port'},
             'can_receiver_port': {'env': 'can_receiver_port'},
             'can_sender_port': {'env': 'can_sender_port'},
+            'can_port': {'env': 'can_port'},
+
             'raw_can_receiver_host': {'env': 'raw_can_recv_host'},
             'raw_can_sender_host': {'env': 'raw_can_sender_host'},
             'can_receiver_host': {'env': 'can_receiver_host'},
             'can_sender_host': {'env': 'can_sender_host'},
+            'can_host': {'env': 'can_host'},
+
+            'can_timeout': {'env': 'can_timeout'},
 
             'websocket_printer_host': {'env': 'websocket_printer_host'},
             'websocket_printer_port': {'env': 'websocket_printer_port'},
