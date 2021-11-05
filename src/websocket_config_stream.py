@@ -6,7 +6,7 @@ from app.schemas.can_commands import *
 from app.services.high_level_can_recv.converter import type_map
 
 IP = "127.0.0.1"
-PORT = 8889
+PORT = 8001
 
 async def main():
     async with websockets.connect(f"ws://{IP}:{PORT}") as websocket:

@@ -221,7 +221,7 @@ class Pong{
 window.onload = ()=>{
     window.pong = new Pong("screen", PONGCONFIG)
 
-    websocket = new WebSocket("ws://127.0.0.1:8889")
+    websocket = new WebSocket("ws://127.0.0.1:8001")
 
     var speed1 = 500;
     var speed2 = 500;
@@ -237,7 +237,7 @@ window.onload = ()=>{
         data = JSON.parse(data)
         let speed = data.speed;
         if (data.loc_id === 16390) {
-            pong.p1.bounds.y = (speed / 1000) * (pong.bounds.h - pong.p1.bounds.h)
+            pong.p1.bounds.y = (1 - speed / 1000) * (pong.bounds.h - pong.p1.bounds.h)
             // if (speed < speed1 || speed === 0) {
             //     pong.moveP1Down(Math.max(3, Math.abs(speed1 - speed)));
             // } else {
