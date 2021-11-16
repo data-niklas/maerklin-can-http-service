@@ -389,6 +389,8 @@ class Tetris{
 }
 
 window.onload = ()=>{
+    let music = document.getElementById("music")
+    music.volume = 0.4
     window.tetris = new Tetris("screen", TETRISCONFIG)
 
     websocket = new WebSocket("ws://127.0.0.1:8001")
