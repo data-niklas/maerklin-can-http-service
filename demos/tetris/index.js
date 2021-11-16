@@ -12,10 +12,11 @@ TETRISCONFIG = {
     bg_board_grid: "#b7b7b7",
     fg: "#383636",
     initial_delay: 300,
-    fast_drop_delay: 200,
+    fast_drop_delay: 100,
     padding: 25,
     border_w: 2,
-    redraw_interval: 150
+    redraw_interval: 150,
+    text_size: 40
 }
 
 class Piece{
@@ -70,12 +71,25 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
 
+var PIXEL_RATIO = (function () {
+    var ctx = document.createElement("canvas").getContext("2d"),
+        dpr = window.devicePixelRatio || 1,
+        bsr = ctx.webkitBackingStorePixelRatio ||
+              ctx.mozBackingStorePixelRatio ||
+              ctx.msBackingStorePixelRatio ||
+              ctx.oBackingStorePixelRatio ||
+              ctx.backingStorePixelRatio || 1;
+
+    return dpr / bsr;
+})() * 4;
+
 
 class Tetris{
     constructor(canvas_id, config){
         this.canvas = document.getElementById(canvas_id)
-        this.canvas.width = this.canvas.clientWidth
-        this.canvas.height = this.canvas.clientHeight
+        this.canvas.width = this.canvas.clientWidth * PIXEL_RATIO
+        this.canvas.height = this.canvas.clientHeight * PIXEL_RATIO
+        this.canvas.getContext("2d").setTransform(PIXEL_RATIO, 0, 0, PIXEL_RATIO, 0, 0)
         this.ctx = this.canvas.getContext("2d", {alpha: false})
         this.ctx.shadowBlur = 0
         this.config = config
@@ -96,6 +110,26 @@ class Tetris{
         this.next_piece = this.random_board_piece()
         this.next()
 
+        this.calc_sizes()
+
+    }
+
+    calc_sizes(){
+        let board_w = (this.bounds.w / 2) - this.config.padding * 2
+        let cell_w = Math.round(board_w / this.board.w)
+
+        let board_h = this.bounds.h - this.config.padding * 2
+        let cell_h = Math.round(board_h / this.board.h)
+        cell_h = cell_w = Math.min(cell_w, cell_h)
+
+
+        board_w = cell_w * this.board.w
+        board_h = cell_h * this.board.h
+        this.board_w = board_w
+        this.board_x = (this.bounds.w - board_w) / 2
+        this.board_h = board_h
+        this.cell_w = cell_w
+        this.cell_h = cell_h
     }
 
     next(){
@@ -116,19 +150,8 @@ class Tetris{
     }
 
     draw_board(){
-        let board_w = (this.bounds.w / 2) - this.config.padding * 2
-        let cell_w = Math.round(board_w / this.board.w)
-
-        let board_h = this.bounds.h - this.config.padding * 2
-        let cell_h = Math.round(board_h / this.board.h)
-        cell_h = cell_w = Math.min(cell_w, cell_h)
-
-
-        board_w = cell_w * this.board.w
-        board_h = cell_h * this.board.h
-
         this.set_color(this.config.bg_board)
-        this.ctx.fillRect(this.config.padding, this.config.padding, board_w, board_h)
+        this.ctx.fillRect(this.board_x, this.config.padding, this.board_w, this.board_h)
 
         for (let i = 0; i < this.board.w; i++){
             for (let j = 0; j < this.board.h; j++){
@@ -139,7 +162,7 @@ class Tetris{
                 else {
                     this.set_color(PIECES[value].color)
                 }
-                this.ctx.fillRect(this.config.padding + cell_w * i, this.config.padding + cell_h * j, cell_w, cell_h)
+                this.ctx.fillRect(this.board_x + this.cell_w * i, this.config.padding + this.cell_h * j, this.cell_w, this.cell_h)
             }
         }
 
@@ -154,29 +177,68 @@ class Tetris{
                     this.set_color(this.current_piece.piece.color)
                 }
                 
-                this.ctx.fillRect(this.config.padding + cell_w * (i + this.current_piece.x), this.config.padding + cell_h * (j + this.current_piece.y), cell_w, cell_h)
+                this.ctx.fillRect(this.board_x + this.cell_w * (i + this.current_piece.x), this.config.padding + this.cell_h * (j + this.current_piece.y), this.cell_w, this.cell_h)
             }
         }
 
         this.set_color(this.config.bg_board_grid)
         for (let i = 0; i <= this.board.w; i++){
-            this.ctx.fillRect(this.config.padding + cell_w * i - this.config.border_w / 2, this.config.padding, this.config.border_w, board_h)
+            this.ctx.fillRect(this.board_x + this.cell_w * i - this.config.border_w / 2, this.config.padding, this.config.border_w, this.board_h)
         }
         for (let i = 0; i <= this.board.h; i++){
-            this.ctx.fillRect(this.config.padding, this.config.padding + cell_h * i - this.config.border_w / 2, board_w, this.config.border_w)
+            this.ctx.fillRect(this.board_x, this.config.padding + this.cell_h * i - this.config.border_w / 2, this.board_w, this.config.border_w)
         }
+    }
+
+    draw_next(){
+        let board_w = this.cell_w * this.next_piece.matrix.w
+        let board_h = this.cell_h * this.next_piece.matrix.h
+
+        let start_x = this.board_x + this.config.padding + this.board_w
+        this.set_color(this.config.bg_board)
+        this.ctx.fillRect(start_x, this.config.padding, board_w, board_h)
+        for (let i = 0; i < this.next_piece.matrix.w; i++){
+            for (let j = 0; j < this.next_piece.matrix.h; j++){
+                let value = this.next_piece.matrix.at(i, j)
+                if (value == 0){
+                    this.set_color(this.config.bg_board)
+                }
+                else {
+                    this.set_color(PIECES[this.next_piece.color_index].color)
+                }
+                this.ctx.fillRect(start_x + this.cell_w * i, this.config.padding + this.cell_h * j, this.cell_w, this.cell_h)
+            }
+        }
+
+        this.set_color(this.config.bg_board_grid)
+        for (let i = 0; i <= this.next_piece.matrix.w; i++){
+            this.ctx.fillRect(start_x + this.cell_w * i - this.config.border_w / 2, this.config.padding, this.config.border_w, board_h)
+        }
+        for (let i = 0; i <= this.next_piece.matrix.h; i++){
+            this.ctx.fillRect(start_x, this.config.padding + this.cell_h * i - this.config.border_w / 2, board_w, this.config.border_w)
+        }
+    }
+
+    draw_score(){
+        this.set_color(this.config.fg)
+        this.ctx.font = "" + this.config.text_size + "px Arial"
+        
+        this.ctx.fillText("Score: " + this.score, this.config.padding, this.config.padding + this.config.text_size)
     }
 
     redraw(){
         this.set_color(this.config.bg)
         this.ctx.fillRect(0, 0, this.bounds.w, this.bounds.h)
         this.draw_board()
+        this.draw_next()
+        this.draw_score()
+        this.ctx.imageSmoothingEnabled = false
     }
 
     drop(){
         if (this.down_fast)return
         this.down_fast = true
-        stop()
+        this.stop()
         this.start(this.config.fast_drop_delay)
     }
 
@@ -226,6 +288,7 @@ class Tetris{
             if (this.is_row_filled(j)){
                 this.clear_row(j)
                 this.move_rows_down(j)
+                this.score += this.board.w
                 j++
             }
         }

@@ -22,11 +22,24 @@ class Player{
     }
 }
 
+var PIXEL_RATIO = (function () {
+    var ctx = document.createElement("canvas").getContext("2d"),
+        dpr = window.devicePixelRatio || 1,
+        bsr = ctx.webkitBackingStorePixelRatio ||
+              ctx.mozBackingStorePixelRatio ||
+              ctx.msBackingStorePixelRatio ||
+              ctx.oBackingStorePixelRatio ||
+              ctx.backingStorePixelRatio || 1;
+
+    return dpr / bsr;
+})() * 4;
+
 class Pong{
     constructor(canvas_id, config){
         this.canvas = document.getElementById(canvas_id)
-        this.canvas.width = this.canvas.clientWidth
-        this.canvas.height = this.canvas.clientHeight
+        this.canvas.width = this.canvas.clientWidth * PIXEL_RATIO
+        this.canvas.height = this.canvas.clientHeight * PIXEL_RATIO
+        this.canvas.getContext("2d").setTransform(PIXEL_RATIO, 0, 0, PIXEL_RATIO, 0, 0)
         this.ctx = this.canvas.getContext("2d", {alpha: false})
         this.ctx.shadowBlur = 0
         this.config = config
