@@ -4,8 +4,14 @@ from . import lok
 from . import accessory
 from . import s88
 from . import configs
+from . import general
 
 router = APIRouter()
+router.include_router(
+    general.router,
+    prefix = "/general",
+    tags = ["general"]
+)
 router.include_router(
     lok.router,
     prefix = "/lok",
