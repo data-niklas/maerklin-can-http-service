@@ -1,0 +1,29 @@
+0: Licht
+1: Rauch
+2: Betriebsgeräusche
+3: Hupe 1
+4: Gewicht
+5: Anfahrgeräusche
+6: Innenlicht
+7: Hupe 2, auf High-Flanke
+8: Innenlicht
+9: Innenlicht / Vorne
+10: Lüftungsgeräusche
+11: Kück-Sound, High und Low
+12: Kompressor
+13: Licht unten
+14: Licht unten
+15: Fake Anfahrgeräusche
+16: Hupe 3
+17: Hupe 4, High-Flanke
+18: Turtle
+19: Kleines Licht
+20: Großes Licht
+21: Luft ablassen
+22: Motorgeräusche
+23: Abkoppelsound 1, High-Flanke
+24: FULL Sound
+25: Abkoppelsound 2, High-Flanke
+26: ALARM 1
+27: ALARM 2
+28: Türen

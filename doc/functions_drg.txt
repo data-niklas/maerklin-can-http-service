@@ -1,0 +1,4 @@
+0: Licht
+1: Rauch
+2: Laggy Betriebsgeräusche
+3: 

@@ -9,9 +9,9 @@ BIRDCONFIG = {
     bird_velocity: 20,
     gravity: 1.7,
     bird_size: 20,
-    bird_x: 400,
+    bird_x: 800,
     pipe_interval: 5000,
-    pipe_velocity: 2.5,
+    pipe_velocity: 3.5,
     text_size: 30
 }
 
@@ -186,29 +186,11 @@ window.onload = ()=>{
 
     websocket.addEventListener("message", (e) => {
         let t = e.data.substring(0, e.data.indexOf("{"))
-        if (t !== "LocomotiveSpeedCommand") {
-            return
-        }
         let data = e.data.substring(e.data.indexOf("{"))
         data = JSON.parse(data)
-        let speed = data.speed;
-        if (data.loc_id === 16390) {
-            pong.p1.bounds.y = (1 - speed / 1000) * (pong.bounds.h - pong.p1.bounds.h)
-            // if (speed < speed1 || speed === 0) {
-            //     pong.moveP1Down(Math.max(3, Math.abs(speed1 - speed)));
-            // } else {
-            //     pong.moveP1Up(Math.max(3, Math.abs(speed1 - speed)));
-            // }
-            // speed1 = speed;
-        } else if (data.loc_id === 16389) {
-            pong.p2.bounds.y = (1 - speed / 1000) * (pong.bounds.h - pong.p2.bounds.h)
-            // if (speed < speed2 || speed === 0) {
-            //     pong.moveP2Down(Math.max(3, Math.abs(speed2 - speed)));
-            // } else {
-            //     pong.moveP2Up(Math.max(3, Math.abs(speed2 - speed)));
-            // }
-            // speed2 = speed;
-        }
+        
+        if (t === "LocomotiveDirectionCommand")flappybird.move();
+        
     })
 }
 

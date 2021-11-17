@@ -398,6 +398,8 @@ class Tetris{
 
 var speed1 = 0;
 var speed2 = 0;
+var rotateCount = 0;
+var speedCount = 3;
 const LOC1_ID = 16390;
 const LOC2_ID = 16389;
 
@@ -412,9 +414,6 @@ window.onload = ()=>{
 
     websocket.addEventListener("message", (e) => {
         let t = e.data.substring(0, e.data.indexOf("{"))
-        if (t !== "LocomotiveSpeedCommand" && t !== "ToggleDirectionCommand") {
-            return
-        }
         let data = e.data.substring(e.data.indexOf("{"))
         data = JSON.parse(data)
         if (t === "LocomotiveSpeedCommand") {
@@ -422,22 +421,46 @@ window.onload = ()=>{
             if (data.loc_id === LOC1_ID) {
                 // rotate
                 if (speed < speed1 || speed === 0) {
-                    tetris.turn_counterclockwise();
+                    rotateCount -= 1;
+                } else if (speed === 0) {
+                    rotateCount -= 3;
+                } else if (speed >= 1000){
+                    rotateCount += 3;
                 } else {
+                    rotateCount += 1;
+                }
+                if (rotateCount > 5) {
                     tetris.turn_clockwise();
+                    rotateCount = 0;
+                } else if (rotateCount < -5) {
+                    tetris.turn_counterclockwise();
+                    rotateCount = 0;
                 }
                 speed1 = speed;
             } else if (data.loc_id === LOC2_ID) {
                 // move
-                if (speed < speed2 || speed === 0) {
-                    tetris.left();
+                if (speed < speed2) {
+                    speedCount -= 1;
+                } else if (speed === 0)  {
+                    speedCount -= 3;
+                } else if (speed >= 1000) {
+                    speedCount += 3;
                 } else {
+                    speedCount += 1;
+                }
+                if (speedCount > 2) {
+                    speedCount = 0;
                     tetris.right();
+                } else if (speedCount < -2) {
+                    speedCount = 0;
+                    tetris.left();
                 }
                 speed2 = speed;
             }
-        } else if (t === "ToggleDirectionCommand") {
+        } else if (t === "LocomotiveDirectionCommand") {
             tetris.drop();
+        } else {
+            console.log(t);
         }
     })
 }

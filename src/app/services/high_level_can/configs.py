@@ -66,7 +66,7 @@ async def get_config(request: List[str], hash_value: str, is_binary = False, is_
         return data
 
 @router.get("/lokinfo/{loc_name}")
-async def get_lokinfo(loc_name: str, x_can_hash: str = Header(None)):
+async def get_lokinfo(loc_name: str = "", x_can_hash: str = Header(None)):
     loc_name = loc_name[:16]
     packet1 = loc_name[:8]
     packet2 = loc_name[8:]
@@ -84,50 +84,50 @@ async def get_maginfo(offset: int = 0, limit: int = 5, x_can_hash: str = Header(
 
 # TODO: needs parameter
 @router.get("/lokdb")
-async def get_maginfo(x_can_hash: str = Header(None)):
+async def get_lokdb(x_can_hash: str = Header(None)):
     return await get_config(["lokdb"], x_can_hash, is_binary=True)
 
 # TODO: needs parameter
 @router.get("/lang")
-async def get_maginfo(x_can_hash: str = Header(None)):
+async def get_lang(x_can_hash: str = Header(None)):
     return await get_config(["lang"], x_can_hash, is_binary=True)
 
 @router.get("/ldbver")
-async def get_maginfo(x_can_hash: str = Header(None)):
+async def get_ldbver(x_can_hash: str = Header(None)):
     return await get_config(["ldbver"], x_can_hash)
 
 @router.get("/langver")
-async def get_maginfo(x_can_hash: str = Header(None)):
+async def get_langver(x_can_hash: str = Header(None)):
     return await get_config(["langver"], x_can_hash)
 
 @router.get("/loks")
-async def get_maginfo(x_can_hash: str = Header(None)):
+async def get_loks(x_can_hash: str = Header(None)):
     return await get_config(["loks"], x_can_hash, is_compressed=True)
 
 @router.get("/mags")
-async def get_maginfo(x_can_hash: str = Header(None)):
+async def get_mags(x_can_hash: str = Header(None)):
     return await get_config(["mags"], x_can_hash, is_compressed=True)
 
 @router.get("/gbs")
-async def get_maginfo(x_can_hash: str = Header(None)):
+async def get_gbs(x_can_hash: str = Header(None)):
     return await get_config(["gbs"], x_can_hash, is_compressed=True)
 
 @router.get("/gbs/{index}")
-async def get_maginfo(index: int, x_can_hash: str = Header(None)):
+async def get_gbs_page(index: int, x_can_hash: str = Header(None)):
     return await get_config([f"gbs-{index}"], x_can_hash, is_compressed=True)
 
 @router.get("/fs")
-async def get_maginfo(x_can_hash: str = Header(None)):
+async def get_fs(x_can_hash: str = Header(None)):
     return await get_config(["fs"], x_can_hash, is_compressed=True)
 
 @router.get("/lokstat")
-async def get_maginfo(x_can_hash: str = Header(None)):
+async def get_lokstat(x_can_hash: str = Header(None)):
     return await get_config(["lokstat"], x_can_hash, is_compressed=True)
 
 @router.get("/magstat")
-async def get_maginfo(x_can_hash: str = Header(None)):
+async def get_magstat(x_can_hash: str = Header(None)):
     return await get_config(["magstat"], x_can_hash, is_compressed=True)
 
 @router.get("/gbsstat")
-async def get_maginfo(x_can_hash: str = Header(None)):
+async def get_gbsstat(x_can_hash: str = Header(None)):
     return await get_config(["gbsstat"], x_can_hash, is_compressed=True)
