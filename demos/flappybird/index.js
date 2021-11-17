@@ -4,14 +4,14 @@ BIRDCONFIG = {
     ball: "#b02a4b",
     pipe_bg: "#48b12a",
     pipe_w: 40,
-    interval: 100,
+    interval: 50,
     pipe_space: 180,
-    bird_velocity: 40,
-    gravity: 6,
+    bird_velocity: 20,
+    gravity: 1.7,
     bird_size: 20,
-    bird_x: 200,
+    bird_x: 400,
     pipe_interval: 5000,
-    pipe_velocity: 6,
+    pipe_velocity: 2.5,
     text_size: 30
 }
 
@@ -80,7 +80,6 @@ class FlappyBird{
         for (let pipe of this.pipes){
             this.ctx.fillRect(pipe.x_offset, 0, this.config.pipe_w, pipe.y_offset)
             this.ctx.fillRect(pipe.x_offset, pipe.y_offset + this.config.pipe_space, this.config.pipe_w, this.bounds.h - (pipe.y_offset + this.config.pipe_space))
-            console.log(pipe)
         }
     }
 
@@ -165,8 +164,8 @@ class FlappyBird{
 
     start(){
         this.interval = setInterval(()=>{
-            flappybird.physics()
             flappybird.redraw()
+            flappybird.physics()
         },this.config.interval)
         this.pipe_interval = setInterval(()=>{
             flappybird.spawn_pipe()
