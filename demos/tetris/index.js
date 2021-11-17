@@ -12,7 +12,7 @@ TETRISCONFIG = {
     bg_board_grid: "#b7b7b7",
     fg: "#383636",
     initial_delay: 300,
-    fast_drop_delay: 100,
+    fast_drop_delay: 70,
     padding: 25,
     border_w: 2,
     redraw_interval: 150,
@@ -353,7 +353,7 @@ class Tetris{
     }
 
     turn_clockwise(){
-        if (this.down_fast)return
+        // if (this.down_fast)return
         let i = (this.current_piece.rotation+1) % 4
         let matrix = this.current_piece.piece.rotation_matrices[i]
         if (this.try_position(this.current_piece.x, this.current_piece.y, matrix)){
@@ -363,7 +363,7 @@ class Tetris{
     }
 
     turn_counterclockwise(){
-        if (this.down_fast)return
+        // if (this.down_fast)return
         let i = this.current_piece.rotation-1
         if (i == -1)i = 3
         let matrix = this.current_piece.piece.rotation_matrices[i]
@@ -374,19 +374,24 @@ class Tetris{
     }
 
     left(){
-        if (this.down_fast)return
+        // if (this.down_fast)return
         if (this.try_position(this.current_piece.x-1,this.current_piece.y,this.current_piece.matrix)){
             this.current_piece.x--
         }
     }
 
     right(){
-        if (this.down_fast)return
+        // if (this.down_fast)return
         if (this.try_position(this.current_piece.x+1,this.current_piece.y,this.current_piece.matrix)){
             this.current_piece.x++
         }
     }
 }
+
+var speed1 = 0;
+var speed2 = 0;
+const LOC1_ID = 16390;
+const LOC2_ID = 16389;
 
 window.onload = ()=>{
     let music = document.getElementById("music")
@@ -397,32 +402,36 @@ window.onload = ()=>{
 
     tetris.start()
 
-    /*websocket.addEventListener("message", (e) => {
+    websocket.addEventListener("message", (e) => {
         let t = e.data.substring(0, e.data.indexOf("{"))
-        if (t !== "LocomotiveSpeedCommand") {
+        if (t !== "LocomotiveSpeedCommand" && t !== "ToggleDirectionCommand") {
             return
         }
         let data = e.data.substring(e.data.indexOf("{"))
         data = JSON.parse(data)
-        let speed = data.speed;
-        if (data.loc_id === 16390) {
-            pong.p1.bounds.y = (1 - speed / 1000) * (pong.bounds.h - pong.p1.bounds.h)
-            // if (speed < speed1 || speed === 0) {
-            //     pong.moveP1Down(Math.max(3, Math.abs(speed1 - speed)));
-            // } else {
-            //     pong.moveP1Up(Math.max(3, Math.abs(speed1 - speed)));
-            // }
-            // speed1 = speed;
-        } else if (data.loc_id === 16389) {
-            pong.p2.bounds.y = (1 - speed / 1000) * (pong.bounds.h - pong.p2.bounds.h)
-            // if (speed < speed2 || speed === 0) {
-            //     pong.moveP2Down(Math.max(3, Math.abs(speed2 - speed)));
-            // } else {
-            //     pong.moveP2Up(Math.max(3, Math.abs(speed2 - speed)));
-            // }
-            // speed2 = speed;
+        if (t === "LocomotiveSpeedCommand") {
+            let speed = data.speed;
+            if (data.loc_id === LOC1_ID) {
+                // rotate
+                if (speed < speed1 || speed === 0) {
+                    tetris.turn_counterclockwise();
+                } else {
+                    tetris.turn_clockwise();
+                }
+                speed1 = speed;
+            } else if (data.loc_id === LOC2_ID) {
+                // move
+                if (speed < speed2 || speed === 0) {
+                    tetris.left();
+                } else {
+                    tetris.right();
+                }
+                speed2 = speed;
+            }
+        } else if (t === "ToggleDirectionCommand") {
+            tetris.drop();
         }
-    })*/
+    })
 }
 
 window.onkeydown = (e) => {
