@@ -5,8 +5,10 @@ TETRISCONFIG = {
     color1: "#91e52b",
     color2: "#e5e22b",
     color3: "#2b98e5",
-    color4: "#2b98e5",
+    color4: "#e52bd6",
     color5: "#e5372b",
+    color6: "#2b60e5",
+    color7: "#d82ce6",
     bg: "#ffffff",
     bg_board: "#e8e1e1",
     bg_board_grid: "#b7b7b7",
@@ -64,7 +66,10 @@ PIECES = [
     new Piece(TETRISCONFIG.color2, [new Matrix([0, 1, 0, 1, 1, 1, 0, 0, 0], 3, 3), new Matrix([0, 1, 0, 0, 1, 1, 0, 1, 0], 3, 3), new Matrix([0, 0, 0, 1, 1, 1, 0, 1, 0], 3, 3), new Matrix([0, 1, 0, 1, 1, 0, 0, 1, 0], 3, 3)]),
     new Piece(TETRISCONFIG.color3, [new Matrix([0, 0, 0, 1, 1, 1, 0, 0, 1], 3, 3), new Matrix([0, 1, 0, 0, 1, 0, 1, 1, 0], 3, 3), new Matrix([1, 0, 0, 1, 1, 1, 0, 0, 0], 3, 3), new Matrix([0, 1, 1, 0, 1, 0, 0, 1, 0], 3, 3)]),
     new Piece(TETRISCONFIG.color4, [new Matrix([1, 0, 0, 1, 1, 0, 0, 1, 0], 3, 3), new Matrix([0, 1, 1, 1, 1, 0, 0, 0, 0], 3, 3), new Matrix([0, 1, 0, 0, 1, 1, 0, 0, 1], 3, 3), new Matrix([0, 0, 0, 0, 1, 1, 1, 1, 0], 3, 3)]),
-    new Piece(TETRISCONFIG.color5, [new Matrix([0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], 4, 4), new Matrix([0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0], 4, 4), new Matrix([0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0], 4, 4), new Matrix([0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0], 4, 4)])
+    new Piece(TETRISCONFIG.color5, [new Matrix([0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], 4, 4), new Matrix([0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0], 4, 4), new Matrix([0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0], 4, 4), new Matrix([0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0], 4, 4)]),
+    new Piece(TETRISCONFIG.color6, [new Matrix([0, 0, 0, 1, 1, 1, 1, 0, 0], 3, 3), new Matrix([0, 1, 0, 0, 1, 0, 0, 1, 1], 3, 3), new Matrix([0, 0, 1, 1, 1, 1, 0, 0, 0], 3, 3), new Matrix([1, 1, 0, 0, 1, 0, 0, 1, 0], 3, 3)]),
+    new Piece(TETRISCONFIG.color7, [new Matrix([0, 0, 1, 0, 1, 1, 0, 1, 0], 3, 3), new Matrix([1, 1, 0, 0, 1, 1, 0, 0, 0], 3, 3), new Matrix([0, 1, 0, 1, 1, 0, 1, 0, 0], 3, 3), new Matrix([0, 0, 0, 1, 1, 0, 0, 1, 1], 3, 3)])
+    
 ]
 
 function getRandomInt(max) {
@@ -284,14 +289,17 @@ class Tetris{
     }
 
     check_clear(){
+        let cleared_rows = 0
         for (let j = this.board.h-1; j >= 0; j--){
             if (this.is_row_filled(j)){
                 this.clear_row(j)
                 this.move_rows_down(j)
-                this.score += this.board.w
+                cleared_rows++
+                
                 j++
             }
         }
+        this.score += Math.round((this.board.w * cleared_rows) * Math.max(1, cleared_rows / 1.5))
     }
 
     place(){
