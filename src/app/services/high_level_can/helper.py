@@ -1,6 +1,8 @@
 import asyncio
 import websockets
 
+from collections import defaultdict
+
 from ...schemas.can_commands import AbstractCANMessage
 from ..high_level_can_recv.converter import type_map
 
@@ -43,3 +45,54 @@ async def get_single_response_timeout(connection, check, transform_result = None
 
 def return204(m):
     return Response(status_code=204)
+
+def get_tree():
+    return defaultdict(get_tree)
+
+def parse_config(text: str, level: int = -1, line: int = 0) -> (int, defaultdict):
+    ret = get_tree()
+
+    def level_map(level: int) -> str:
+        if level == -1:
+            return "["
+        assert level >= 0
+        return "." * level
+    
+    def level_from_prefix(text: str) -> int:
+        text = text.strip()
+        if text[0] == "[":
+            assert text[-1] == "]"
+            return -1
+        for i, c in enumerate(text):
+            if c != ".":
+                return i
+    
+    def remove_prefix(text: str) -> str:
+        text = text.strip()
+        for i, c in enumerate(text):
+            if c != ".":
+                return text[i:]
+    
+    lines = text.splitlines()
+    line_num = line
+    while line_num < len(lines):
+        line = lines[line_num]
+        print(line, line_num, level, level_from_prefix(line))
+        if level_from_prefix(line) < level:
+            return (line_num, ret)
+        assert level_from_prefix(line) == level
+        line = remove_prefix(line)
+        if "=" in line:
+            ret[line.split("=")[0]] = line.split("=")[1]
+            line_num += 1
+        else:
+            line_num, inner = parse_config(text, level+1, line_num+1)
+            if line in ret:
+                if isinstance(ret[line], list):
+                    ret[line].append(inner)
+                else:
+                    ret[line] = [ret[line], inner]
+            else:
+                ret[line] = inner
+
+    return (line_num, ret)
