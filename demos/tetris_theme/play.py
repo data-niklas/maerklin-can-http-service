@@ -32,11 +32,8 @@ if __name__ == "__main__":
         cur_time += msg.time
         cur_sec += sleep_time
         if msg.type == 'note_on':
-            if msg.note > 65:
-                print(msg.note, "on", cur_time, cur_sec)
-                notes.add(msg.note)
+            print(msg.note, "on", cur_time, cur_sec)
+            notes.add(msg.note)
         if msg.type == 'note_off':
-            if msg.note > 65:
-                # print(msg.note, "off", cur_time, cur_sec)
-                notes.add(msg.note)
+            notes.add(msg.note)
     print(notes)
