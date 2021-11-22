@@ -9,6 +9,8 @@ from ...schemas.can_commands import AbstractCANMessage, CommandSchema
 
 from .schemas.lok import FunctionValueModel, SpeedModel, DirectionModel
 
+from .configs import get_config
+
 
 router = APIRouter()
 
@@ -105,3 +107,12 @@ async def set_function(loc_id: int, function: int, value: FunctionValueModel, x_
     async with connect() as connection:
         await send_can_message(message)
         return await get_single_response_timeout(connection, check, return204)
+
+
+@router.get("/list")
+async def list_locs(x_can_hash: str = Header(None)):
+    loks_config = await get_config(["loks"], x_can_hash, is_compressed=True, is_config=True)
+    loks_list = loks_config["[lokomotive]"]["lokomotive"]
+    for lok in loks_list:
+        lok["loc_id"] = int(lok["uid"], 0)
+    return loks_list

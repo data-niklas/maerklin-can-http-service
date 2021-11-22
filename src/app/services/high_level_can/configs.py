@@ -64,7 +64,7 @@ async def get_config(request: List[str], hash_value: str, is_binary = False, is_
         if not is_binary:
             data = data.decode("utf-8")
             if is_config:
-                data = parse_config(data)
+                _, data = parse_config(data)
         return data
 
 @router.get("/lokinfo/{loc_name}")
@@ -124,12 +124,12 @@ async def get_fs(x_can_hash: str = Header(None)):
 
 @router.get("/lokstat")
 async def get_lokstat(x_can_hash: str = Header(None)):
-    return await get_config(["lokstat"], x_can_hash, is_compressed=True)
+    return await get_config(["lokstat"], x_can_hash, is_compressed=True, is_config=True)
 
 @router.get("/magstat")
 async def get_magstat(x_can_hash: str = Header(None)):
-    return await get_config(["magstat"], x_can_hash, is_compressed=True)
+    return await get_config(["magstat"], x_can_hash, is_compressed=True, is_config=True)
 
 @router.get("/gbsstat")
 async def get_gbsstat(x_can_hash: str = Header(None)):
-    return await get_config(["gbsstat"], x_can_hash, is_compressed=True)
+    return await get_config(["gbsstat"], x_can_hash, is_compressed=True, is_config=True)
