@@ -7,6 +7,8 @@ from ...schemas.can_commands import AbstractCANMessage
 from ..high_level_can_recv.converter import type_map
 
 from fastapi import HTTPException, Response
+
+from typing import Tuple
  
 
 from config import get_settings
@@ -49,7 +51,7 @@ def return204(m):
 def get_tree():
     return defaultdict(get_tree)
 
-def parse_config(text: str, level: int = -1, line: int = 0) -> (int, defaultdict):
+def parse_config(text: str, level: int = -1, line: int = 0) -> Tuple[int, defaultdict]:
     ret = get_tree()
 
     def level_map(level: int) -> str:

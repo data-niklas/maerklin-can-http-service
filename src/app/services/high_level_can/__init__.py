@@ -5,6 +5,7 @@ from . import accessory
 from . import s88
 from . import configs
 from . import general
+from . import system
 
 router = APIRouter()
 router.include_router(
@@ -31,4 +32,9 @@ router.include_router(
     configs.router,
     prefix = "/config",
     tags = ["config"]
+)
+router.include_router(
+    system.router,
+    prefix = "/system",
+    tags = ["system"]
 )
