@@ -68,10 +68,10 @@ class AbstractSystemCommand(AbstractCANMessage):
         return CommandSchema.SystemCommand
 
     def get_other_data(self) -> bytes:
-        raise NotImplentedError()
+        raise NotImplementedError()
     
     def get_subcommand(self) -> SystemSubcommandSchema:
-        raise NotImplentedError()
+        raise NotImplementedError()
 
     def get_data(self) -> bytes:
         data = bytes()
@@ -211,6 +211,7 @@ class LocomotiveDataProtocolCommand(AbstractSystemCommand):
         protocol_number = bytes_to_int(data[5:6])
         protocol = RailProtocolSchema(RailProtocol(protocol_number).name)
         return LocomotiveDataProtocolCommand(protocol = protocol, **vars(abstract_message))
+
 class AccessoryDecoderSwitchingTimeCommand(AbstractSystemCommand):
     # time * 10ms
     time: int
@@ -324,6 +325,7 @@ class SystemOverloadCommand(AbstractSystemCommand):
 
         channel = bytes_to_int(data[5:6])
         return SystemOverloadCommand(channel = channel, **vars(abstract_message))
+
 class SystemStatusCommand(AbstractSystemCommand):
     # Who is responsible for overload
     channel: int
@@ -403,6 +405,7 @@ class MfxSeekCommand(AbstractSystemCommand):
             return None
 
         return MfxSeekCommand(**vars(abstract_message))
+        
 class SystemResetCommand(AbstractSystemCommand):
     target: int
 

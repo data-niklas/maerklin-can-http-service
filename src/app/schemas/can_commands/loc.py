@@ -10,7 +10,7 @@ class AbstractLocIDCommand(AbstractCANMessage):
     loc_id: int
 
     def get_other_data(self) -> bytes:
-        raise NotImplentedError()
+        raise NotImplementedError()
 
     def get_data(self) -> bytes:
         data = bytes()
@@ -223,7 +223,7 @@ class WriteConfigControlByte(BaseModel):
         elif self.dcc_programming == DCCProgramming.BitProgramming:
             ret |= 0b0010_0000
         else:
-            raise NotImplentedError()
+            raise NotImplementedError()
 
         return ret
     
