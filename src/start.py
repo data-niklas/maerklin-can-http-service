@@ -3,13 +3,20 @@ import sys
 import subprocess
 import os
 import signal
+import time
 
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))
-SCRIPT_PREFIX = "./app/scripts/"
+SCRIPT_DIR = os.path.join(FILE_DIR, "app", "scripts")
 SCRIPT_POSTFIX = ".py"
 
 ASGI_SERVICES = ["raw_can_receiver", "raw_can_sender", "can_receiver", "can_sender", "can"]
 SCRIPTS = ["dummy_central_station", "websocket_logger", "websocket_printer"]
+
+WORKFLOW_TERMINAL_COMMAND = ["wt.exe"]
+WORKFLOW_INTERVAL = 1
+
+WORKFLOWS = dict()
+WORKFLOWS["dummy_central_station"] = ["dummy_central_station", "raw_can_receiver", "can_receiver"]
 
 HELP = """A start script to run various ASGI routers and scripts, which work with the Märklin CAN interface.
 
@@ -19,7 +26,9 @@ python start.py <router or script>
 Routers:
 """+ ", ".join(ASGI_SERVICES) + """
 Scripts:
-"""+ ", ".join(SCRIPTS)
+"""+ ", ".join(SCRIPTS) + """
+Workflows:
+""" + ", ".join(WORKFLOWS.keys())
 
 
 active_process = None
@@ -31,30 +40,39 @@ def print_help():
     print(HELP)
     sys.exit(0)
 
-def run(command):
+def run(command, spawn_new):
     global active_process
+    if spawn_new:
+        command = WORKFLOW_TERMINAL_COMMAND + command
+
     print(f'\'{" ".join(command)}\'' )
     print()
     active_process = subprocess.Popen(command, stdout=sys.stdout, stderr=sys.stderr, cwd=FILE_DIR)
-    active_process.wait()
+    if not spawn_new:
+        active_process.wait()
 
-def start_script(script):
+def start_script(script, spawn_new):
     settings = get_settings()
-    command = [settings.script_command, SCRIPT_PREFIX + script + SCRIPT_POSTFIX]
-    run(command)
+    command = [settings.script_command, os.path.join(SCRIPT_DIR, script) + SCRIPT_POSTFIX]
+    run(command, spawn_new)
 
-def start_wsgi(name):
+def start_wsgi(name, spawn_new):
     settings = get_settings()
     port = getattr(settings, name + '_port')
     host = getattr(settings, name + '_host')
     command = [settings.asgi_command, f'main:{name}', f'--port={port}', f'--host={host}', '--reload']
-    run(command)
+    run(command, spawn_new)
 
-def start_service(service):
+def start_service(service, spawn_new=False):
     if service in SCRIPTS:
-        start_script(service)
+        start_script(service, spawn_new)
     else:
-        start_wsgi(service)
+        start_wsgi(service, spawn_new)
+
+def start_workflow(workflow):
+    for item in WORKFLOWS[workflow]:
+        start_service(item, True)
+        time.sleep(WORKFLOW_INTERVAL)
 
 def signal_handler(sig, frame):
     global active_process
@@ -64,16 +82,24 @@ def signal_handler(sig, frame):
 
 if __name__ == '__main__':
     args = sys.argv[1:]
-    if not len(args) == 1:
-        print(f'Invalid number of arguments {len(args)}. 1 expected.')
+    if not len(args) == 1 and not len(args) == 2:
+        print(f'Invalid number of arguments {len(args)}. 1-2 expected.')
         print_help()
 
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
+    
+    os.chdir(os.path.dirname(os.path.realpath(__file__)))
+    if len(args) == 2:
+        workflow = args[1]
+        if not workflow in WORKFLOWS:
+            print(f'Invalid workflow {workflow}')
+            print_help()
+        start_workflow(workflow)
+    else:
+        service = args[0]
+        if not service in supported_services():
+            print(f'Invalid service {service}')
+            print_help()
 
-    service = args[0]
-    if not service in supported_services():
-        print(f'Invalid service {service}')
-        print_help()
-
-    start_service(service)
+        start_service(service)

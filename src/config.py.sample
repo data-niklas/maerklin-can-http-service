@@ -3,12 +3,15 @@
 # 2. Change the DEFAULT_ values
 # 3. Enjoy and use the scripts / ASGI routers
 
+import os
 from pydantic import BaseSettings
 from functools import lru_cache
 
+FILE_DIR = os.path.dirname(os.path.realpath(__file__))
+
 # Router configs
 DEFAULT_ASGI_COMMAND = "uvicorn"
-DEFAULT_SCRIPT_COMMAND = "python"
+DEFAULT_SCRIPT_COMMAND = os.path.join(os.path.dirname(FILE_DIR), "venv", "Scripts", "python.exe")
 
 # IP from which packages are received and sent to
 DEFAULT_RAW_CAN_IP = "192.168.1.3"
