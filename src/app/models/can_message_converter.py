@@ -1,10 +1,55 @@
-from can_message import AbstractCANMessage
-from app.schemas.can_commands import AbstractCANMessage as PydanticAbstractCANMessage
+from app.models.can_message import ConfigMessage, MfxSeekMessage, RequestConfigDataMessage, SetSystemIdentifierMessage, SystemOverloadMessage, AbstractCANMessage, SetMfxRegisterCounterMessage, MfxFastReadMessage, EnableRailProtocolCommand, ReadConfigMessage, SystemResetMessage, WriteConfigMessage, LocomotiveSpeedMessage, LocomotiveDirectionMessage, AccessoryDecoderSwitchingTimeMessage, LocomotiveFunctionMessage, SwitchingAccessoriesMessage, S88PollingMessage, SystemStateMessage, SystemStatusMessage, LocomotiveEmergencyStopMessage, LocomotiveDataProtocolMessage, LocomotiveCycleStopMessage, ConfigMessage, ParticipantPingMessage, LocomotiveDiscoveryMessage, S88EventMessage, ServiceStatusDataConfigurationMessage, BootloaderCANBoundMessage, MfxBindMessage, MfxVerifyMessage
+from ..schemas.can_commands import AbstractCANMessage as PydanticAbstractCANMessage
 registered_models = list()
 
-def convert_to_model(t: str, message: PydanticAbstractCANMessage) -> AbstractCANMessage:
+
+def convert_to_model(message: PydanticAbstractCANMessage) -> AbstractCANMessage:
     for model in registered_models:
-        abstract_message = model.from_schema(t, message)
+        abstract_message = model.from_schema(message)
         if abstract_message is not None:
             return abstract_message
     return None
+
+# Missing: RequestConfigDataCommand
+
+registered_models.extend([
+    LocomotiveSpeedMessage,
+    LocomotiveDirectionMessage,
+    LocomotiveFunctionMessage,
+    ReadConfigMessage,
+    WriteConfigMessage,
+    RequestConfigDataMessage
+])
+
+registered_models.extend([
+    SwitchingAccessoriesMessage,
+    S88PollingMessage,
+    S88EventMessage,
+    ConfigMessage,
+    ParticipantPingMessage,
+    LocomotiveDiscoveryMessage,
+    ServiceStatusDataConfigurationMessage,
+    BootloaderCANBoundMessage
+])
+
+registered_models.extend([
+    SystemStateMessage,
+    LocomotiveEmergencyStopMessage,
+    LocomotiveCycleStopMessage,
+    LocomotiveDataProtocolMessage,
+    AccessoryDecoderSwitchingTimeMessage,
+    MfxFastReadMessage,
+    EnableRailProtocolCommand,
+    SetMfxRegisterCounterMessage,
+    SystemOverloadMessage,
+    SystemStatusMessage,
+    SetSystemIdentifierMessage,
+    MfxSeekMessage,
+    SystemResetMessage
+])
+
+
+registered_models.extend([
+    MfxBindMessage,
+    MfxVerifyMessage
+])
