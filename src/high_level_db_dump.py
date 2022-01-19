@@ -1,5 +1,4 @@
 import asyncio
-from msilib.schema import Error
 import zlib
 import websockets
 
@@ -17,7 +16,7 @@ settings = get_settings()
 HOST = settings.can_receiver_host
 PORT = settings.can_receiver_port
 
-DB = "sqlite:///high_level_dump.sqlite3"
+DB = settings.high_level_db_dump_database
 
 
 async def parse_message(message):
@@ -31,9 +30,7 @@ async def parse_message(message):
 async def dump(session, pydantic_abstract_message):
     print("Dumping message")
     abstract_model = convert_to_model(pydantic_abstract_message)
-    if pydantic_abstract_message.get_command() == CommandSchema.SystemCommand:
-        print(pydantic_abstract_message.get_subcommand())
-    assert not abstract_model is None
+    assert abstract_model is not None
     session.add(abstract_model)
     session.commit()
 
@@ -85,11 +82,11 @@ async def process_config_stream(session, websocket, pydantic_abstract_message):
     try:
         data = zlib.decompress(data[4:])
     except Exception as e:
-        print(f"{e}")
+        pass
     try:
         data = data.decode("utf-8")
     except Exception as e:
-        print(f"{e}")
+        pass
 
     session.add(ConfigMessage.from_message(
         data, length, pydantic_abstract_message))

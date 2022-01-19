@@ -56,7 +56,7 @@ def start_script(script, spawn_new):
     command = [settings.script_command, os.path.join(SCRIPT_DIR, script) + SCRIPT_POSTFIX]
     run(command, spawn_new)
 
-def start_wsgi(name, spawn_new):
+def start_asgi(name, spawn_new):
     settings = get_settings()
     port = getattr(settings, name + '_port')
     host = getattr(settings, name + '_host')
@@ -67,7 +67,7 @@ def start_service(service, spawn_new=False):
     if service in SCRIPTS:
         start_script(service, spawn_new)
     else:
-        start_wsgi(service, spawn_new)
+        start_asgi(service, spawn_new)
 
 def start_workflow(workflow):
     for item in WORKFLOWS[workflow]:

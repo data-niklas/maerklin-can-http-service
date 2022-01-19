@@ -1,4 +1,4 @@
-from app.models.can_message import ConfigMessage, MfxSeekMessage, RequestConfigDataMessage, SetSystemIdentifierMessage, SystemOverloadMessage, AbstractCANMessage, SetMfxRegisterCounterMessage, MfxFastReadMessage, EnableRailProtocolCommand, ReadConfigMessage, SystemResetMessage, WriteConfigMessage, LocomotiveSpeedMessage, LocomotiveDirectionMessage, AccessoryDecoderSwitchingTimeMessage, LocomotiveFunctionMessage, SwitchingAccessoriesMessage, S88PollingMessage, SystemStateMessage, SystemStatusMessage, LocomotiveEmergencyStopMessage, LocomotiveDataProtocolMessage, LocomotiveCycleStopMessage, ConfigMessage, ParticipantPingMessage, LocomotiveDiscoveryMessage, S88EventMessage, ServiceStatusDataConfigurationMessage, BootloaderCANBoundMessage, MfxBindMessage, MfxVerifyMessage
+from app.models.can_message import *
 from ..schemas.can_commands import AbstractCANMessage as PydanticAbstractCANMessage
 registered_models = list()
 
@@ -10,7 +10,6 @@ def convert_to_model(message: PydanticAbstractCANMessage) -> AbstractCANMessage:
             return abstract_message
     return None
 
-# Missing: RequestConfigDataCommand
 
 registered_models.extend([
     LocomotiveSpeedMessage,

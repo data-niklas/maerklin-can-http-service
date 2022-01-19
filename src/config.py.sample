@@ -38,6 +38,9 @@ DEFAULT_CAN_HOST = "127.0.0.1"
 # Timeout in millis
 DEFAULT_CAN_TIMEOUT = 300
 
+DEFAULT_HIGH_LEVEL_DB_DUMP_DATABASE = "sqlite:///high_level_dump.sqlite3"
+DEFAULT_RAW_DB_DUMP_DATABASE = "sqlite:///raw_dump.sqlite3"
+
 
 # Scripts config
 DEFAULT_WEBSOCKET_LOGGER_PORT = DEFAULT_CAN_RECV_PORT
@@ -71,6 +74,9 @@ class Settings(BaseSettings):
     can_host: str = DEFAULT_CAN_HOST
 
     can_timeout: int = DEFAULT_CAN_TIMEOUT
+
+    high_level_db_dump_database: str = DEFAULT_HIGH_LEVEL_DB_DUMP_DATABASE
+    raw_db_dump_database: str = DEFAULT_RAW_DB_DUMP_DATABASE
     
 
     websocket_printer_host: str = DEFAULT_WEBSOCKET_PRINTER_HOST
@@ -104,7 +110,10 @@ class Settings(BaseSettings):
             'websocket_printer_host': {'env': 'websocket_printer_host'},
             'websocket_printer_port': {'env': 'websocket_printer_port'},
             'websocket_logger_host': {'env': 'websocket_logger_host'},
-            'websocket_logger_port': {'env': 'websocket_logger_port'}
+            'websocket_logger_port': {'env': 'websocket_logger_port'},
+            
+            'high_level_db_dump_database': {'env': 'high_level_db_dump_database'},
+            'raw_db_dump_database': {'env': 'raw_db_dump_database'}
         }
 
 

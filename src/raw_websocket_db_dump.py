@@ -11,7 +11,7 @@ settings = get_settings()
 
 HOST = settings.raw_can_receiver_host
 PORT = settings.raw_can_receiver_port
-DB = "sqlite:///raw_dump.sqlite3"
+DB = settings.raw_db_dump_database
 
 async def dump(session, message):
     print("Dumping message")
