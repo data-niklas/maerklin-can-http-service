@@ -73,9 +73,9 @@ async def process_config_stream(session, websocket, pydantic_abstract_message):
         data = next_message.data
         if not isinstance(data, str):
             break
-        received_count += 8
         if received_count > 0:
             received_data += " "
+        received_count += 8
         received_data += data
 
     data = bytes.fromhex(received_data)[:length]
