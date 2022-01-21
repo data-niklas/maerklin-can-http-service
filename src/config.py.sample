@@ -6,6 +6,7 @@
 import os
 from pydantic import BaseSettings
 from functools import lru_cache
+from typing import List
 
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -40,6 +41,9 @@ DEFAULT_CAN_TIMEOUT = 300
 
 DEFAULT_HIGH_LEVEL_DB_DUMP_DATABASE = "sqlite:///high_level_dump.sqlite3"
 DEFAULT_RAW_DB_DUMP_DATABASE = "sqlite:///raw_dump.sqlite3"
+
+DEFAULT_WORKFLOW_TERMINAL_COMMAND = ["cmd.exe", "/c"]
+DEFAULT_WORKFLOW_TERMINAL_INTERVAL = 1
 
 
 # Scripts config
@@ -85,6 +89,9 @@ class Settings(BaseSettings):
     websocket_logger_host: str = DEFAULT_WEBSOCKET_LOGGER_HOST
     websocket_logger_port: int = DEFAULT_WEBSOCKET_LOGGER_PORT
 
+    workflow_terminal_command: List[str] = DEFAULT_WORKFLOW_TERMINAL_COMMAND
+    workflow_terminal_interval: int = DEFAULT_WORKFLOW_TERMINAL_INTERVAL
+
     class Config():
         fields = {
             'asgi_command': {'env': 'asgi_command'},
@@ -113,7 +120,10 @@ class Settings(BaseSettings):
             'websocket_logger_port': {'env': 'websocket_logger_port'},
             
             'high_level_db_dump_database': {'env': 'high_level_db_dump_database'},
-            'raw_db_dump_database': {'env': 'raw_db_dump_database'}
+            'raw_db_dump_database': {'env': 'raw_db_dump_database'},
+
+            'workflow_terminal_command': {'env': 'workflow_terminal_command'},
+            'workflow_terminal_interval': {'env': 'workflow_terminal_interval'}
         }
 
 

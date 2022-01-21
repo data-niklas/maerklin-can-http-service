@@ -5,6 +5,8 @@ import os
 import signal
 import time
 
+settings = get_settings()
+
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))
 SCRIPT_DIR = os.path.join(FILE_DIR, "app", "scripts")
 SCRIPT_POSTFIX = ".py"
@@ -12,8 +14,8 @@ SCRIPT_POSTFIX = ".py"
 ASGI_SERVICES = ["raw_can_receiver", "raw_can_sender", "can_receiver", "can_sender", "can"]
 SCRIPTS = ["dummy_central_station", "websocket_logger", "websocket_printer"]
 
-WORKFLOW_TERMINAL_COMMAND = ["wt.exe"]
-WORKFLOW_INTERVAL = 1
+WORKFLOW_TERMINAL_COMMAND = settings.workflow_terminal_command
+WORKFLOW_INTERVAL = settings.workflow_terminal_interval
 
 WORKFLOWS = dict()
 WORKFLOWS["dummy_central_station"] = ["dummy_central_station", "raw_can_receiver", "can_receiver"]
@@ -52,12 +54,12 @@ def run(command, spawn_new):
         active_process.wait()
 
 def start_script(script, spawn_new):
-    settings = get_settings()
+    global settings
     command = [settings.script_command, os.path.join(SCRIPT_DIR, script) + SCRIPT_POSTFIX]
     run(command, spawn_new)
 
 def start_asgi(name, spawn_new):
-    settings = get_settings()
+    global settings
     port = getattr(settings, name + '_port')
     host = getattr(settings, name + '_host')
     command = [settings.asgi_command, f'main:{name}', f'--port={port}', f'--host={host}', '--reload']
