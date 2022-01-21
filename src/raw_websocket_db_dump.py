@@ -6,9 +6,12 @@ from sqlalchemy.orm.session import sessionmaker
 from app.schemas.can import CANMessage as PydanticCANMessage
 from app.models.raw_can_message import CANMessage, Base
 
-IP = "127.0.0.1"
-PORT = 8888
-DB = "sqlite:///test.sqlite3"
+from config import get_settings
+settings = get_settings()
+
+HOST = settings.raw_can_receiver_host
+PORT = settings.raw_can_receiver_port
+DB = settings.raw_db_dump_database
 
 async def dump(session, message):
     print("Dumping message")
@@ -26,7 +29,7 @@ async def create_sql_session():
 
 async def main():
     session = await create_sql_session()
-    async with websockets.connect(f"ws://{IP}:{PORT}") as websocket:
+    async with websockets.connect(f"ws://{HOST}:{PORT}") as websocket:
         print("connected")
         async for message in websocket:
             print(message)

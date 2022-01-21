@@ -7,6 +7,8 @@
 !.vscode/extensions.json
 *.code-workspace
 
+*.sqlite3
+
 # Local History for Visual Studio Code
 .history/
 

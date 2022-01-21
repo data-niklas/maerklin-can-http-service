@@ -7,7 +7,7 @@ class AbstractMfxCommand(AbstractCANMessage):
     mfx_sid: int
 
     def get_other_data(self) -> bytes:
-        raise NotImplentedError()
+        raise NotImplementedError()
     
     def get_data(self) -> bytes:
         data = bytes()

@@ -1,6 +1,9 @@
 import asyncio
 import websockets
 
+from config import get_settings
+settings = get_settings()
+
 lines = list()
 
 async def echo(websocket, path):
@@ -8,7 +11,7 @@ async def echo(websocket, path):
         await websocket.send(line)
 
 async def main():
-    async with websockets.serve(echo, "localhost", 8889):
+    async with websockets.serve(echo, "localhost", settings.can_receiver_port):
         await asyncio.Future()  # run forever
 
 if __name__ == "__main__":
