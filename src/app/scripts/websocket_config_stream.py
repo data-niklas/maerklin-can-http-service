@@ -2,14 +2,18 @@ import zlib
 import asyncio
 import websockets
 
+from config_wrapper import get_settings
+
 from app.schemas.can_commands import *
 from app.services.high_level_can_recv.converter import type_map
 
-IP = "127.0.0.1"
-PORT = 8001
+settings = get_settings()
+
+HOST = settings.raw_can_receiver_host
+PORT = settings.raw_can_receiver_port
 
 async def main():
-    async with websockets.connect(f"ws://{IP}:{PORT}") as websocket:
+    async with websockets.connect(f"ws://{HOST}:{PORT}") as websocket:
         print("connected")
         data = str()
         async for message in websocket:
