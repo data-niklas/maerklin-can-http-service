@@ -1,4 +1,4 @@
-from typing import List
+from typing import Optional
 
 from fastapi import APIRouter, Depends
 from fastapi_pagination import LimitOffsetPage, add_pagination
@@ -36,7 +36,7 @@ def get_db():
 
 def make_get(model):
     @router.get(f"/get{model.__name__}/", response_model=LimitOffsetPage[sqlalchemy_to_pydantic(model)])
-    def get(filter: str = str(), db: Session = Depends(get_db)):
+    def get(filter: Optional[str] = None, db: Session = Depends(get_db)):
         query = select(model)
         if filter is not None and len(filter) > 0:
             query = apply_odata_query(query, filter)
