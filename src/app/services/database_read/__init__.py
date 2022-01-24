@@ -1,9 +1,12 @@
 from typing import List
 
 from fastapi import APIRouter, Depends
-from sqlalchemy import create_engine
+from fastapi_pagination import LimitOffsetPage, add_pagination
+from fastapi_pagination.ext.sqlalchemy_future import paginate
+from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker, Session
 from pydantic_sqlalchemy import sqlalchemy_to_pydantic
+from odata_query.sqlalchemy import apply_odata_query
 
 from app.models.can_message import Base, LocomotiveSpeedMessage
 from app.models.can_message_converter import registered_models
@@ -32,10 +35,14 @@ def get_db():
         db.close()
 
 def make_get(model):
-    @router.get(f"/get{model.__name__}/", response_model=List[sqlalchemy_to_pydantic(model)])
-    def get(db: Session = Depends(get_db)):
-        return db.query(model).all()
+    @router.get(f"/get{model.__name__}/", response_model=LimitOffsetPage[sqlalchemy_to_pydantic(model)])
+    def get(filter: str = str(), db: Session = Depends(get_db)):
+        query = select(model)
+        if filter is not None and len(filter) > 0:
+            query = apply_odata_query(query, filter)
+        return paginate(db, query)
 
 for model in registered_models:
     make_get(model)
-    
+
+add_pagination(router)
