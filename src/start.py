@@ -12,7 +12,8 @@ SCRIPT_DIR = os.path.join(FILE_DIR, "app", "scripts")
 SCRIPT_POSTFIX = ".py"
 
 ASGI_SERVICES = ["raw_can_receiver", "raw_can_sender", "can_receiver", "can_sender", "can"]
-SCRIPTS = ["dummy_central_station", "websocket_logger", "websocket_printer"]
+SCRIPTS = ["dummy_central_station", "websocket_logger", "websocket_printer", "high_level_db_dump", \
+    "raw_websocket_db_dump", "websocket_config_stream", "websocket_replay"]
 
 WORKFLOW_TERMINAL_COMMAND = settings.workflow_terminal_command
 WORKFLOW_INTERVAL = settings.workflow_terminal_interval
@@ -24,6 +25,10 @@ HELP = """A start script to run various ASGI routers and scripts, which work wit
 
 Usage:
 python start.py <router or script>
+
+ or
+
+python start.py _ <workflow>
 
 Routers:
 """+ ", ".join(ASGI_SERVICES) + """

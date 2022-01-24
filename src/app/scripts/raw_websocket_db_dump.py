@@ -3,10 +3,12 @@ import websockets
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm.session import sessionmaker
+
+from config_wrapper import get_settings
+
 from app.schemas.can import CANMessage as PydanticCANMessage
 from app.models.raw_can_message import CANMessage, Base
 
-from config import get_settings
 settings = get_settings()
 
 HOST = settings.raw_can_receiver_host

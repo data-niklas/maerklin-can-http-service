@@ -26,8 +26,8 @@ if __name__ == "__main__":
         print(f"stopping with {e}")
     except KeyboardInterrupt:
         print("stopping with keyboard interrupt")
-        with open("messages.log", "a") as f:
+        with open("../out/messages.log", "a") as f:
             f.write("\n" + "\n".join(messages))
     finally:
-        with open("messages.log", "a") as f:
+        with open("../out/messages.log", "a") as f:
             f.write("\n" + "\n".join(messages))

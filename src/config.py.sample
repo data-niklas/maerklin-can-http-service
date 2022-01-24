@@ -39,8 +39,8 @@ DEFAULT_CAN_HOST = "127.0.0.1"
 # Timeout in millis
 DEFAULT_CAN_TIMEOUT = 300
 
-DEFAULT_HIGH_LEVEL_DB_DUMP_DATABASE = "sqlite:///high_level_dump.sqlite3"
-DEFAULT_RAW_DB_DUMP_DATABASE = "sqlite:///raw_dump.sqlite3"
+DEFAULT_HIGH_LEVEL_DB_DUMP_DATABASE = "sqlite:///../out/high_level_dump.sqlite3"
+DEFAULT_RAW_DB_DUMP_DATABASE = "sqlite:///../out/raw_dump.sqlite3"
 
 DEFAULT_WORKFLOW_TERMINAL_COMMAND = ["cmd.exe", "/c"]
 DEFAULT_WORKFLOW_TERMINAL_INTERVAL = 1

@@ -1,0 +1,4 @@
+# folder for output of scripts or .sqlite files
+
+*
+!.gitignore

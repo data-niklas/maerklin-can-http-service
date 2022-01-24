@@ -4,13 +4,15 @@ import websockets
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm.session import sessionmaker
+
+from config_wrapper import get_settings
+
 from app.schemas.can import CANMessage as PydanticCANMessage
 from app.models.can_message import Base, ConfigMessage
 from app.models.can_message_converter import registered_models, convert_to_model
 from app.services.high_level_can_recv.converter import type_map as pydantic_type_map
 from app.schemas.can_commands import CommandSchema
 
-from config import get_settings
 settings = get_settings()
 
 HOST = settings.can_receiver_host
