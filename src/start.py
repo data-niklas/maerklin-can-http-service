@@ -11,7 +11,7 @@ FILE_DIR = os.path.dirname(os.path.realpath(__file__))
 SCRIPT_DIR = os.path.join(FILE_DIR, "app", "scripts")
 SCRIPT_POSTFIX = ".py"
 
-ASGI_SERVICES = ["raw_can_receiver", "raw_can_sender", "can_receiver", "can_sender", "can"]
+ASGI_SERVICES = ["raw_can_receiver", "raw_can_sender", "can_receiver", "can_sender", "can", "database"]
 SCRIPTS = ["dummy_central_station", "websocket_logger", "websocket_printer", "high_level_db_dump", \
     "raw_websocket_db_dump", "websocket_config_stream", "websocket_replay"]
 
