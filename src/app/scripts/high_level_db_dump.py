@@ -2,7 +2,7 @@ import asyncio
 import zlib
 import websockets
 
-from sqlalchemy import create_engine
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm.session import sessionmaker
 
 from config_wrapper import get_settings
@@ -20,6 +20,10 @@ PORT = settings.can_receiver_port
 
 DB = settings.high_level_db_dump_database
 
+engine = create_async_engine(
+    DB, connect_args={"check_same_thread": False}
+)
+SessionLocal = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
 
 async def parse_message(message):
     t = message[:message.find("{")]
@@ -34,7 +38,7 @@ async def dump(session, pydantic_abstract_message):
     abstract_model = convert_to_model(pydantic_abstract_message)
     assert abstract_model is not None
     session.add(abstract_model)
-    session.commit()
+    await session.commit()
 
 
 async def get_next_config_stream(session, connection):
@@ -54,12 +58,11 @@ async def get_next_config_stream_timeout(session, connection):
         return None
 
 
-async def create_sql_session():
-    engine = create_engine(DB)
-    for model in registered_models:
-        model.metadata.create_all(engine)
-    Session = sessionmaker(bind=engine)
-    return Session()
+async def init_db():
+    async with engine.begin() as conn:
+        for model in registered_models:
+            await conn.run_sync(model.metadata.create_all)
+    
 
 
 async def process_config_stream(session, websocket, pydantic_abstract_message):
@@ -95,17 +98,18 @@ async def process_config_stream(session, websocket, pydantic_abstract_message):
 
 
 async def main():
-    session = await create_sql_session()
+    await init_db()
     async with websockets.connect(f"ws://{HOST}:{PORT}") as websocket:
-        print("connected")
-        async for message in websocket:
-            print(message)
-            pydantic_abstract_message = await parse_message(message)
-            print(pydantic_abstract_message.get_command())
-            if pydantic_abstract_message.get_command() == CommandSchema.ConfigDataStream:
-                await process_config_stream(session, websocket, pydantic_abstract_message)
-            else:
-                await dump(session, pydantic_abstract_message)
+        async with SessionLocal() as session:
+            print("connected")
+            async for message in websocket:
+                print(message)
+                pydantic_abstract_message = await parse_message(message)
+                print(pydantic_abstract_message.get_command())
+                if pydantic_abstract_message.get_command() == CommandSchema.ConfigDataStream:
+                    await process_config_stream(session, websocket, pydantic_abstract_message)
+                else:
+                    await dump(session, pydantic_abstract_message)
 
 if __name__ == "__main__":
     asyncio.run(main())
