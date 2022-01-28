@@ -9,7 +9,7 @@ from sqlalchemy.orm import sessionmaker
 from pydantic_sqlalchemy import sqlalchemy_to_pydantic
 from odata_query.sqlalchemy import apply_odata_query
 
-from app.models.can_message import Base, LocomotiveSpeedMessage
+from app.models.can_message import Base
 from app.models.can_message_converter import registered_models
 from config import get_settings
 
