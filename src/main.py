@@ -7,6 +7,7 @@ from app.services import high_level_can_send
 from app.services import raw_can_recv
 from app.services import high_level_can_recv
 from app.services import high_level_can
+from app.services import database_read
 
 
 raw_can_sender = FastAPI()
@@ -23,3 +24,6 @@ can_receiver.include_router(high_level_can_recv.router)
 
 can = FastAPI()
 can.include_router(high_level_can.router)
+
+database = FastAPI()
+database.include_router(database_read.router)
