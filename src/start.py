@@ -9,9 +9,11 @@ settings = get_settings()
 
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))
 SCRIPT_DIR = os.path.join(FILE_DIR, "app", "scripts")
+EXTERNAL_SERVICE_DIR = os.path.join(FILE_DIR, "app", "external_services")
 SCRIPT_POSTFIX = ".py"
 
 ASGI_SERVICES = ["raw_can_receiver", "raw_can_sender", "can_receiver", "can_sender", "can", "database"]
+EXTERNAL_SERVICES = ["grafana"]
 SCRIPTS = ["dummy_central_station", "websocket_logger", "websocket_printer", "high_level_db_dump", \
     "raw_websocket_db_dump", "websocket_config_stream", "websocket_replay"]
 
@@ -32,6 +34,8 @@ python start.py _ <workflow>
 
 Routers:
 """+ ", ".join(ASGI_SERVICES) + """
+External Services:
+"""+ ", ".join(EXTERNAL_SERVICES) + """
 Scripts:
 """+ ", ".join(SCRIPTS) + """
 Workflows:
@@ -41,7 +45,7 @@ Workflows:
 active_process = None
 
 def supported_services():
-    return ASGI_SERVICES + SCRIPTS
+    return ASGI_SERVICES + SCRIPTS + EXTERNAL_SERVICES
 
 def print_help():
     print(HELP)
@@ -70,11 +74,20 @@ def start_asgi(name, spawn_new):
     command = [settings.asgi_command, f'main:{name}', f'--port={port}', f'--host={host}', '--reload']
     run(command, spawn_new)
 
+def start_external(script, spawn_new):
+    global settings
+    command = [settings.script_command, os.path.join(EXTERNAL_SERVICE_DIR, script, "__init__") + SCRIPT_POSTFIX]
+    run(command, spawn_new)
+
+
+
 def start_service(service, spawn_new=False):
     if service in SCRIPTS:
         start_script(service, spawn_new)
-    else:
+    elif service in ASGI_SERVICES:
         start_asgi(service, spawn_new)
+    else:
+        start_external(service, spawn_new)
 
 def start_workflow(workflow):
     for item in WORKFLOWS[workflow]:
