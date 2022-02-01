@@ -25,8 +25,9 @@ AUTHORIZATION_HEADER = {'Authorization': f'Bearer {API_KEY}'}
 def apply_config(port):
     os.system(f'sed -E "s/http_port = [0-9]+$/http_port = {port}/g" {CONFIG_TEMPLATE_FILE} > {CONFIG_FILE}')
 
-
+active_process = None
 def start_grafana():
+    global active_process
     active_process = subprocess.Popen(["grafana-server", "--homepath", HOMEFOLDER], stdout=subprocess.DEVNULL)
     def signal_handler(sig, frame):
         active_process.terminate()
@@ -47,21 +48,31 @@ def apply_datasource(file):
     apply_file(file, f'http://localhost:{PORT}/api/datasources', lambda data: data.replace("DBPATH", DATASOURCE_PATH))
 
 
-def apply_dashboard(file):
+def apply_dashboard(file, preprocess_cb):
     apply_file(file, f'http://localhost:{PORT}/api/dashboards/db', lambda data: """{
-            "dashboard": """ + data +  """,
+            "dashboard": """ + preprocess_cb(data) +  """,
             "overwrite": true
     }""")
 
+def scan_for_locs():
+    return list()
+
+def apply_loc(loc_id):
+    file = os.path.join(VIEWS_DIR, "loc.json")
+    apply_dashboard(file, lambda data: data.replace("LOC_ID", loc_id))
+
+
 apply_config(PORT)
 start_grafana()
+# Let grafana initialize the server
 time.sleep(2)
 
 apply_datasource(os.path.join(VIEWS_DIR, "datasource.json"))
-apply_dashboard(os.path.join(VIEWS_DIR, "general.json"))
+apply_dashboard(os.path.join(VIEWS_DIR, "general.json"), lambda data: data)
+
+for loc_id in scan_for_locs():
+    apply_loc(loc_id)
 
 
-# TODO implement applying views
-import time
-while True:
-    time.sleep(10.0)
+if active_process is not None:
+    active_process.wait()
