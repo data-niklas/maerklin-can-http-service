@@ -114,7 +114,7 @@ class SystemStopCommand(AbstractSystemCommand):
         if subcommand != SystemSubcommandSchema.SystemStop:
             return None
 
-        return SystemGoCommand(**vars(abstract_message))
+        return SystemStopCommand(**vars(abstract_message))
 
 
 class SystemGoCommand(AbstractSystemCommand):

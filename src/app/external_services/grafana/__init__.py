@@ -20,8 +20,8 @@ DATASOURCE_PATH = settings.high_level_db_dump_database.split("///")[1]
 CONFIG_FILE = os.path.join(HOMEFOLDER, "conf", "defaults.ini")
 CONFIG_TEMPLATE_FILE =  os.path.join(os.path.dirname(os.path.abspath(__file__)), "defaults.ini.template")
 VIEWS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "views")
-AUTHORIZATION_HEADER = {'Authorization': f'Bearer {API_KEY}'}
-
+AUTHORIZATION_HEADER = {'Authorization': f'Bearer {API_KEY}', 'Content-Type': 'application/json'}
+print(AUTHORIZATION_HEADER)
 def apply_config(port):
     os.system(f'sed -E "s/http_port = [0-9]+$/http_port = {port}/g" {CONFIG_TEMPLATE_FILE} > {CONFIG_FILE}')
 
@@ -41,6 +41,8 @@ def apply_file(file, url, modifier_cb):
     with open(file, 'r', encoding="utf-8") as f:
         data = f.read()
         data = modifier_cb(data)
+        print(url)
+        print(data)
         result = requests.post(url, data=data, headers=AUTHORIZATION_HEADER)
         print(result.content)
 
@@ -65,7 +67,7 @@ def apply_loc(loc_id):
 apply_config(PORT)
 start_grafana()
 # Let grafana initialize the server
-time.sleep(2)
+time.sleep(5)
 
 apply_datasource(os.path.join(VIEWS_DIR, "datasource.json"))
 apply_dashboard(os.path.join(VIEWS_DIR, "general.json"), lambda data: data)
