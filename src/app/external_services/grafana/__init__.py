@@ -14,7 +14,7 @@ PORT = settings.grafana_port
 HOMEFOLDER = settings.grafana_dir
 API_KEY = settings.grafana_api_key
 # Only works if a sqlite3 database was used and the path starts with an 'sqlite:///'
-DATASOURCE_PATH = settings.high_level_db_dump_database[10:]
+DATASOURCE_PATH = settings.high_level_db_dump_database.split("///")[1]
 
 
 CONFIG_FILE = os.path.join(HOMEFOLDER, "conf", "defaults.ini")

@@ -22,6 +22,7 @@ WORKFLOW_INTERVAL = settings.workflow_terminal_interval
 
 WORKFLOWS = dict()
 WORKFLOWS["dummy_central_station"] = ["dummy_central_station", "raw_can_receiver", "can_receiver"]
+WORKFLOWS["grafana"] = ["raw_can_receiver", "can_receiver", "high_level_db_dump", "grafana"]
 
 HELP = """A start script to run various ASGI routers and scripts, which work with the Märklin CAN interface.
 
