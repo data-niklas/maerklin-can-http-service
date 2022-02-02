@@ -3,7 +3,7 @@ pydantic==1.8.2
 websockets==10.0
 SQLAlchemy==1.4.26
 pydantic-sqlalchemy==0.0.9
-odata-query[sqlalchemy]=0.4.2
-fastapi-pagination[sqlalchemy]=0.9.1
-aiosqlite=0.17.0
-requests=2.27.1
+odata-query[sqlalchemy]==0.4.2
+fastapi-pagination[sqlalchemy]==0.9.1
+aiosqlite==0.17.0
+requests==2.27.1

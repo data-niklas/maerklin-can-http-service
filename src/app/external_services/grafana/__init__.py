@@ -43,6 +43,8 @@ def apply_file(file, url, modifier_cb):
     with open(file, 'r', encoding="utf-8") as f:
         data = f.read()
         data = modifier_cb(data)
+        print(url)
+        print(data)
         result = requests.post(url, data=data, headers=AUTHORIZATION_HEADER)
         print(result.content)
 
@@ -67,7 +69,7 @@ def apply_loc(loc_id):
 apply_config(PORT)
 start_grafana()
 # Let grafana initialize the server
-time.sleep(2)
+time.sleep(5)
 
 apply_datasource(os.path.join(VIEWS_DIR, "datasource.json"))
 apply_dashboard(os.path.join(VIEWS_DIR, "general.json"), lambda data: data)
