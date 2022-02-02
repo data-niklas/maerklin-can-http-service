@@ -14,13 +14,15 @@ PORT = settings.grafana_port
 HOMEFOLDER = settings.grafana_dir
 API_KEY = settings.grafana_api_key
 # Only works if a sqlite3 database was used and the path starts with an 'sqlite:///'
-DATASOURCE_PATH = settings.high_level_db_dump_database[10:]
+DATASOURCE_PATH = settings.high_level_db_dump_database.split("///")[1]
 
+
+CAN_LOC_URL = f"http://{settings.can_host}:{settings.can_port}/lok/list"
 
 CONFIG_FILE = os.path.join(HOMEFOLDER, "conf", "defaults.ini")
 CONFIG_TEMPLATE_FILE =  os.path.join(os.path.dirname(os.path.abspath(__file__)), "defaults.ini.template")
 VIEWS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "views")
-AUTHORIZATION_HEADER = {'Authorization': f'Bearer {API_KEY}'}
+AUTHORIZATION_HEADER = {'Authorization': f'Bearer {API_KEY}', 'Content-Type': 'application/json'}
 
 def apply_config(port):
     os.system(f'sed -E "s/http_port = [0-9]+$/http_port = {port}/g" {CONFIG_TEMPLATE_FILE} > {CONFIG_FILE}')
@@ -55,7 +57,7 @@ def apply_dashboard(file, preprocess_cb):
     }""")
 
 def scan_for_locs():
-    return list()
+    return requests.get(CAN_LOC_URL).json()
 
 def apply_loc(loc_id):
     file = os.path.join(VIEWS_DIR, "loc.json")
@@ -71,7 +73,7 @@ apply_datasource(os.path.join(VIEWS_DIR, "datasource.json"))
 apply_dashboard(os.path.join(VIEWS_DIR, "general.json"), lambda data: data)
 
 for loc_id in scan_for_locs():
-    apply_loc(loc_id)
+    apply_loc(loc_id["loc_id"])
 
 
 if active_process is not None:
