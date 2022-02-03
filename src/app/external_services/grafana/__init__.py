@@ -17,12 +17,16 @@ API_KEY = settings.grafana_api_key
 DATASOURCE_PATH = settings.high_level_db_dump_database.split("///")[1]
 
 
-CAN_LOC_URL = f"http://{settings.can_host}:{settings.can_port}/lok/list"
+CAN_BASE_URL = f"http://{settings.can_host}:{settings.can_port}/"
+CAN_GET_HASH = CAN_BASE_URL + "general/hash"
+CAN_LOC_LIST = CAN_BASE_URL + "lok/list"
 
 CONFIG_FILE = os.path.join(HOMEFOLDER, "conf", "defaults.ini")
 CONFIG_TEMPLATE_FILE =  os.path.join(os.path.dirname(os.path.abspath(__file__)), "defaults.ini.template")
 VIEWS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "views")
 AUTHORIZATION_HEADER = {'Authorization': f'Bearer {API_KEY}', 'Content-Type': 'application/json'}
+
+CAN_HASH = ""
 
 def apply_config(port):
     os.system(f'sed -E "s/http_port = [0-9]+$/http_port = {port}/g" {CONFIG_TEMPLATE_FILE} > {CONFIG_FILE}')
@@ -58,8 +62,11 @@ def apply_dashboard(file, preprocess_cb):
             "overwrite": true
     }""")
 
+def get_hash():
+    return requests.get(CAN_GET_HASH).json()
+
 def scan_for_locs():
-    return requests.get(CAN_LOC_URL).json()
+    return requests.get(CAN_LOC_LIST, headers={'x-can-hash': CAN_HASH}).json()
 
 def apply_loc(loc_id):
     file = os.path.join(VIEWS_DIR, "loc.json")
@@ -74,6 +81,7 @@ time.sleep(5)
 apply_datasource(os.path.join(VIEWS_DIR, "datasource.json"))
 apply_dashboard(os.path.join(VIEWS_DIR, "general.json"), lambda data: data)
 
+CAN_HASH = get_hash()
 for loc_id in scan_for_locs():
     apply_loc(loc_id["loc_id"])
 
