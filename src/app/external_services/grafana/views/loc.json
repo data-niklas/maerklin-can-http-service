@@ -92,13 +92,14 @@
             "type": "frser-sqlite-datasource",
             "uid": "yyAw0-bnz"
           },
-          "queryText": "SELECT timestamp, speed FROM locomotive_speed  WHERE loc_id = LOC_ID",
+          "queryText": "SELECT timestamp_iso, speed FROM locomotive_speed  WHERE loc_id = LOC_ID",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp, speed FROM locomotive_speed  WHERE loc_id = LOC_ID",
+          "rawQueryText": "SELECT timestamp_iso, speed FROM locomotive_speed  WHERE loc_id = LOC_ID",
           "refId": "A",
           "timeColumns": [
             "time",
-            "ts"
+            "ts",
+            "timestamp_iso"
           ]
         }
       ],
@@ -180,13 +181,14 @@
             "uid": "yyAw0-bnz"
           },
           "hide": false,
-          "queryText": "SELECT timestamp, speed FROM locomotive_speed WHERE loc_id = LOC_ID",
+          "queryText": "SELECT timestamp_iso, speed FROM locomotive_speed WHERE loc_id = LOC_ID",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp, speed FROM locomotive_speed WHERE loc_id = LOC_ID",
+          "rawQueryText": "SELECT timestamp_iso, speed FROM locomotive_speed WHERE loc_id = LOC_ID",
           "refId": "A",
           "timeColumns": [
             "time",
-            "ts"
+            "ts",
+            "timestamp_iso"
           ]
         }
       ],
@@ -196,11 +198,6 @@
           "id": "convertFieldType",
           "options": {
             "conversions": [
-              {
-                "dateFormat": "YYYY-MM-DD HH:mm:ss.SSS",
-                "destinationType": "time",
-                "targetField": "timestamp"
-              }
             ],
             "fields": {}
           }
@@ -272,13 +269,14 @@
             "type": "frser-sqlite-datasource",
             "uid": "yyAw0-bnz"
           },
-          "queryText": "SELECT timestamp, direction FROM locomotive_direction  WHERE loc_id = LOC_ID",
+          "queryText": "SELECT timestamp_iso, direction FROM locomotive_direction  WHERE loc_id = LOC_ID",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp, direction FROM locomotive_direction  WHERE loc_id = LOC_ID",
+          "rawQueryText": "SELECT timestamp_iso, direction FROM locomotive_direction  WHERE loc_id = LOC_ID",
           "refId": "A",
           "timeColumns": [
             "time",
-            "ts"
+            "ts",
+            "timestamp_iso"
           ]
         }
       ],

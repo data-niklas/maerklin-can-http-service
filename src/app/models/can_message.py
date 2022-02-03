@@ -20,15 +20,17 @@ Base = declarative_base()
 class AbstractCANMessage(Base):
     __abstract__ = True
     timestamp = Column(DateTime, primary_key=True)
+    timestamp_iso = Column(Text, primary_key=True)
     hash_value = Column(Integer, primary_key=True)
     response = Column(Boolean, primary_key=True)
 
     def from_schema(can_message):
         timestamp = datetime.now()
+        timestamp_iso = datetime.now().isoformat() + "Z"
         hash_value = can_message.hash_value
         response = can_message.response
 
-        return AbstractCANMessage(timestamp=timestamp, hash_value=hash_value, response=response)
+        return AbstractCANMessage(timestamp=timestamp, timestamp_iso=timestamp_iso, hash_value=hash_value, response=response)
 
 
 class AbstractLocomotiveMessage(AbstractCANMessage):

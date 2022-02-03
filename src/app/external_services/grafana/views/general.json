@@ -110,31 +110,19 @@
               "type": "frser-sqlite-datasource",
               "uid": "yyAw0-bnz"
             },
-            "queryText": "SELECT timestamp, CASE\n    WHEN state == \"go\" THEN 100\n    WHEN state == \"stop\" THEN 0\n    WHEN state == \"halt\" THEN 50\nEND AS state\nFROM system_state",
+            "queryText": "SELECT timestamp_iso, CASE\n    WHEN state == \"go\" THEN 100\n    WHEN state == \"stop\" THEN 0\n    WHEN state == \"halt\" THEN 50\nEND AS state\nFROM system_state",
             "queryType": "table",
-            "rawQueryText": "SELECT timestamp, CASE\n    WHEN state == \"go\" THEN 100\n    WHEN state == \"stop\" THEN 0\n    WHEN state == \"halt\" THEN 50\nEND AS state\nFROM system_state",
+            "rawQueryText": "SELECT timestamp_iso, CASE\n    WHEN state == \"go\" THEN 100\n    WHEN state == \"stop\" THEN 0\n    WHEN state == \"halt\" THEN 50\nEND AS state\nFROM system_state",
             "refId": "A",
             "timeColumns": [
               "time",
-              "ts"
+              "ts",
+              "timestamp_iso"
             ]
           }
         ],
         "title": "Current",
         "transformations": [
-          {
-            "id": "convertFieldType",
-            "options": {
-              "conversions": [
-                {
-                  "dateFormat": "YYYY-MM-DD HH:mm:ss.SSS",
-                  "destinationType": "time",
-                  "targetField": "timestamp"
-                }
-              ],
-              "fields": {}
-            }
-          }
         ],
         "type": "gauge"
       },
@@ -170,13 +158,14 @@
               "type": "frser-sqlite-datasource",
               "uid": "yyAw0-bnz"
             },
-            "queryText": "SELECT timestamp, CASE\n    WHEN state == \"go\" THEN 100\n    WHEN state == \"stop\" THEN 0\n    WHEN state == \"halt\" THEN 50\nEND AS state\nFROM system_state",
+            "queryText": "SELECT timestamp_iso, CASE\n    WHEN state == \"go\" THEN 100\n    WHEN state == \"stop\" THEN 0\n    WHEN state == \"halt\" THEN 50\nEND AS state\nFROM system_state",
             "queryType": "table",
-            "rawQueryText": "SELECT timestamp, CASE\n    WHEN state == \"go\" THEN 100\n    WHEN state == \"stop\" THEN 0\n    WHEN state == \"halt\" THEN 50\nEND AS state\nFROM system_state",
+            "rawQueryText": "SELECT timestamp_iso, CASE\n    WHEN state == \"go\" THEN 100\n    WHEN state == \"stop\" THEN 0\n    WHEN state == \"halt\" THEN 50\nEND AS state\nFROM system_state",
             "refId": "A",
             "timeColumns": [
               "time",
-              "ts"
+              "ts",
+              "timestamp_iso"
             ]
           }
         ],
@@ -240,31 +229,19 @@
               "type": "frser-sqlite-datasource",
               "uid": "yyAw0-bnz"
             },
-            "queryText": "SELECT timestamp,config FROM config",
+            "queryText": "SELECT timestamp_iso,config FROM config",
             "queryType": "table",
-            "rawQueryText": "SELECT timestamp,config FROM config",
+            "rawQueryText": "SELECT timestamp_iso,config FROM config",
             "refId": "A",
             "timeColumns": [
               "time",
-              "ts"
+              "ts",
+              "timestamp_iso"
             ]
           }
         ],
         "title": "Config Updates",
         "transformations": [
-          {
-            "id": "convertFieldType",
-            "options": {
-              "conversions": [
-                {
-                  "dateFormat": "YYYY-MM-DD HH:mm:ss.SSS",
-                  "destinationType": "time",
-                  "targetField": "timestamp"
-                }
-              ],
-              "fields": {}
-            }
-          }
         ],
         "type": "logs"
       },
@@ -309,11 +286,6 @@
             "options": {
               "conversions": [
                 {
-                  "dateFormat": "YYYY-MM-DD HH:mm:ss.SSS",
-                  "destinationType": "time",
-                  "targetField": "timestamp"
-                },
-                {
                   "destinationType": "string",
                   "targetField": "hash_value"
                 }
@@ -348,13 +320,14 @@
               "type": "frser-sqlite-datasource",
               "uid": "yyAw0-bnz"
             },
-            "queryText": "SELECT timestamp,contact_id,hash_value,response,device_id,state_old,state_new FROM s88_event",
+            "queryText": "SELECT timestamp_iso,contact_id,hash_value,response,device_id,state_old,state_new FROM s88_event",
             "queryType": "table",
-            "rawQueryText": "SELECT timestamp,contact_id,hash_value,response,device_id,state_old,state_new FROM s88_event",
+            "rawQueryText": "SELECT timestamp_iso,contact_id,hash_value,response,device_id,state_old,state_new FROM s88_event",
             "refId": "A",
             "timeColumns": [
               "time",
-              "ts"
+              "ts",
+              "timestamp_iso"
             ]
           }
         ],
@@ -364,11 +337,6 @@
             "id": "convertFieldType",
             "options": {
               "conversions": [
-                {
-                  "dateFormat": "YYYY-MM-DD HH:mm:ss.SSS",
-                  "destinationType": "time",
-                  "targetField": "timestamp"
-                },
                 {
                   "destinationType": "string",
                   "targetField": "contact_id"
