@@ -63,7 +63,7 @@ def apply_dashboard(file, preprocess_cb):
     }""")
 
 def get_hash():
-    return requests.get(CAN_GET_HASH).json()
+    return str(requests.get(CAN_GET_HASH).json())
 
 def scan_for_locs():
     return requests.get(CAN_LOC_LIST, headers={'x-can-hash': CAN_HASH}).json()
@@ -83,7 +83,7 @@ apply_dashboard(os.path.join(VIEWS_DIR, "general.json"), lambda data: data)
 
 CAN_HASH = get_hash()
 for loc_id in scan_for_locs():
-    apply_loc(loc_id["loc_id"])
+    apply_loc(str(loc_id["loc_id"]))
 
 
 if active_process is not None:
