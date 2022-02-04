@@ -141,6 +141,7 @@ class S88PollingMessage(AbstractLocomotiveMessage):
 
         return S88PollingMessage(module_count=module_count, module=module, state=state, **vars(locomotive_message))
 
+
 class ReadConfigMessage(AbstractLocomotiveMessage):
     __mapper_args__ = {
         'concrete': True
@@ -162,6 +163,7 @@ class ReadConfigMessage(AbstractLocomotiveMessage):
         value = can_message.value
 
         return ReadConfigMessage(index=index, number=number, count=count, value=value, **vars(locomotive_message))
+
 
 class WriteConfigMessage(AbstractLocomotiveMessage):
     __mapper_args__ = {
@@ -225,7 +227,7 @@ class SystemStateMessage(AbstractSystemMessage):
         if not can_message.get_command() == CommandSchema.SystemCommand:
             return None
         sub_command = can_message.get_subcommand()
-        if not sub_command in  [SystemSubcommandSchema.SystemStop, SystemSubcommandSchema.SystemGo, SystemSubcommandSchema.SystemHalt]:
+        if not sub_command in [SystemSubcommandSchema.SystemStop, SystemSubcommandSchema.SystemGo, SystemSubcommandSchema.SystemHalt]:
             return None
 
         abstract_message = AbstractSystemMessage.from_schema(can_message)
@@ -258,6 +260,7 @@ class LocomotiveEmergencyStopMessage(AbstractSystemMessage):
 
         return LocomotiveEmergencyStopMessage(**vars(abstract_message))
 
+
 class LocomotiveCycleStopMessage(AbstractSystemMessage):
     __mapper_args__ = {
         'concrete': True
@@ -274,12 +277,14 @@ class LocomotiveCycleStopMessage(AbstractSystemMessage):
 
         return LocomotiveCycleStopMessage(**vars(abstract_message))
 
+
 class LocomotiveDataProtocolMessage(AbstractSystemMessage):
     __mapper_args__ = {
         'concrete': True
     }
     __tablename__ = 'locomotive_data_protocol'
     protocol = Column(Text, nullable=False)
+
     def from_schema(can_message):
         if not can_message.get_command() == CommandSchema.SystemCommand:
             return None
@@ -288,7 +293,8 @@ class LocomotiveDataProtocolMessage(AbstractSystemMessage):
 
         abstract_message = AbstractSystemMessage.from_schema(can_message)
         protocol = can_message.protocol.value
-        return LocomotiveDataProtocolMessage(protocol=protocol,**vars(abstract_message))
+        return LocomotiveDataProtocolMessage(protocol=protocol, **vars(abstract_message))
+
 
 class AccessoryDecoderSwitchingTimeMessage(AbstractSystemMessage):
     __mapper_args__ = {
@@ -296,6 +302,7 @@ class AccessoryDecoderSwitchingTimeMessage(AbstractSystemMessage):
     }
     __tablename__ = 'accessory_decoder_switching_time'
     time = Column(Integer, nullable=False)
+
     def from_schema(can_message):
         if not can_message.get_command() == CommandSchema.SystemCommand:
             return None
@@ -304,7 +311,8 @@ class AccessoryDecoderSwitchingTimeMessage(AbstractSystemMessage):
 
         abstract_message = AbstractSystemMessage.from_schema(can_message)
         time = can_message.time
-        return AccessoryDecoderSwitchingTimeMessage(time=time,**vars(abstract_message))
+        return AccessoryDecoderSwitchingTimeMessage(time=time, **vars(abstract_message))
+
 
 class MfxFastReadMessage(AbstractSystemMessage):
     __mapper_args__ = {
@@ -312,6 +320,7 @@ class MfxFastReadMessage(AbstractSystemMessage):
     }
     __tablename__ = 'mfx_fast_read'
     mfx_sid = Column(Integer, nullable=False)
+
     def from_schema(can_message):
         if not can_message.get_command() == CommandSchema.SystemCommand:
             return None
@@ -320,7 +329,8 @@ class MfxFastReadMessage(AbstractSystemMessage):
 
         abstract_message = AbstractSystemMessage.from_schema(can_message)
         mfx_sid = can_message.mfx_sid
-        return MfxFastReadMessage(mfx_sid=mfx_sid,**vars(abstract_message))
+        return MfxFastReadMessage(mfx_sid=mfx_sid, **vars(abstract_message))
+
 
 class EnableRailProtocolCommand(AbstractSystemMessage):
     __mapper_args__ = {
@@ -328,6 +338,7 @@ class EnableRailProtocolCommand(AbstractSystemMessage):
     }
     __tablename__ = 'enable_rail_protocol'
     bitset = Column(Integer, nullable=False)
+
     def from_schema(can_message):
         if not can_message.get_command() == CommandSchema.SystemCommand:
             return None
@@ -336,7 +347,8 @@ class EnableRailProtocolCommand(AbstractSystemMessage):
 
         abstract_message = AbstractSystemMessage.from_schema(can_message)
         bitset = can_message.bitset
-        return EnableRailProtocolCommand(bitset=bitset,**vars(abstract_message))
+        return EnableRailProtocolCommand(bitset=bitset, **vars(abstract_message))
+
 
 class SetMfxRegisterCounterMessage(AbstractSystemMessage):
     __mapper_args__ = {
@@ -344,6 +356,7 @@ class SetMfxRegisterCounterMessage(AbstractSystemMessage):
     }
     __tablename__ = 'set_mfx_register_counter'
     counter = Column(Integer, nullable=False)
+
     def from_schema(can_message):
         if not can_message.get_command() == CommandSchema.SystemCommand:
             return None
@@ -352,7 +365,8 @@ class SetMfxRegisterCounterMessage(AbstractSystemMessage):
 
         abstract_message = AbstractSystemMessage.from_schema(can_message)
         counter = can_message.counter
-        return SetMfxRegisterCounterMessage(counter=counter,**vars(abstract_message))
+        return SetMfxRegisterCounterMessage(counter=counter, **vars(abstract_message))
+
 
 class SystemOverloadMessage(AbstractSystemMessage):
     __mapper_args__ = {
@@ -360,6 +374,7 @@ class SystemOverloadMessage(AbstractSystemMessage):
     }
     __tablename__ = 'system_overload'
     channel = Column(Integer, nullable=False)
+
     def from_schema(can_message):
         if not can_message.get_command() == CommandSchema.SystemCommand:
             return None
@@ -368,7 +383,8 @@ class SystemOverloadMessage(AbstractSystemMessage):
 
         abstract_message = AbstractSystemMessage.from_schema(can_message)
         channel = can_message.channel
-        return SystemOverloadMessage(channel=channel,**vars(abstract_message))
+        return SystemOverloadMessage(channel=channel, **vars(abstract_message))
+
 
 class SystemStatusMessage(AbstractSystemMessage):
     __mapper_args__ = {
@@ -377,6 +393,7 @@ class SystemStatusMessage(AbstractSystemMessage):
     __tablename__ = 'system_status'
     channel = Column(Integer, nullable=False)
     measured_value = Column(Integer)
+
     def from_schema(can_message):
         if not can_message.get_command() == CommandSchema.SystemCommand:
             return None
@@ -386,7 +403,8 @@ class SystemStatusMessage(AbstractSystemMessage):
         abstract_message = AbstractSystemMessage.from_schema(can_message)
         channel = can_message.channel
         measured_value = can_message.measured_value
-        return SystemStatusMessage(channel=channel, measured_value=measured_value,**vars(abstract_message))
+        return SystemStatusMessage(channel=channel, measured_value=measured_value, **vars(abstract_message))
+
 
 class SetSystemIdentifierMessage(AbstractSystemMessage):
     __mapper_args__ = {
@@ -394,6 +412,7 @@ class SetSystemIdentifierMessage(AbstractSystemMessage):
     }
     __tablename__ = 'set_system_identifier'
     system_id = Column(Integer)
+
     def from_schema(can_message):
         if not can_message.get_command() == CommandSchema.SystemCommand:
             return None
@@ -402,13 +421,15 @@ class SetSystemIdentifierMessage(AbstractSystemMessage):
 
         abstract_message = AbstractSystemMessage.from_schema(can_message)
         system_id = can_message.system_id
-        return SetSystemIdentifierMessage(system_id=system_id,**vars(abstract_message))
+        return SetSystemIdentifierMessage(system_id=system_id, **vars(abstract_message))
+
 
 class MfxSeekMessage(AbstractSystemMessage):
     __mapper_args__ = {
         'concrete': True
     }
     __tablename__ = 'mfx_seek'
+
     def from_schema(can_message):
         if not can_message.get_command() == CommandSchema.SystemCommand:
             return None
@@ -418,12 +439,14 @@ class MfxSeekMessage(AbstractSystemMessage):
         abstract_message = AbstractSystemMessage.from_schema(can_message)
         return MfxSeekMessage(**vars(abstract_message))
 
+
 class SystemResetMessage(AbstractSystemMessage):
     __mapper_args__ = {
         'concrete': True
     }
     __tablename__ = 'system_reset'
     target = Column(Integer, primary_key=True)
+
     def from_schema(can_message):
         if not can_message.get_command() == CommandSchema.SystemCommand:
             return None
@@ -432,8 +455,7 @@ class SystemResetMessage(AbstractSystemMessage):
 
         abstract_message = AbstractSystemMessage.from_schema(can_message)
         target = can_message.target
-        return SystemResetMessage(target=target,**vars(abstract_message))
-
+        return SystemResetMessage(target=target, **vars(abstract_message))
 
 
 class ConfigMessage(AbstractCANMessage):
@@ -452,6 +474,101 @@ class ConfigMessage(AbstractCANMessage):
             base_pydantic_message)
         return ConfigMessage(config=data, length=length, **vars(abstract_message))
 
+
+class ConfigUsageMessage(AbstractCANMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'config_usage'
+    mfxuid = Column(Integer, nullable=False)
+    maxFuelA = Column(Integer, nullable=False)
+    maxFuelB = Column(Integer, nullable=False)
+    maxSand = Column(Integer, nullable=False)
+    faktorFuelA = Column(Integer, nullable=False)
+    fuelA = Column(Integer)
+    fuelB = Column(Integer)
+    sand = Column(Integer)
+    alter = Column(Integer)
+
+    def from_schema(abstract_pydantic_message):
+        return None
+
+    def from_message(obj, base_pydantic_message):
+        abstract_message = AbstractCANMessage.from_schema(
+            base_pydantic_message)
+        lok = obj["lok"]
+        mfxuid = int(lok["mfxuid"], 0)
+        maxFuelA = int(lok["maxFuelA"], 0)
+        maxFuelB = int(lok["maxFuelB"], 0)
+        maxSand = int(lok["maxSand"], 0)
+        faktorFuelA = int(lok["faktorFuelA"], 0)
+        fuelA = int(lok["fuelA"], 0)
+        fuelB = int(lok["fuelB"], 0)
+        sand = int(lok["sand"], 0)
+        alter = int(lok["alter"], 0)
+        return ConfigUsageMessage(mfxuid=mfxuid, maxFuelA=maxFuelA, maxFuelB=maxFuelB, maxSand=maxSand, faktorFuelA=faktorFuelA, fuelA=fuelA, fuelB=fuelB, sand=sand, alter=alter, **vars(abstract_message))
+
+
+class ConfigLocomotiveMessage(AbstractCANMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'config_locomotive'
+    name = Column(Text, nullable=False)
+    vorname = Column(Text, nullable=False)
+    uid = Column(Integer, nullable=False)
+    mfxuid = Column(Integer, nullable=False)
+    adresse = Column(Integer, nullable=False)
+    icon = Column(Text, nullable=False)
+    typ = Column(Text, nullable=False)
+    sid = Column(Integer, nullable=False)
+    symbol = Column(Integer, nullable=False)
+    tachomax = Column(Integer, nullable=False)
+    vmax = Column(Integer, nullable=False)
+    vmin = Column(Integer, nullable=False)
+    av = Column(Integer, nullable=False)
+    bv = Column(Integer, nullable=False)
+    volume = Column(Integer, nullable=False)
+    spa = Column(Integer, nullable=False)
+    spm = Column(Integer, nullable=False)
+    ft = Column(Integer, nullable=False)
+    velocity = Column(Integer, nullable=False)
+    richtung = Column(Integer, nullable=False)
+    mfxtyp = Column(Integer, nullable=False)
+    blocks = Column(Text, nullable=False)
+
+    def from_schema(abstract_pydantic_message):
+        return None
+
+    def from_message(obj, base_pydantic_message):
+        abstract_message = AbstractCANMessage.from_schema(
+            base_pydantic_message)
+        lok = obj["lok"]
+        name = lok["name"]
+        vorname = lok["vorname"]
+        uid = int(lok["uid"], 0)
+        mfxuid = int(lok["mfxuid"], 0)
+        adresse = int(lok["adresse"], 0)
+        icon = lok["icon"]
+        typ = lok["typ"]
+        sid = int(lok["sid"], 0)
+        symbol = int(lok["symbol"], 0)
+        tachomax = int(lok["tachomax"], 0)
+        vmax = int(lok["vmax"], 0)
+        vmin = int(lok["vmin"], 0)
+        av = int(lok["av"], 0)
+        bv = int(lok["bv"], 0)
+        volume = int(lok["volume"], 0)
+        spa = int(lok["spa"], 0)
+        spm = int(lok["spm"], 0)
+        ft = int(lok["ft"], 0)
+        velocity = int(lok["velocity"], 0)
+        richtung = int(lok["richtung"], 0)
+        mfxtyp = int(lok["mfxtyp"], 0)
+        blocks = lok["blocks"]
+        return ConfigLocomotiveMessage(name=name, vorname=vorname, uid=uid, mfxuid=mfxuid, adresse=adresse, icon=icon, typ=typ, sid=sid, symbol=symbol, tachomax=tachomax, vmax=vmax, vmin=vmin, av=av, bv=bv, volume=volume, spa=spa, spm=spm, ft=ft, velocity=velocity, richtung=richtung, mfxtyp=mfxtyp, blocks=blocks, **vars(abstract_message))
+
+
 class RequestConfigDataMessage(AbstractCANMessage):
     __mapper_args__ = {
         'concrete': True
@@ -465,7 +582,8 @@ class RequestConfigDataMessage(AbstractCANMessage):
 
         abstract_message = AbstractCANMessage.from_schema(can_message)
         filename = can_message.filename
-        return RequestConfigDataMessage(filename=filename,**vars(abstract_message))
+        return RequestConfigDataMessage(filename=filename, **vars(abstract_message))
+
 
 class ParticipantPingMessage(AbstractCANMessage):
     __mapper_args__ = {
@@ -487,6 +605,7 @@ class ParticipantPingMessage(AbstractCANMessage):
         device_id = can_message.device_id
 
         return ParticipantPingMessage(sender_id=sender_id, software_version=software_version, device_id=device_id, **vars(abstract_message))
+
 
 class LocomotiveDiscoveryMessage(AbstractCANMessage):
     __mapper_args__ = {
@@ -513,6 +632,7 @@ class LocomotiveDiscoveryMessage(AbstractCANMessage):
 
         return LocomotiveDiscoveryMessage(loc_id=loc_id, protocol=protocol, mfx_range=mfx_range, ask_ratio=ask_ratio, **vars(abstract_message))
 
+
 class S88EventMessage(AbstractCANMessage):
     __mapper_args__ = {
         'concrete': True
@@ -538,6 +658,7 @@ class S88EventMessage(AbstractCANMessage):
 
         return S88EventMessage(device_id=device_id, contact_id=contact_id, state_old=state_old, state_new=state_new, time=time, **vars(abstract_message))
 
+
 class ServiceStatusDataConfigurationMessage(AbstractCANMessage):
     __mapper_args__ = {
         'concrete': True
@@ -560,7 +681,8 @@ class ServiceStatusDataConfigurationMessage(AbstractCANMessage):
         data = can_message.data
 
         return ServiceStatusDataConfigurationMessage(device_id=device_id, index=index, count=count, data=data, **vars(abstract_message))
-        
+
+
 class BootloaderCANBoundMessage(AbstractCANMessage):
     __mapper_args__ = {
         'concrete': True
@@ -579,7 +701,6 @@ class BootloaderCANBoundMessage(AbstractCANMessage):
         return BootloaderCANBoundMessage(data=data, **vars(abstract_message))
 
 
-
 class AbstractMfxMessage(AbstractCANMessage):
     __abstract__ = True
     mfx_uid = Column(Integer, primary_key=True)
@@ -590,7 +711,8 @@ class AbstractMfxMessage(AbstractCANMessage):
         mfx_uid = can_message.mfx_uid
         mfx_sid = can_message.mfx_sid
         return AbstractMfxMessage(mfx_uid=mfx_uid, mfx_sid=mfx_sid, **vars(abstract_message))
-        
+
+
 class MfxBindMessage(AbstractMfxMessage):
     __tablename__ = 'mfx_bind'
 
@@ -603,7 +725,6 @@ class MfxBindMessage(AbstractMfxMessage):
         return MfxBindMessage(**vars(abstract_message))
 
 
-        
 class MfxVerifyMessage(AbstractMfxMessage):
     __mapper_args__ = {
         'concrete': True
@@ -617,6 +738,4 @@ class MfxVerifyMessage(AbstractMfxMessage):
 
         abstract_message = AbstractMfxMessage.from_schema(can_message)
         ask_ratio = can_message.ask_ratio
-        return MfxVerifyMessage(ask_ratio = ask_ratio, **vars(abstract_message))
-
-
+        return MfxVerifyMessage(ask_ratio=ask_ratio, **vars(abstract_message))

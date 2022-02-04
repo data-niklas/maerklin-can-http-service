@@ -68,10 +68,14 @@ def get_hash():
 def scan_for_locs():
     return requests.get(CAN_LOC_LIST, headers={'x-can-hash': CAN_HASH}).json()
 
-def apply_loc(loc_id):
+def apply_loc(loc):
     file = os.path.join(VIEWS_DIR, "loc.json")
-    apply_dashboard(file, lambda data: data.replace("LOC_ID", loc_id))
+    apply_dashboard(file, lambda data: data.replace("LOC_ID", str(loc_id["loc_id"])).replace("LOC_NAME", str(loc_id["name"])))
 
+
+def update():
+    for loc in scan_for_locs():
+        apply_loc(loc)
 
 apply_config(PORT)
 start_grafana()
@@ -82,9 +86,6 @@ apply_datasource(os.path.join(VIEWS_DIR, "datasource.json"))
 apply_dashboard(os.path.join(VIEWS_DIR, "general.json"), lambda data: data)
 
 CAN_HASH = get_hash()
-for loc_id in scan_for_locs():
-    apply_loc(str(loc_id["loc_id"]))
-
-
-if active_process is not None:
-    active_process.wait()
+while True:
+    update()
+    time.sleep(300)

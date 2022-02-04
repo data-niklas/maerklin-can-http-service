@@ -297,7 +297,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Loc LOC_ID",
+  "title": "LOC_NAME - LOC_ID",
   "uid": "locLOC_ID",
   "version": 2,
   "weekStart": ""

@@ -25,6 +25,8 @@ registered_models.extend([
     S88PollingMessage,
     S88EventMessage,
     ConfigMessage,
+    ConfigUsageMessage,
+    ConfigLocomotiveMessage,
     ParticipantPingMessage,
     LocomotiveDiscoveryMessage,
     ServiceStatusDataConfigurationMessage,

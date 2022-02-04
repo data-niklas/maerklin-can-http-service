@@ -8,10 +8,11 @@ from sqlalchemy.orm.session import sessionmaker
 from config_wrapper import get_settings
 
 from app.schemas.can import CANMessage as PydanticCANMessage
-from app.models.can_message import Base, ConfigMessage
+from app.models.can_message import Base, ConfigMessage, ConfigUsageMessage
 from app.models.can_message_converter import registered_models, convert_to_model
 from app.services.high_level_can_recv.converter import type_map as pydantic_type_map
 from app.schemas.can_commands import CommandSchema
+from app.services.high_level_can.helper import parse_config
 
 settings = get_settings()
 
@@ -24,6 +25,10 @@ engine = create_async_engine(
     DB, connect_args={"check_same_thread": False}
 )
 SessionLocal = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
+
+config_message_dict = dict()
+config_message_dict["[verbrauch]"] = ConfigUsageMessage
+config_message_dict["[lokomotive]"] = ConfigLocomotiveMessage
 
 async def parse_message(message):
     t = message[:message.find("{")]
@@ -65,6 +70,19 @@ async def init_db():
     
 
 
+async def save_config_message(session, data, length, pydantic_abstract_message):
+    global config_message_dict
+    _, config_obj = parse_config(data)
+
+    for message_type in config_message_dict:
+        if message_type in config_obj:
+            session.add(config_message_dict[message_type].from_message(config_obj[message_type], pydantic_abstract_message))
+            return
+
+    # fallback
+    session.add(ConfigMessage.from_message(
+        data, length, pydantic_abstract_message))
+
 async def process_config_stream(session, websocket, pydantic_abstract_message):
     if pydantic_abstract_message.file_length is None:
         return
@@ -93,8 +111,8 @@ async def process_config_stream(session, websocket, pydantic_abstract_message):
     except Exception as e:
         pass
 
-    session.add(ConfigMessage.from_message(
-        data, length, pydantic_abstract_message))
+    await save_config_message(session, data, length, pydantic_abstract_message)
+
 
 
 async def main():
