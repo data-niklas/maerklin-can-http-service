@@ -6,7 +6,7 @@ from sqlalchemy import (
     Text,
 )
 from sqlalchemy.ext.declarative import declarative_base
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List
 
 from app.schemas.can import Command
@@ -25,8 +25,9 @@ class AbstractCANMessage(Base):
     response = Column(Boolean, primary_key=True)
 
     def from_schema(can_message):
-        timestamp = datetime.now()
-        timestamp_iso = datetime.now().isoformat() + "Z"
+        current_date = datetime.now(timezone.utc).astimezone()
+        timestamp = current_date
+        timestamp_iso = current_date.isoformat().replace("+", "Z")
         hash_value = can_message.hash_value
         response = can_message.response
 
