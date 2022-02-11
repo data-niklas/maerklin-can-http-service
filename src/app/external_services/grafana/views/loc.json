@@ -25,6 +25,22 @@
   "liveNow": false,
   "panels": [
     {
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 0,
+        "y": 0
+      },
+      "id": 12,
+      "options": {
+        "content": "# LOC_NAME",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.4.0-pre",
+      "title": "Name",
+      "type": "text"
+    },
+    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
@@ -281,6 +297,202 @@
         }
       ],
       "title": "Loc Direction",
+      "type": "gauge"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "id": 14,
+      "panels": [],
+      "title": "Usage",
+      "type": "row"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": LOC_FUELA_MAX,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 0,
+        "y": 18
+      },
+      "id": 16,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "8.4.0-pre",
+      "targets": [
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "yyAw0-bnz"
+          },
+          "queryText": "SELECT timestamp_iso,  fuelA FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "queryType": "table",
+          "rawQueryText": "SELECT timestamp_iso,  fuelA FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "refId": "A",
+          "timeColumns": [
+            "time",
+            "ts",
+            "timestamp_iso"
+          ]
+        }
+      ],
+      "title": "Fuel 1",
+      "type": "gauge"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": LOC_FUELB_MAX,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 3,
+        "y": 18
+      },
+      "id": 17,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "8.4.0-pre",
+      "targets": [
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "yyAw0-bnz"
+          },
+          "queryText": "SELECT timestamp_iso,  fuelB FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "queryType": "table",
+          "rawQueryText": "SELECT timestamp_iso,  fuelB FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "refId": "A",
+          "timeColumns": [
+            "time",
+            "ts",
+            "timestamp_iso"
+          ]
+        }
+      ],
+      "title": "Fuel 2",
+      "type": "gauge"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": LOC_SAND_MAX,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 6,
+        "y": 18
+      },
+      "id": 18,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "8.4.0-pre",
+      "targets": [
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "yyAw0-bnz"
+          },
+          "queryText": "SELECT timestamp_iso,  sand FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "queryType": "table",
+          "rawQueryText": "SELECT timestamp_iso,  sand FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "refId": "A",
+          "timeColumns": [
+            "time",
+            "ts",
+            "timestamp_iso"
+          ]
+        }
+      ],
+      "title": "Sand",
       "type": "gauge"
     }
   ],

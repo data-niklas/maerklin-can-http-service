@@ -4,6 +4,7 @@ import subprocess
 import signal
 import requests
 import time
+from requests.utils import requote_uri
 # Plugins needed: grafana-cli --pluginUrl https://github.com/cloudspout/cloudspout-button-panel/releases/download/7.0.23/cloudspout-button-panel.zip plugins install cloudspout-button-panel
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
 from config import get_settings
@@ -20,6 +21,9 @@ DATASOURCE_PATH = settings.high_level_db_dump_database.split("///")[1]
 CAN_BASE_URL = f"http://{settings.can_host}:{settings.can_port}/"
 CAN_GET_HASH = CAN_BASE_URL + "general/hash"
 CAN_LOC_LIST = CAN_BASE_URL + "lok/list"
+
+DATABASE_PORT = settings.database_port
+DATABASE_HOST = settings.database_host
 
 CONFIG_FILE = os.path.join(HOMEFOLDER, "conf", "defaults.ini")
 CONFIG_TEMPLATE_FILE =  os.path.join(os.path.dirname(os.path.abspath(__file__)), "defaults.ini.template")
@@ -68,14 +72,51 @@ def get_hash():
 def scan_for_locs():
     return requests.get(CAN_LOC_LIST, headers={'x-can-hash': CAN_HASH}).json()
 
-def apply_loc(loc):
+def apply_loc(loc, maxFuelA, maxFuelB, maxSand):
     file = os.path.join(VIEWS_DIR, "loc.json")
-    apply_dashboard(file, lambda data: data.replace("LOC_ID", str(loc_id["loc_id"])).replace("LOC_NAME", str(loc_id["name"])))
+    loc_map = dict()
+    loc_map["LOC_ID"] = str(loc["loc_id"])
+    loc_map["LOC_MFXUID"] = str(loc["mfxuid"])
+    loc_map["LOC_NAME"] = loc["vorname"] + " " + loc["name"]
+    loc_map["LOC_FUELA_MAX"] = str(maxFuelA)
+    loc_map["LOC_FUELB_MAX"] = str(maxFuelA)
+    loc_map["LOC_SAND_MAX"] = str(maxSand)
+
+    def map_data(data):
+        for k in loc_map:
+            data = data.replace(k, loc_map[k])
+        return data
+    apply_dashboard(file, map_data)
+
+DEFAULT_FUELA_MAX = 100
+DEFAULT_FUELB_MAX = 100
+DEFAULT_SAND_MAX = 100
+
+def read_lok_usage(mfxuid):
+    filter = requote_uri(f'mfxuid eq {mfxuid}')
+    url = f'http://{DATABASE_HOST}:{DATABASE_PORT}/getConfigUsageMessage?filter={filter}&limit=1'
+    usage_data = requests.get(url).json()
+    if usage_data.total == 0:
+        return DEFAULT_FUELA_MAX, DEFAULT_FUELB_MAX, DEFAULT_SAND_MAX
+    
+    maxFuelA = usage_data.items[0].maxFuelA
+    maxFuelB = usage_data.items[0].maxFuelB
+    maxSand = usage_data.items[0].maxSand
+
+    if maxFuelA is None:
+        maxFuelA = DEFAULT_FUELA_MAX
+    if maxFuelB is None:
+        maxFuelB = DEFAULT_FUELB_MAX
+    if maxSand is None:
+        maxSand = DEFAULT_SAND_MAX
+
+    return maxFuelA, maxFuelB, maxSand
 
 
 def update():
     for loc in scan_for_locs():
-        apply_loc(loc)
+        maxFuelA, maxFuelB, maxSand = read_lok_usage(loc["mfxuid"])
+        apply_loc(loc, maxFuelA, maxFuelB, maxSand)
 
 apply_config(PORT)
 start_grafana()
