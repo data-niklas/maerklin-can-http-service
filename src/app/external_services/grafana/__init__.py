@@ -96,12 +96,13 @@ def read_lok_usage(mfxuid):
     filter = requote_uri(f'mfxuid eq {mfxuid}')
     url = f'http://{DATABASE_HOST}:{DATABASE_PORT}/getConfigUsageMessage?filter={filter}&limit=1'
     usage_data = requests.get(url).json()
-    if usage_data.total == 0:
+    print(usage_data)
+    if usage_data["total"] == 0:
         return DEFAULT_FUELA_MAX, DEFAULT_FUELB_MAX, DEFAULT_SAND_MAX
     
-    maxFuelA = usage_data.items[0].maxFuelA
-    maxFuelB = usage_data.items[0].maxFuelB
-    maxSand = usage_data.items[0].maxSand
+    maxFuelA = usage_data["items"][0]["maxFuelA"]
+    maxFuelB = usage_data["items"][0]["maxFuelB"]
+    maxSand = usage_data["items"][0]["maxSand"]
 
     if maxFuelA is None:
         maxFuelA = DEFAULT_FUELA_MAX
@@ -115,8 +116,8 @@ def read_lok_usage(mfxuid):
 
 def update():
     for loc in scan_for_locs():
-        maxFuelA, maxFuelB, maxSand = read_lok_usage(loc["mfxuid"])
-        apply_loc(loc, maxFuelA, maxFuelB, maxSand)
+#        maxFuelA, maxFuelB, maxSand = read_lok_usage(int(loc["mfxuid"], 0))
+        apply_loc(loc, 255, 255, 255)
 
 apply_config(PORT)
 start_grafana()

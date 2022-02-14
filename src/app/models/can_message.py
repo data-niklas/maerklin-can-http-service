@@ -540,31 +540,30 @@ class ConfigLocomotiveMessage(AbstractCANMessage):
     def from_schema(abstract_pydantic_message):
         return None
 
-    def from_message(obj, base_pydantic_message):
+    def from_message(lok, base_pydantic_message):
         abstract_message = AbstractCANMessage.from_schema(
             base_pydantic_message)
-        lok = obj["lok"]
         name = lok["name"]
         vorname = lok["vorname"]
-        uid = int(lok["uid"], 0)
-        mfxuid = int(lok["mfxuid"], 0)
-        adresse = int(lok["adresse"], 0)
+        uid = lok["uid"]
+        mfxuid = lok["mfxuid"]
+        adresse = lok["adresse"]
         icon = lok["icon"]
         typ = lok["typ"]
-        sid = int(lok["sid"], 0)
-        symbol = int(lok["symbol"], 0)
-        tachomax = int(lok["tachomax"], 0)
-        vmax = int(lok["vmax"], 0)
-        vmin = int(lok["vmin"], 0)
-        av = int(lok["av"], 0)
-        bv = int(lok["bv"], 0)
-        volume = int(lok["volume"], 0)
-        spa = int(lok["spa"], 0)
-        spm = int(lok["spm"], 0)
-        ft = int(lok["ft"], 0)
-        velocity = int(lok["velocity"], 0)
-        richtung = int(lok["richtung"], 0)
-        mfxtyp = int(lok["mfxtyp"], 0)
+        sid = lok["sid"]
+        symbol = lok["symbol"]
+        tachomax = lok["tachomax"]
+        vmax = lok["vmax"]
+        vmin = lok["vmin"]
+        av = lok["av"]
+        bv = lok["bv"]
+        volume = lok["volume"]
+        spa = lok["spa"]
+        spm = lok["spm"]
+        ft = lok["ft"]
+        velocity = lok["velocity"]
+        richtung = lok["richtung"]
+        mfxtyp = lok["mfxtyp"]
         blocks = lok["blocks"]
         return ConfigLocomotiveMessage(name=name, vorname=vorname, uid=uid, mfxuid=mfxuid, adresse=adresse, icon=icon, typ=typ, sid=sid, symbol=symbol, tachomax=tachomax, vmax=vmax, vmin=vmin, av=av, bv=bv, volume=volume, spa=spa, spm=spm, ft=ft, velocity=velocity, richtung=richtung, mfxtyp=mfxtyp, blocks=blocks, **vars(abstract_message))
 

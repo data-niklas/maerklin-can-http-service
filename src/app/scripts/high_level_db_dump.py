@@ -8,7 +8,7 @@ from sqlalchemy.orm.session import sessionmaker
 from config_wrapper import get_settings
 
 from app.schemas.can import CANMessage as PydanticCANMessage
-from app.models.can_message import Base, ConfigMessage, ConfigUsageMessage
+from app.models.can_message import Base, ConfigMessage, ConfigUsageMessage, ConfigLocomotiveMessage
 from app.models.can_message_converter import registered_models, convert_to_model
 from app.services.high_level_can_recv.converter import type_map as pydantic_type_map
 from app.schemas.can_commands import CommandSchema
@@ -26,9 +26,17 @@ engine = create_async_engine(
 )
 SessionLocal = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
 
+
+def save_usage_message(session, obj, pydantic_abstract_message):
+    session.add(ConfigUsageMessage.from_message(obj, pydantic_abstract_message))
+
+def save_locomotive_message(session, obj, pydantic_abstract_message):
+    for lok in obj["lokomotive"]:
+        session.add(ConfigLocomotiveMessage.from_message(lok, pydantic_abstract_message))
+
 config_message_dict = dict()
-config_message_dict["[verbrauch]"] = ConfigUsageMessage
-config_message_dict["[lokomotive]"] = ConfigLocomotiveMessage
+config_message_dict["[verbrauch]"] = save_usage_message
+config_message_dict["[lokomotive]"] = save_locomotive_message
 
 async def parse_message(message):
     t = message[:message.find("{")]
@@ -76,7 +84,8 @@ async def save_config_message(session, data, length, pydantic_abstract_message):
 
     for message_type in config_message_dict:
         if message_type in config_obj:
-            session.add(config_message_dict[message_type].from_message(config_obj[message_type], pydantic_abstract_message))
+            obj = config_obj[message_type]
+            config_message_dict[message_type](session, obj, pydantic_abstract_message)
             return
 
     # fallback
