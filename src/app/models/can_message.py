@@ -13,6 +13,7 @@ from typing import List
 from app.schemas.can import Command
 from ..schemas.can_commands import CommandSchema
 from ..schemas.can_commands.system import SystemSubcommand, SystemSubcommandSchema
+from ..utils.coding import to_int_safe
 
 
 Base = declarative_base()
@@ -502,10 +503,10 @@ class ConfigUsageMessage(AbstractCANMessage):
         maxFuelB = int(lok["maxFuelB"], 0)
         maxSand = int(lok["maxSand"], 0)
         faktorFuelA = int(lok["faktorFuelA"], 0)
-        fuelA = int(lok["fuelA"], 0)
-        fuelB = int(lok["fuelB"], 0)
-        sand = int(lok["sand"], 0)
-        alter = int(lok["alter"], 0)
+        fuelA = to_int_safe(lok.get("fuelA", None))
+        fuelB = to_int_safe(lok.get("fuelB", None))
+        sand = to_int_safe(lok.get("sand", None))
+        alter = to_int_safe(lok.get("alter", None))
         return ConfigUsageMessage(mfxuid=mfxuid, maxFuelA=maxFuelA, maxFuelB=maxFuelB, maxSand=maxSand, faktorFuelA=faktorFuelA, fuelA=fuelA, fuelB=fuelB, sand=sand, alter=alter, **vars(abstract_message))
 
 
@@ -515,27 +516,27 @@ class ConfigLocomotiveMessage(AbstractCANMessage):
     }
     __tablename__ = 'config_locomotive'
     name = Column(Text, nullable=False)
-    vorname = Column(Text, nullable=False)
+    vorname = Column(Text)
     uid = Column(Integer, nullable=False)
     mfxuid = Column(Integer, nullable=False)
     adresse = Column(Integer, nullable=False)
-    icon = Column(Text, nullable=False)
-    typ = Column(Text, nullable=False)
-    sid = Column(Integer, nullable=False)
-    symbol = Column(Integer, nullable=False)
-    tachomax = Column(Integer, nullable=False)
+    icon = Column(Text)
+    typ = Column(Text, nullable=None)
+    sid = Column(Integer)
+    symbol = Column(Integer)
+    tachomax = Column(Integer)
     vmax = Column(Integer, nullable=False)
     vmin = Column(Integer, nullable=False)
     av = Column(Integer, nullable=False)
     bv = Column(Integer, nullable=False)
     volume = Column(Integer, nullable=False)
-    spa = Column(Integer, nullable=False)
-    spm = Column(Integer, nullable=False)
-    ft = Column(Integer, nullable=False)
-    velocity = Column(Integer, nullable=False)
-    richtung = Column(Integer, nullable=False)
-    mfxtyp = Column(Integer, nullable=False)
-    blocks = Column(Text, nullable=False)
+    spa = Column(Integer)
+    spm = Column(Integer)
+    ft = Column(Integer)
+    velocity = Column(Integer)
+    richtung = Column(Integer)
+    mfxtyp = Column(Integer)
+    blocks = Column(Text)
 
     def from_schema(abstract_pydantic_message):
         return None
@@ -544,27 +545,27 @@ class ConfigLocomotiveMessage(AbstractCANMessage):
         abstract_message = AbstractCANMessage.from_schema(
             base_pydantic_message)
         name = lok["name"]
-        vorname = lok["vorname"]
-        uid = lok["uid"]
-        mfxuid = lok["mfxuid"]
+        vorname = lok.get("vorname", None)
+        uid = int(lok["uid"], 0)
+        mfxuid = int(lok["mfxuid"], 0)
         adresse = lok["adresse"]
-        icon = lok["icon"]
+        icon = lok.get("icon", None)
         typ = lok["typ"]
-        sid = lok["sid"]
-        symbol = lok["symbol"]
-        tachomax = lok["tachomax"]
-        vmax = lok["vmax"]
-        vmin = lok["vmin"]
-        av = lok["av"]
-        bv = lok["bv"]
+        sid = to_int_safe(lok.get("sid", None))
+        symbol = lok.get("symbol", None)
+        tachomax = to_int_safe(lok.get("tachomax", None))
+        vmax = int(lok["vmax"], 0)
+        vmin = int(lok["vmin"], 0)
+        av = int(lok["av"], 0)
+        bv = int(lok["bv"], 0)
         volume = lok["volume"]
-        spa = lok["spa"]
-        spm = lok["spm"]
-        ft = lok["ft"]
-        velocity = lok["velocity"]
-        richtung = lok["richtung"]
-        mfxtyp = lok["mfxtyp"]
-        blocks = lok["blocks"]
+        spa = lok.get("spa", None) # TODO determine types
+        spm = lok.get("spm", None)
+        ft = lok.get("ft", None)
+        velocity = to_int_safe(lok.get("velocity", None))
+        richtung = lok.get("richtung", None)
+        mfxtyp = lok.get("mfxtyp", None)
+        blocks = lok.get("blocks", None)
         return ConfigLocomotiveMessage(name=name, vorname=vorname, uid=uid, mfxuid=mfxuid, adresse=adresse, icon=icon, typ=typ, sid=sid, symbol=symbol, tachomax=tachomax, vmax=vmax, vmin=vmin, av=av, bv=bv, volume=volume, spa=spa, spm=spm, ft=ft, velocity=velocity, richtung=richtung, mfxtyp=mfxtyp, blocks=blocks, **vars(abstract_message))
 
 
