@@ -475,6 +475,24 @@ class ConfigMessage(AbstractCANMessage):
             base_pydantic_message)
         return ConfigMessage(config=data, length=length, **vars(abstract_message))
 
+class LocomotiveMetricMessage(Base):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'locomotive_metrics'
+
+    timestamp = Column(DateTime, primary_key=True)
+    timestamp_iso = Column(Integer, primary_key=True)
+    mfxuid = Column(Integer, primary_key=True)
+    loc_id = Column(Integer, primary_key=True)
+    fuelA = Column(Integer)
+    fuelB = Column(Integer)
+    sand = Column(Integer)
+    distance = Column(Integer)
+
+    def from_schema(abstract_pydantic_message):
+        return None
+
 
 class ConfigUsageMessage(AbstractCANMessage):
     __mapper_args__ = {

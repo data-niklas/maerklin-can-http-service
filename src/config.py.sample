@@ -60,6 +60,9 @@ DEFAULT_WEBSOCKET_LOGGER_HOST = DEFAULT_CAN_RECV_HOST
 DEFAULT_WEBSOCKET_PRINTER_PORT = DEFAULT_CAN_RECV_PORT
 DEFAULT_WEBSOCKET_PRINTER_HOST = DEFAULT_CAN_RECV_HOST
 
+# Resample interval in seconds
+DEFAULT_HIGH_LEVEL_DB_DUMP_RESAMPLE_INTERVAL = 120
+
 
 
 
@@ -105,6 +108,8 @@ class Settings(BaseSettings):
     grafana_dir: str = DEFAULT_GRAFANA_DIR
     grafana_api_key: str = DEFAULT_GRAFANA_API_KEY
 
+    high_level_db_dump_resample_interval: int = DEFAULT_HIGH_LEVEL_DB_DUMP_RESAMPLE_INTERVAL
+
     class Config():
         fields = {
             'asgi_command': {'env': 'asgi_command'},
@@ -142,7 +147,9 @@ class Settings(BaseSettings):
 
             'grafana_port': {'env': 'grafana_port'},
             'grafana_dir': {'env': 'grafana_dir'},
-            'grafana_api_key': {'env': 'grafana_api_key'}
+            'grafana_api_key': {'env': 'grafana_api_key'},
+
+            'high_level_db_dump_resample_interval': {'env': 'high_level_db_dump_resample_interval'}
         }
 
 

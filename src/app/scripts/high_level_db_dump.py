@@ -1,14 +1,17 @@
 import asyncio
 import zlib
 import websockets
+from datetime import datetime, timedelta
+import time
 
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm.session import sessionmaker
+from sqlalchemy import asc, desc
 
 from config_wrapper import get_settings
 
 from app.schemas.can import CANMessage as PydanticCANMessage
-from app.models.can_message import Base, ConfigMessage, ConfigUsageMessage, ConfigLocomotiveMessage
+from app.models.can_message import Base, ConfigMessage, ConfigUsageMessage, ConfigLocomotiveMessage, LocomotiveMetricMessage, LocomotiveSpeedMessage
 from app.models.can_message_converter import registered_models, convert_to_model
 from app.services.high_level_can_recv.converter import type_map as pydantic_type_map
 from app.schemas.can_commands import CommandSchema
@@ -123,9 +126,122 @@ async def process_config_stream(session, websocket, pydantic_abstract_message):
     await save_config_message(session, data, length, pydantic_abstract_message)
 
 
+# Calculates 'distance points' = duration (in s) * speed
+async def resample_speed_for_loc(session, filter_after, filter_before, loc_id):
+    base_query = session.query(LocomotiveSpeedMessage.timestamp, LocomotiveSpeedMessage.speed).filter(LocomotiveSpeedMessage.loc_id == loc_id)
+    results_after = base_query.order_by(asc(LocomotiveSpeedMessage.timestamp)).filter(LocomotiveSpeedMessage.timestamp >= filter_after).filter(LocomotiveSpeedMessage.timestamp < filter_before).all()
+    result_before = base_query.order_by(desc(LocomotiveSpeedMessage.timestamp)).filter(LocomotiveSpeedMessage.timestamp < filter_after).limit(1).all()
 
-async def main():
-    await init_db()
+    results_after_count = len(results_after)
+
+    has_before = len(result_before) == 1
+
+    total_duration = (filter_before - filter_after).total_seconds()
+
+    if results_after_count == 0:
+        if has_before:
+            return result_before[0][1] * total_duration
+        return None
+
+    distance_sum = 0
+
+    # First data point; Boundary check
+    if has_before:
+        previous_value = result_before[0][1]
+    else:
+        previous_value = results_after[0][1]
+
+    duration = (results_after[0][0] - filter_after).total_seconds()
+    distance_sum += previous_value * duration
+
+
+    for i in range(0, results_after_count):
+        if i == results_after_count - 1:
+            duration = (filter_before - results_after[i][0]).total_seconds()
+        else:
+            duration = (results_after[i + 1][0] - results_after[i][0]).total_seconds()
+        
+        distance_sum += results_after[i][1] * duration
+
+    return distance_sum
+
+
+# TODO check if attributes are nullable
+async def resample_fuel_for_loc(session, filter_after, filter_before, mfxuid):
+    base_query = session.query(ConfigUsageMessage.timestamp, ConfigUsageMessage.fuelA, ConfigUsageMessage.fuelB, ConfigUsageMessage.sand).filter(ConfigUsageMessage.mfxuid == mfxuid)
+    results_after = base_query.order_by(asc(ConfigUsageMessage.timestamp)).filter(ConfigUsageMessage.timestamp >= filter_after).filter(ConfigUsageMessage.timestamp < filter_before).all()
+    result_before = base_query.order_by(desc(ConfigUsageMessage.timestamp)).filter(ConfigUsageMessage.timestamp < filter_after).limit(1).all()
+
+    results_after_count = len(results_after)
+
+    has_before = len(result_before) == 1
+
+    total_duration = (filter_before - filter_after).total_seconds()
+
+    if results_after_count == 0:
+        if has_before:
+            return result_before[0][1], result_before[0][2], result_before[0][3]
+        return None, None, None
+
+    fuel_a_sum = 0
+    fuel_b_sum = 0
+    sand_sum = 0
+
+    # First data point; Boundary check
+    if has_before:
+        previous_a_value = result_before[0][1]
+        previous_b_value = result_before[0][2]
+        previous_sand_value = result_before[0][3]
+    else:
+        previous_a_value = results_after[0][1]
+        previous_b_value = results_after[0][2]
+        previous_sand_value = results_after[0][3]
+
+    duration = (results_after[0][0] - filter_after).total_seconds()
+    fuel_a_sum += previous_a_value * duration
+    fuel_b_sum += previous_b_value * duration
+    sand_sum += previous_sand_value * duration
+
+
+    for i in range(0, results_after_count):
+        if i == results_after_count - 1:
+            duration = (filter_before - results_after[i][0]).total_seconds()
+        else:
+            duration = (results_after[i + 1][0] - results_after[i][0]).total_seconds()
+        
+        fuel_a_sum += results_after[i][1] * duration
+        fuel_b_sum += results_after[i][2] * duration
+        sand_sum += results_after[i][3] * duration
+
+    fuel_a_sum /= duration
+    fuel_b_sum /= duration
+    sand_sum /= duration
+    return fuel_a_sum, fuel_b_sum, sand_sum
+
+
+async def resample(session):
+    filter_before = datetime.now()
+    filter_after = filter_before - timedelta(seconds = settings.high_level_db_dump_resample_interval)
+
+    loc_ids = session.query(ConfigLocomotiveMessage.uid, ConfigLocomotiveMessage.mfxuid).all()
+    for loc_id_result in loc_ids:
+        loc_id = loc_id_result[0]
+        mfxuid = loc_id_result[1]
+        distance = await resample_speed_for_loc(session, filter_after, filter_before, loc_id)
+        fuel_a, fuel_b, sand = await resample_fuel_for_loc(session, filter_after, filter_before, mfxuid)
+
+        timestamp_iso = time.mktime(filter_before.timetuple())
+        session.add(LocomotiveMetricMessage(timestamp=filter_before, timestamp_iso=timestamp_iso, mfxuid=mfxuid, loc_id=loc_id, fuelA=fuel_a, fuelB=fuel_b, sand=sand, distance=distance))
+
+
+async def start_resampler():
+    async with SessionLocal() as session:
+        while True:
+            resample(session)
+            await asyncio.sleep(settings.high_level_db_dump_resample_interval)
+
+
+async def start_websocket_listener():
     async with websockets.connect(f"ws://{HOST}:{PORT}") as websocket:
         async with SessionLocal() as session:
             print("connected")
@@ -137,6 +253,12 @@ async def main():
                     await process_config_stream(session, websocket, pydantic_abstract_message)
                 else:
                     await dump(session, pydantic_abstract_message)
+
+
+async def main():
+    await init_db()
+    start_resampler()
+    await start_websocket_listener()
 
 if __name__ == "__main__":
     asyncio.run(main())

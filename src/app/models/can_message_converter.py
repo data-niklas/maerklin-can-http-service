@@ -54,3 +54,7 @@ registered_models.extend([
     MfxBindMessage,
     MfxVerifyMessage
 ])
+
+registered_models.extend([
+    LocomotiveMetricMessage
+])
