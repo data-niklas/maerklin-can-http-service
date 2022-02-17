@@ -88,9 +88,9 @@ def apply_loc(loc, maxFuelA, maxFuelB, maxSand):
         return data
     apply_dashboard(file, map_data)
 
-DEFAULT_FUELA_MAX = 100
-DEFAULT_FUELB_MAX = 100
-DEFAULT_SAND_MAX = 100
+DEFAULT_FUELA_MAX = 255
+DEFAULT_FUELB_MAX = 255
+DEFAULT_SAND_MAX = 255
 
 def read_lok_usage(mfxuid):
     filter = requote_uri(f'mfxuid eq {mfxuid}')

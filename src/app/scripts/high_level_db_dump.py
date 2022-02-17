@@ -141,7 +141,7 @@ async def resample_speed_for_loc(session, filter_after, filter_before, loc_id):
     if results_after_count == 0:
         if has_before:
             return result_before[0][1] * total_duration
-        return None
+        return 0
 
     distance_sum = 0
 
@@ -179,9 +179,21 @@ async def resample_fuel_for_loc(session, filter_after, filter_before, mfxuid):
     total_duration = (filter_before - filter_after).total_seconds()
 
     if results_after_count == 0:
-        if has_before:
-            return result_before[0][1], result_before[0][2], result_before[0][3]
-        return None, None, None
+        return 0, 0, 0
+
+    def default_0(value):
+        if value is None:
+            return 0
+        return value
+
+    def fuel_a_at(index):
+        return default_0(results_after[index][1])
+
+    def fuel_b_at(index):
+        return default_0(results_after[index][2])
+
+    def sand_at(index):
+        return default_0(results_after[index][3])
 
     fuel_a_sum = 0
     fuel_b_sum = 0
@@ -189,33 +201,30 @@ async def resample_fuel_for_loc(session, filter_after, filter_before, mfxuid):
 
     # First data point; Boundary check
     if has_before:
-        previous_a_value = result_before[0][1]
-        previous_b_value = result_before[0][2]
-        previous_sand_value = result_before[0][3]
+        previous_a_value = default_0(result_before[0][1])
+        previous_b_value = default_0(result_before[0][2])
+        previous_sand_value = default_0(result_before[0][3])
     else:
-        previous_a_value = results_after[0][1]
-        previous_b_value = results_after[0][2]
-        previous_sand_value = results_after[0][3]
+        previous_a_value = fuel_a_at(0)
+        previous_b_value = fuel_b_at(0)
+        previous_sand_value = sand_at(0)
 
     duration = (results_after[0][0] - filter_after).total_seconds()
-    fuel_a_sum += previous_a_value * duration
-    fuel_b_sum += previous_b_value * duration
-    sand_sum += previous_sand_value * duration
+    fuel_a_sum += (fuel_a_at(0) - previous_a_value) * duration
+    fuel_b_sum += (fuel_b_at(0) - previous_b_value) * duration
+    sand_sum += (sand_at(0) - previous_sand_value) * duration
 
 
-    for i in range(0, results_after_count):
-        if i == results_after_count - 1:
-            duration = (filter_before - results_after[i][0]).total_seconds()
-        else:
-            duration = (results_after[i + 1][0] - results_after[i][0]).total_seconds()
+    for i in range(1, results_after_count):
+        duration = (results_after[i][0] - results_after[i - 1][0]).total_seconds()
         
-        fuel_a_sum += results_after[i][1] * duration
-        fuel_b_sum += results_after[i][2] * duration
-        sand_sum += results_after[i][3] * duration
+        fuel_a_sum += (fuel_a_at(i) - fuel_a_at(i - 1)) / duration
+        fuel_b_sum += (fuel_b_at(i) - fuel_b_at(i - 1)) / duration
+        sand_sum += (sand_at(i) - sand_at(i - 1)) / duration
 
-    fuel_a_sum /= duration
-    fuel_b_sum /= duration
-    sand_sum /= duration
+    fuel_a_sum /= results_after_count
+    fuel_b_sum /= results_after_count
+    sand_sum /= results_after_count
     return fuel_a_sum, fuel_b_sum, sand_sum
 
 
@@ -238,6 +247,7 @@ async def start_resampler():
     async with SessionLocal() as session:
         while True:
             resample(session)
+            # TODO: Sleep is inaccurate - make it accurate
             await asyncio.sleep(settings.high_level_db_dump_resample_interval)
 
 
