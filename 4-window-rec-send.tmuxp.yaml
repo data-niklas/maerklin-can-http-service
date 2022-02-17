@@ -1,0 +1,11 @@
+session_name: ablaufberg
+windows:
+  - window_name: ablaufberg windos
+    layout: tiled
+    shell_command_before:
+      - source ./venv/bin/activate
+    panes:
+      - python src/start.py raw_can_receiver
+      - python src/start.py raw_can_sender
+      - python src/start.py can_receiver
+      - python src/start.py can_sender
