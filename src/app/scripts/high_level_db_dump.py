@@ -31,12 +31,12 @@ engine = create_async_engine(
 SessionLocal = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
 
 
-def save_usage_message(session, obj, pydantic_abstract_message):
-    session.add(ConfigUsageMessage.from_message(obj, pydantic_abstract_message))
+async def save_usage_message(session, obj, pydantic_abstract_message):
+    await session.add(ConfigUsageMessage.from_message(obj, pydantic_abstract_message))
 
-def save_locomotive_message(session, obj, pydantic_abstract_message):
+async def save_locomotive_message(session, obj, pydantic_abstract_message):
     for lok in obj["lokomotive"]:
-        session.add(ConfigLocomotiveMessage.from_message(lok, pydantic_abstract_message))
+        await session.add(ConfigLocomotiveMessage.from_message(lok, pydantic_abstract_message))
 
 config_message_dict = dict()
 config_message_dict["[verbrauch]"] = save_usage_message
@@ -54,7 +54,7 @@ async def dump(session, pydantic_abstract_message):
     print("Dumping message")
     abstract_model = convert_to_model(pydantic_abstract_message)
     assert abstract_model is not None
-    session.add(abstract_model)
+    await session.add(abstract_model)
     await session.commit()
 
 
@@ -89,11 +89,11 @@ async def save_config_message(session, data, length, pydantic_abstract_message):
     for message_type in config_message_dict:
         if message_type in config_obj:
             obj = config_obj[message_type]
-            config_message_dict[message_type](session, obj, pydantic_abstract_message)
+            await config_message_dict[message_type](session, obj, pydantic_abstract_message)
             return
 
     # fallback
-    session.add(ConfigMessage.from_message(
+    await session.add(ConfigMessage.from_message(
         data, length, pydantic_abstract_message))
 
 async def process_config_stream(session, websocket, pydantic_abstract_message):
@@ -130,8 +130,8 @@ async def process_config_stream(session, websocket, pydantic_abstract_message):
 # Calculates 'distance points' = duration (in s) * speed
 async def resample_speed_for_loc(session, filter_after, filter_before, loc_id):
     base_query = select(LocomotiveSpeedMessage.timestamp, LocomotiveSpeedMessage.speed).filter(LocomotiveSpeedMessage.loc_id == loc_id)
-    results_after = (await session.execute(base_query.order_by(asc(LocomotiveSpeedMessage.timestamp)).filter(LocomotiveSpeedMessage.timestamp >= filter_after).filter(LocomotiveSpeedMessage.timestamp < filter_before))).all()
-    result_before = (await session.execute(base_query.order_by(desc(LocomotiveSpeedMessage.timestamp)).filter(LocomotiveSpeedMessage.timestamp < filter_after).limit(1))).all()
+    results_after = (await session.execute(base_query.order_by(asc(LocomotiveSpeedMessage.timestamp)).filter(LocomotiveSpeedMessage.timestamp >= filter_after).filter(LocomotiveSpeedMessage.timestamp < filter_before))).fetchall()
+    result_before = (await session.execute(base_query.order_by(desc(LocomotiveSpeedMessage.timestamp)).filter(LocomotiveSpeedMessage.timestamp < filter_after).limit(1))).fetchall()
 
     results_after_count = len(results_after)
 
@@ -170,8 +170,8 @@ async def resample_speed_for_loc(session, filter_after, filter_before, loc_id):
 # TODO check if attributes are nullable
 async def resample_fuel_for_loc(session, filter_after, filter_before, mfxuid):
     base_query = select(ConfigUsageMessage.timestamp, ConfigUsageMessage.fuelA, ConfigUsageMessage.fuelB, ConfigUsageMessage.sand).filter(ConfigUsageMessage.mfxuid == mfxuid)
-    results_after = (await session.execute(base_query.order_by(asc(ConfigUsageMessage.timestamp)).filter(ConfigUsageMessage.timestamp >= filter_after).filter(ConfigUsageMessage.timestamp < filter_before))).all()
-    result_before = (await session.execute(base_query.order_by(desc(ConfigUsageMessage.timestamp)).filter(ConfigUsageMessage.timestamp < filter_after).limit(1))).all()
+    results_after = (await session.execute(base_query.order_by(asc(ConfigUsageMessage.timestamp)).filter(ConfigUsageMessage.timestamp >= filter_after).filter(ConfigUsageMessage.timestamp < filter_before))).fetchall()
+    result_before = (await session.execute(base_query.order_by(desc(ConfigUsageMessage.timestamp)).filter(ConfigUsageMessage.timestamp < filter_after).limit(1))).fetchall()
 
     results_after_count = len(results_after)
 
@@ -233,7 +233,7 @@ async def resample(session):
     filter_before = datetime.now()
     filter_after = filter_before - timedelta(seconds = settings.high_level_db_dump_resample_interval)
 
-    loc_ids = (await session.execute(select(ConfigLocomotiveMessage.uid, ConfigLocomotiveMessage.mfxuid))).all()
+    loc_ids = (await session.execute(select(ConfigLocomotiveMessage.uid, ConfigLocomotiveMessage.mfxuid))).fetchall()
     for loc_id_result in loc_ids:
         loc_id = loc_id_result[0]
         mfxuid = loc_id_result[1]
@@ -241,7 +241,7 @@ async def resample(session):
         fuel_a, fuel_b, sand = await resample_fuel_for_loc(session, filter_after, filter_before, mfxuid)
 
         timestamp_iso = time.mktime(filter_before.timetuple())
-        session.add(LocomotiveMetricMessage(timestamp=filter_before, timestamp_iso=timestamp_iso, mfxuid=mfxuid, loc_id=loc_id, fuelA=fuel_a, fuelB=fuel_b, sand=sand, distance=distance))
+        await session.add(LocomotiveMetricMessage(timestamp=filter_before, timestamp_iso=timestamp_iso, mfxuid=mfxuid, loc_id=loc_id, fuelA=fuel_a, fuelB=fuel_b, sand=sand, distance=distance))
 
 
 async def start_resampler():

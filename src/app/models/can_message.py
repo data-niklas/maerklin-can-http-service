@@ -499,7 +499,7 @@ class ConfigUsageMessage(AbstractCANMessage):
         'concrete': True
     }
     __tablename__ = 'config_usage'
-    mfxuid = Column(Integer, nullable=False)
+    mfxuid = Column(Integer, primary_key=True)
     maxFuelA = Column(Integer, nullable=False)
     maxFuelB = Column(Integer, nullable=False)
     maxSand = Column(Integer, nullable=False)
