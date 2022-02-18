@@ -32,11 +32,11 @@ SessionLocal = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=F
 
 
 async def save_usage_message(session, obj, pydantic_abstract_message):
-    await session.add(ConfigUsageMessage.from_message(obj, pydantic_abstract_message))
+    session.add(ConfigUsageMessage.from_message(obj, pydantic_abstract_message))
 
 async def save_locomotive_message(session, obj, pydantic_abstract_message):
     for lok in obj["lokomotive"]:
-        await session.add(ConfigLocomotiveMessage.from_message(lok, pydantic_abstract_message))
+        session.add(ConfigLocomotiveMessage.from_message(lok, pydantic_abstract_message))
 
 config_message_dict = dict()
 config_message_dict["[verbrauch]"] = save_usage_message
@@ -54,7 +54,7 @@ async def dump(session, pydantic_abstract_message):
     print("Dumping message")
     abstract_model = convert_to_model(pydantic_abstract_message)
     assert abstract_model is not None
-    await session.add(abstract_model)
+    session.add(abstract_model)
     await session.commit()
 
 
@@ -93,7 +93,7 @@ async def save_config_message(session, data, length, pydantic_abstract_message):
             return
 
     # fallback
-    await session.add(ConfigMessage.from_message(
+    session.add(ConfigMessage.from_message(
         data, length, pydantic_abstract_message))
 
 async def process_config_stream(session, websocket, pydantic_abstract_message):
@@ -241,7 +241,7 @@ async def resample(session):
         fuel_a, fuel_b, sand = await resample_fuel_for_loc(session, filter_after, filter_before, mfxuid)
 
         timestamp_iso = time.mktime(filter_before.timetuple())
-        await session.add(LocomotiveMetricMessage(timestamp=filter_before, timestamp_iso=timestamp_iso, mfxuid=mfxuid, loc_id=loc_id, fuelA=fuel_a, fuelB=fuel_b, sand=sand, distance=distance))
+        session.add(LocomotiveMetricMessage(timestamp=filter_before, timestamp_iso=timestamp_iso, mfxuid=mfxuid, loc_id=loc_id, fuelA=fuel_a, fuelB=fuel_b, sand=sand, distance=distance))
 
 
 async def start_resampler():
