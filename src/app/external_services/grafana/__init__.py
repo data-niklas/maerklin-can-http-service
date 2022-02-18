@@ -19,7 +19,8 @@ HOMEFOLDER = settings.grafana_dir
 API_KEY = settings.grafana_api_key
 # Only works if a sqlite3 database was used and the path starts with an 'sqlite:///'
 DATASOURCE_PATH = settings.high_level_db_dump_database.split("///")[1]
-
+DATASOURCE_UID = "yyAw0-bnz"
+DATASOURDE_TYPE = "frser-sqlite-datasource"
 
 CAN_BASE_URL = f"http://{settings.can_host}:{settings.can_port}/"
 CAN_GET_HASH = CAN_BASE_URL + "general/hash"
@@ -27,6 +28,8 @@ CAN_LOC_LIST = CAN_BASE_URL + "lok/list"
 
 DATABASE_PORT = settings.database_port
 DATABASE_HOST = settings.database_host
+
+GRAFANA_UPDATE_INTERVAL = settings.grafana_update_interval
 
 CONFIG_FILE = os.path.join(HOMEFOLDER, "conf", "defaults.ini")
 CONFIG_TEMPLATE_FILE =  os.path.join(CURRENT_DIR, "defaults.ini.template")
@@ -40,9 +43,7 @@ DEFAULT_SAND_MAX = 255
 def apply_config(port):
     os.system(f'sed -E "s/http_port = [0-9]+$/http_port = {port}/g" {CONFIG_TEMPLATE_FILE} > {CONFIG_FILE}')
 
-active_process = None
 def start_grafana():
-    global active_process
     active_process = subprocess.Popen(["grafana-server", "--homepath", HOMEFOLDER], stdout=subprocess.DEVNULL)
     def signal_handler(sig, frame):
         active_process.terminate()
@@ -52,22 +53,26 @@ def start_grafana():
     signal.signal(signal.SIGTERM, signal_handler)
     print(f'Serving grafana on http://localhost:{PORT}')
 
-def apply_file(file, url, modifier_cb):
-    with open(file, 'r', encoding="utf-8") as f:
-        data = f.read()
-        data = modifier_cb(data)
+def apply_template(template_path, url, fill_template_callback):
+    with open(template_path, 'r', encoding="utf-8") as f:
+        template = f.read()
+        template = fill_template_callback(template)
         print(url)
-        print(data)
-        result = requests.post(url, data=data, headers=AUTHORIZATION_HEADER)
+        print(template)
+        result = requests.post(url, data=template, headers=AUTHORIZATION_HEADER)
         print(result.content)
 
-def apply_datasource(file):
-    apply_file(file, f'http://localhost:{PORT}/api/datasources', lambda data: data.replace("DBPATH", DATASOURCE_PATH))
+def apply_datasource(datasource_template_path, datasource_uid):
+    apply_template(
+        datasource_template_path,
+        f'http://localhost:{PORT}/api/datasources', 
+        lambda data: data.replace("DBPATH", DATASOURCE_PATH).replace("DATASOURCE_UID", datasource_uid)
+    )
 
 
-def apply_dashboard(file, preprocess_cb):
-    apply_file(file, f'http://localhost:{PORT}/api/dashboards/db', lambda data: """{
-            "dashboard": """ + preprocess_cb(data) +  """,
+def apply_dashboard(dashboard_template_path, fill_dashboard_callback):
+    apply_template(dashboard_template_path, f'http://localhost:{PORT}/api/dashboards/db', lambda data: """{
+            "dashboard": """ + fill_dashboard_callback(data) +  """,
             "overwrite": true
     }""")
 
@@ -75,52 +80,54 @@ def apply_dashboard(file, preprocess_cb):
 def get_hash():
     return str(requests.get(CAN_GET_HASH).json())
 
-def scan_for_locs():
+def get_locs():
     return requests.get(CAN_LOC_LIST, headers={'x-can-hash': get_hash()}).json()
 
-def apply_loc(loc, maxFuelA, maxFuelB, maxSand):
-    file = os.path.join(VIEWS_DIR, "loc.json.template")
+def apply_loc(loc, max_fuel_a, max_fuel_b, max_sand, datasource_uid, datasource_type):
+    loc_template_path = os.path.join(VIEWS_DIR, "loc.json.template")
     loc_map = dict()
     loc_map["LOC_ID"] = str(loc["loc_id"])
     loc_map["LOC_MFXUID"] = str(loc["mfxuid"])
     loc_map["LOC_NAME"] = loc["name"]
-    loc_map["LOC_FUELA_MAX"] = str(maxFuelA)
-    loc_map["LOC_FUELB_MAX"] = str(maxFuelB)
-    loc_map["LOC_SAND_MAX"] = str(maxSand)
+    loc_map["LOC_FUELA_MAX"] = str(max_fuel_a)
+    loc_map["LOC_FUELB_MAX"] = str(max_fuel_b)
+    loc_map["LOC_SAND_MAX"] = str(max_sand)
+    loc_map["DATASOURCE_UID"] = datasource_uid
+    loc_map["DATASOURCE_TYPE"] = datasource_type
 
     def map_data(data):
         for k in loc_map:
             data = data.replace(k, loc_map[k])
         return data
-    apply_dashboard(file, map_data)
+    apply_dashboard(loc_template_path, map_data)
 
 
-def read_lok_usage(mfxuid):
-    filter = requote_uri(f'mfxuid eq {mfxuid}')
-    url = f'http://{DATABASE_HOST}:{DATABASE_PORT}/getConfigUsageMessage?filter={filter}&limit=1'
+def read_loc_usage(mfxuid):
+    loc_filter = requote_uri(f'mfxuid eq {mfxuid}')
+    url = f'http://{DATABASE_HOST}:{DATABASE_PORT}/getConfigUsageMessage?filter={loc_filter}&limit=1'
     usage_data = requests.get(url).json()
     print(usage_data)
     if usage_data["total"] == 0:
         return DEFAULT_FUELA_MAX, DEFAULT_FUELB_MAX, DEFAULT_SAND_MAX
     
-    maxFuelA = usage_data["items"][0]["maxFuelA"]
-    maxFuelB = usage_data["items"][0]["maxFuelB"]
-    maxSand = usage_data["items"][0]["maxSand"]
+    max_fuel_a = usage_data["items"][0].get("maxFuelA", None)
+    max_fuel_b = usage_data["items"][0].get("maxFuelB", None)
+    max_sand = usage_data["items"][0].get("maxSand", None)
 
-    if maxFuelA is None:
-        maxFuelA = DEFAULT_FUELA_MAX
-    if maxFuelB is None:
-        maxFuelB = DEFAULT_FUELB_MAX
-    if maxSand is None:
-        maxSand = DEFAULT_SAND_MAX
+    if max_fuel_a is None:
+        max_fuel_a = DEFAULT_FUELA_MAX
+    if max_fuel_b is None:
+        max_fuel_b = DEFAULT_FUELB_MAX
+    if max_sand is None:
+        max_sand = DEFAULT_SAND_MAX
 
-    return maxFuelA, maxFuelB, maxSand
+    return max_fuel_a, max_fuel_b, max_sand
 
 
 def update():
-    for loc in scan_for_locs():
-#        maxFuelA, maxFuelB, maxSand = read_lok_usage(int(loc["mfxuid"], 0))
-        apply_loc(loc, 255, 255, 255)
+    for loc in get_locs():
+#        max_fuel_a, max_fuel_b, max_sand = read_loc_usage(int(loc["mfxuid"], 0))
+        apply_loc(loc, 255, 255, 255, DATASOURCE_UID, DATASOURCE_TYPE)
 
 def main():
     apply_config(PORT)
@@ -128,13 +135,14 @@ def main():
     # Let grafana initialize the server
     time.sleep(5)
 
-    apply_datasource(os.path.join(VIEWS_DIR, "datasource.json.template"))
-    apply_dashboard(os.path.join(VIEWS_DIR, "general.json.template"), lambda data: data)
+
+    apply_datasource(os.path.join(VIEWS_DIR, "datasource.json.template"), DATASOURCE_UID)
+    apply_dashboard(os.path.join(VIEWS_DIR, "general.json.template"), lambda data: data.replace("DATASOURCE_TYPE", DATASOURCE_TYPE).replace("DATASOURCE_UID", DATASOURCE_UID))
 
     CAN_HASH = get_hash()
     while True:
         update()
-        time.sleep(300)
+        time.sleep(GRAFANA_UPDATE_INTERVAL)
 
 
 if __name__ == "__main__":

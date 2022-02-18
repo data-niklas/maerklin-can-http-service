@@ -38,9 +38,10 @@ async def save_locomotive_message(session, obj, pydantic_abstract_message):
     for lok in obj["lokomotive"]:
         session.add(ConfigLocomotiveMessage.from_message(lok, pydantic_abstract_message))
 
-config_message_dict = dict()
-config_message_dict["[verbrauch]"] = save_usage_message
-config_message_dict["[lokomotive]"] = save_locomotive_message
+CONFIG_MESSAGE_DICT = {
+    "[verbrauch]": save_usage_message,
+    "[lokomotive]": save_locomotive_message
+}
 
 async def parse_message(message):
     t = message[:message.find("{")]
@@ -83,13 +84,12 @@ async def init_db():
 
 
 async def save_config_message(session, data, length, pydantic_abstract_message):
-    global config_message_dict
     _, config_obj = parse_config(data)
 
-    for message_type in config_message_dict:
+    for message_type in CONFIG_MESSAGE_DICT:
         if message_type in config_obj:
             obj = config_obj[message_type]
-            await config_message_dict[message_type](session, obj, pydantic_abstract_message)
+            await CONFIG_MESSAGE_DICT[message_type](session, obj, pydantic_abstract_message)
             return
 
     # fallback
@@ -211,9 +211,9 @@ async def resample_fuel_for_loc(session, filter_after, filter_before, mfxuid):
         previous_sand_value = sand_at(0)
 
     duration = (results_after[0][0] - filter_after).total_seconds()
-    fuel_a_sum += (fuel_a_at(0) - previous_a_value) * duration
-    fuel_b_sum += (fuel_b_at(0) - previous_b_value) * duration
-    sand_sum += (sand_at(0) - previous_sand_value) * duration
+    fuel_a_sum += (fuel_a_at(0) - previous_a_value) / duration
+    fuel_b_sum += (fuel_b_at(0) - previous_b_value) / duration
+    sand_sum += (sand_at(0) - previous_sand_value) / duration
 
 
     for i in range(1, results_after_count):

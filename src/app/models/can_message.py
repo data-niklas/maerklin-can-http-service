@@ -525,7 +525,18 @@ class ConfigUsageMessage(AbstractCANMessage):
         fuelB = to_int_safe(lok.get("fuelB", None))
         sand = to_int_safe(lok.get("sand", None))
         alter = to_int_safe(lok.get("alter", None))
-        return ConfigUsageMessage(mfxuid=mfxuid, maxFuelA=maxFuelA, maxFuelB=maxFuelB, maxSand=maxSand, faktorFuelA=faktorFuelA, fuelA=fuelA, fuelB=fuelB, sand=sand, alter=alter, **vars(abstract_message))
+        return ConfigUsageMessage(
+            mfxuid=mfxuid,
+            maxFuelA=maxFuelA,
+            maxFuelB=maxFuelB,
+            maxSand=maxSand,
+            faktorFuelA=faktorFuelA,
+            fuelA=fuelA,
+            fuelB=fuelB,
+            sand=sand,
+            alter=alter,
+            **vars(abstract_message)
+        )
 
 
 class ConfigLocomotiveMessage(AbstractCANMessage):
@@ -584,7 +595,31 @@ class ConfigLocomotiveMessage(AbstractCANMessage):
         richtung = lok.get("richtung", None)
         mfxtyp = lok.get("mfxtyp", None)
         blocks = lok.get("blocks", None)
-        return ConfigLocomotiveMessage(name=name, vorname=vorname, uid=uid, mfxuid=mfxuid, adresse=adresse, icon=icon, typ=typ, sid=sid, symbol=symbol, tachomax=tachomax, vmax=vmax, vmin=vmin, av=av, bv=bv, volume=volume, spa=spa, spm=spm, ft=ft, velocity=velocity, richtung=richtung, mfxtyp=mfxtyp, blocks=blocks, **vars(abstract_message))
+        return ConfigLocomotiveMessage(
+            name=name,
+            vorname=vorname,
+            uid=uid,
+            mfxuid=mfxuid,
+            adresse=adresse,
+            icon=icon,
+            typ=typ,
+            sid=sid,
+            symbol=symbol,
+            tachomax=tachomax,
+            vmax=vmax,
+            vmin=vmin,
+            av=av,
+            bv=bv,
+            volume=volume,
+            spa=spa,
+            spm=spm,
+            ft=ft,
+            velocity=velocity,
+            richtung=richtung,
+            mfxtyp=mfxtyp,
+            blocks=blocks,
+            **vars(abstract_message)
+        )
 
 
 class RequestConfigDataMessage(AbstractCANMessage):

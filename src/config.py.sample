@@ -12,7 +12,9 @@ FILE_DIR = os.path.dirname(os.path.realpath(__file__))
 
 # Router configs
 DEFAULT_ASGI_COMMAND = "uvicorn"
-DEFAULT_SCRIPT_COMMAND = os.path.join(os.path.dirname(FILE_DIR), "venv", "bin", "python")
+
+# DEFAULT_SCRIPT_COMMAND = os.path.join(os.path.dirname(FILE_DIR), "venv", "Scripts", "python.exe")     # For windows
+DEFAULT_SCRIPT_COMMAND = os.path.join(os.path.dirname(FILE_DIR), "venv", "bin", "python")       # For unix
 
 # IP from which packages are received and sent to
 DEFAULT_RAW_CAN_IP = "192.168.1.3"
@@ -52,6 +54,7 @@ DEFAULT_WORKFLOW_TERMINAL_INTERVAL = 1
 DEFAULT_GRAFANA_PORT = 8044
 DEFAULT_GRAFANA_DIR = os.path.join("/usr", "share", "grafana")
 DEFAULT_GRAFANA_API_KEY = "REPLACE WITH YOUR OWN CREATED API KEY!"
+DEFAULT_GRAFANA_UPDATE_INTERVAL = 300
 
 # Scripts config
 DEFAULT_WEBSOCKET_LOGGER_PORT = DEFAULT_CAN_RECV_PORT
@@ -107,6 +110,7 @@ class Settings(BaseSettings):
     grafana_port: int = DEFAULT_GRAFANA_PORT
     grafana_dir: str = DEFAULT_GRAFANA_DIR
     grafana_api_key: str = DEFAULT_GRAFANA_API_KEY
+    grafana_update_interval: int = DEFAULT_GRAFANA_UPDATE_INTERVAL
 
     high_level_db_dump_resample_interval: int = DEFAULT_HIGH_LEVEL_DB_DUMP_RESAMPLE_INTERVAL
 
@@ -148,6 +152,7 @@ class Settings(BaseSettings):
             'grafana_port': {'env': 'grafana_port'},
             'grafana_dir': {'env': 'grafana_dir'},
             'grafana_api_key': {'env': 'grafana_api_key'},
+            'grafana_update_interval': {'env': 'grafana_update_interval'},
 
             'high_level_db_dump_resample_interval': {'env': 'high_level_db_dump_resample_interval'}
         }

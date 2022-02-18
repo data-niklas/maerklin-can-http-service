@@ -105,16 +105,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "yyAw0-bnz"
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
           },
           "queryText": "SELECT timestamp_iso, speed FROM locomotive_speed  WHERE loc_id = LOC_ID",
           "queryType": "table",
           "rawQueryText": "SELECT timestamp_iso, speed FROM locomotive_speed  WHERE loc_id = LOC_ID",
           "refId": "A",
           "timeColumns": [
-            "time",
-            "ts",
             "timestamp_iso"
           ]
         }
@@ -193,8 +191,8 @@
       "targets": [
         {
           "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "yyAw0-bnz"
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
           },
           "hide": false,
           "queryText": "SELECT timestamp_iso, speed FROM locomotive_speed WHERE loc_id = LOC_ID",
@@ -202,8 +200,6 @@
           "rawQueryText": "SELECT timestamp_iso, speed FROM locomotive_speed WHERE loc_id = LOC_ID",
           "refId": "A",
           "timeColumns": [
-            "time",
-            "ts",
             "timestamp_iso"
           ]
         }
@@ -282,16 +278,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "yyAw0-bnz"
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
           },
           "queryText": "SELECT timestamp_iso, direction FROM locomotive_direction  WHERE loc_id = LOC_ID",
           "queryType": "table",
           "rawQueryText": "SELECT timestamp_iso, direction FROM locomotive_direction  WHERE loc_id = LOC_ID",
           "refId": "A",
           "timeColumns": [
-            "time",
-            "ts",
             "timestamp_iso"
           ]
         }
@@ -356,16 +350,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "yyAw0-bnz"
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
           },
           "queryText": "SELECT timestamp_iso,  fuelA FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "queryType": "table",
           "rawQueryText": "SELECT timestamp_iso,  fuelA FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "refId": "A",
           "timeColumns": [
-            "time",
-            "ts",
             "timestamp_iso"
           ]
         }
@@ -417,16 +409,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "yyAw0-bnz"
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
           },
           "queryText": "SELECT timestamp_iso,  fuelB FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "queryType": "table",
           "rawQueryText": "SELECT timestamp_iso,  fuelB FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "refId": "A",
           "timeColumns": [
-            "time",
-            "ts",
             "timestamp_iso"
           ]
         }
@@ -478,16 +468,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "yyAw0-bnz"
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
           },
           "queryText": "SELECT timestamp_iso,  sand FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "queryType": "table",
           "rawQueryText": "SELECT timestamp_iso,  sand FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "refId": "A",
           "timeColumns": [
-            "time",
-            "ts",
             "timestamp_iso"
           ]
         }
