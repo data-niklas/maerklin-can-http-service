@@ -7,3 +7,4 @@ odata-query[sqlalchemy]==0.4.2
 fastapi-pagination[sqlalchemy]==0.9.1
 aiosqlite==0.17.0
 requests==2.27.1
+greenlets==1.1.2

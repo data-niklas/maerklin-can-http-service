@@ -3,10 +3,13 @@ import os
 import subprocess
 import signal
 import requests
-import time
 from requests.utils import requote_uri
-# Plugins needed: grafana-cli --pluginUrl https://github.com/cloudspout/cloudspout-button-panel/releases/download/7.0.23/cloudspout-button-panel.zip plugins install cloudspout-button-panel
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+import time
+from functools import lru_cache
+# Plugins needed: https://github.com/cloudspout/cloudspout-button-panel 
+# Installation: grafana-cli --pluginUrl https://github.com/cloudspout/cloudspout-button-panel/releases/download/7.0.23/cloudspout-button-panel.zip plugins install cloudspout-button-panel
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(CURRENT_DIR))))
 from config import get_settings
 
 settings = get_settings()
@@ -26,11 +29,13 @@ DATABASE_PORT = settings.database_port
 DATABASE_HOST = settings.database_host
 
 CONFIG_FILE = os.path.join(HOMEFOLDER, "conf", "defaults.ini")
-CONFIG_TEMPLATE_FILE =  os.path.join(os.path.dirname(os.path.abspath(__file__)), "defaults.ini.template")
-VIEWS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "views")
+CONFIG_TEMPLATE_FILE =  os.path.join(CURRENT_DIR, "defaults.ini.template")
+VIEWS_DIR = os.path.join(CURRENT_DIR, "views")
 AUTHORIZATION_HEADER = {'Authorization': f'Bearer {API_KEY}', 'Content-Type': 'application/json'}
 
-CAN_HASH = ""
+DEFAULT_FUELA_MAX = 255
+DEFAULT_FUELB_MAX = 255
+DEFAULT_SAND_MAX = 255
 
 def apply_config(port):
     os.system(f'sed -E "s/http_port = [0-9]+$/http_port = {port}/g" {CONFIG_TEMPLATE_FILE} > {CONFIG_FILE}')
@@ -66,20 +71,21 @@ def apply_dashboard(file, preprocess_cb):
             "overwrite": true
     }""")
 
+@lru_cache
 def get_hash():
     return str(requests.get(CAN_GET_HASH).json())
 
 def scan_for_locs():
-    return requests.get(CAN_LOC_LIST, headers={'x-can-hash': CAN_HASH}).json()
+    return requests.get(CAN_LOC_LIST, headers={'x-can-hash': get_hash()}).json()
 
 def apply_loc(loc, maxFuelA, maxFuelB, maxSand):
-    file = os.path.join(VIEWS_DIR, "loc.json")
+    file = os.path.join(VIEWS_DIR, "loc.json.template")
     loc_map = dict()
     loc_map["LOC_ID"] = str(loc["loc_id"])
     loc_map["LOC_MFXUID"] = str(loc["mfxuid"])
-    loc_map["LOC_NAME"] = loc["vorname"] + " " + loc["name"]
+    loc_map["LOC_NAME"] = loc["name"]
     loc_map["LOC_FUELA_MAX"] = str(maxFuelA)
-    loc_map["LOC_FUELB_MAX"] = str(maxFuelA)
+    loc_map["LOC_FUELB_MAX"] = str(maxFuelB)
     loc_map["LOC_SAND_MAX"] = str(maxSand)
 
     def map_data(data):
@@ -88,9 +94,6 @@ def apply_loc(loc, maxFuelA, maxFuelB, maxSand):
         return data
     apply_dashboard(file, map_data)
 
-DEFAULT_FUELA_MAX = 255
-DEFAULT_FUELB_MAX = 255
-DEFAULT_SAND_MAX = 255
 
 def read_lok_usage(mfxuid):
     filter = requote_uri(f'mfxuid eq {mfxuid}')
@@ -119,15 +122,20 @@ def update():
 #        maxFuelA, maxFuelB, maxSand = read_lok_usage(int(loc["mfxuid"], 0))
         apply_loc(loc, 255, 255, 255)
 
-apply_config(PORT)
-start_grafana()
-# Let grafana initialize the server
-time.sleep(5)
+def main():
+    apply_config(PORT)
+    start_grafana()
+    # Let grafana initialize the server
+    time.sleep(5)
 
-apply_datasource(os.path.join(VIEWS_DIR, "datasource.json"))
-apply_dashboard(os.path.join(VIEWS_DIR, "general.json"), lambda data: data)
+    apply_datasource(os.path.join(VIEWS_DIR, "datasource.json.template"))
+    apply_dashboard(os.path.join(VIEWS_DIR, "general.json.template"), lambda data: data)
 
-CAN_HASH = get_hash()
-while True:
-    update()
-    time.sleep(300)
+    CAN_HASH = get_hash()
+    while True:
+        update()
+        time.sleep(300)
+
+
+if __name__ == "__main__":
+    main()

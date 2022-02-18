@@ -264,11 +264,12 @@ async def start_websocket_listener():
                 else:
                     await dump(session, pydantic_abstract_message)
 
-
-async def main():
-    await init_db()
-    start_resampler()
-    await start_websocket_listener()
+def main():
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(init_db())
+    loop.create_task(start_resampler())
+    loop.create_task(start_websocket_listener())
+    loop.run_forever()
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
