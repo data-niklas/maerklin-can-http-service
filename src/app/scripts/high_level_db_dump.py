@@ -7,6 +7,7 @@ import time
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm.session import sessionmaker
 from sqlalchemy import asc, desc
+from sqlalchemy.future import select
 
 from config_wrapper import get_settings
 
@@ -128,9 +129,9 @@ async def process_config_stream(session, websocket, pydantic_abstract_message):
 
 # Calculates 'distance points' = duration (in s) * speed
 async def resample_speed_for_loc(session, filter_after, filter_before, loc_id):
-    base_query = session.query(LocomotiveSpeedMessage.timestamp, LocomotiveSpeedMessage.speed).filter(LocomotiveSpeedMessage.loc_id == loc_id)
-    results_after = base_query.order_by(asc(LocomotiveSpeedMessage.timestamp)).filter(LocomotiveSpeedMessage.timestamp >= filter_after).filter(LocomotiveSpeedMessage.timestamp < filter_before).all()
-    result_before = base_query.order_by(desc(LocomotiveSpeedMessage.timestamp)).filter(LocomotiveSpeedMessage.timestamp < filter_after).limit(1).all()
+    base_query = select(LocomotiveSpeedMessage.timestamp, LocomotiveSpeedMessage.speed).filter(LocomotiveSpeedMessage.loc_id == loc_id)
+    results_after = await session.execute(base_query.order_by(asc(LocomotiveSpeedMessage.timestamp)).filter(LocomotiveSpeedMessage.timestamp >= filter_after).filter(LocomotiveSpeedMessage.timestamp < filter_before).all())
+    result_before = await session.execute(base_query.order_by(desc(LocomotiveSpeedMessage.timestamp)).filter(LocomotiveSpeedMessage.timestamp < filter_after).limit(1).all())
 
     results_after_count = len(results_after)
 
@@ -168,9 +169,9 @@ async def resample_speed_for_loc(session, filter_after, filter_before, loc_id):
 
 # TODO check if attributes are nullable
 async def resample_fuel_for_loc(session, filter_after, filter_before, mfxuid):
-    base_query = session.query(ConfigUsageMessage.timestamp, ConfigUsageMessage.fuelA, ConfigUsageMessage.fuelB, ConfigUsageMessage.sand).filter(ConfigUsageMessage.mfxuid == mfxuid)
-    results_after = base_query.order_by(asc(ConfigUsageMessage.timestamp)).filter(ConfigUsageMessage.timestamp >= filter_after).filter(ConfigUsageMessage.timestamp < filter_before).all()
-    result_before = base_query.order_by(desc(ConfigUsageMessage.timestamp)).filter(ConfigUsageMessage.timestamp < filter_after).limit(1).all()
+    base_query = select(ConfigUsageMessage.timestamp, ConfigUsageMessage.fuelA, ConfigUsageMessage.fuelB, ConfigUsageMessage.sand).filter(ConfigUsageMessage.mfxuid == mfxuid)
+    results_after = await session.execute(base_query.order_by(asc(ConfigUsageMessage.timestamp)).filter(ConfigUsageMessage.timestamp >= filter_after).filter(ConfigUsageMessage.timestamp < filter_before).all())
+    result_before = await session.execute(base_query.order_by(desc(ConfigUsageMessage.timestamp)).filter(ConfigUsageMessage.timestamp < filter_after).limit(1).all())
 
     results_after_count = len(results_after)
 
@@ -232,7 +233,7 @@ async def resample(session):
     filter_before = datetime.now()
     filter_after = filter_before - timedelta(seconds = settings.high_level_db_dump_resample_interval)
 
-    loc_ids = session.query(ConfigLocomotiveMessage.uid, ConfigLocomotiveMessage.mfxuid).all()
+    loc_ids = await session.execute(select(ConfigLocomotiveMessage.uid, ConfigLocomotiveMessage.mfxuid).all())
     for loc_id_result in loc_ids:
         loc_id = loc_id_result[0]
         mfxuid = loc_id_result[1]
@@ -246,7 +247,7 @@ async def resample(session):
 async def start_resampler():
     async with SessionLocal() as session:
         while True:
-            resample(session)
+            await resample(session)
             # TODO: Sleep is inaccurate - make it accurate
             await asyncio.sleep(settings.high_level_db_dump_resample_interval)
 
