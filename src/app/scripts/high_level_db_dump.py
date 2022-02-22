@@ -47,7 +47,7 @@ async def dump(session, pydantic_abstract_message):
     print("Dumping message")
     abstract_model = convert_to_model(pydantic_abstract_message)
     assert abstract_model is not None
-    dump_model(session, abstract_model)
+    await dump_model(session, abstract_model)
 
 
 async def save_usage_message(session, obj, pydantic_abstract_message):
@@ -242,7 +242,7 @@ async def resample(session, start, end):
         fuel_a, fuel_b, sand = await resample_fuel_for_loc(session, start, end, mfxuid)
 
         timestamp_iso = time.mktime(end.timetuple())
-        dump_model(LocomotiveMetricMessage(timestamp=end, timestamp_iso=timestamp_iso, mfxuid=mfxuid, loc_id=loc_id, fuelA=fuel_a, fuelB=fuel_b, sand=sand, distance=distance))
+        await dump_model(LocomotiveMetricMessage(timestamp=end, timestamp_iso=timestamp_iso, mfxuid=mfxuid, loc_id=loc_id, fuelA=fuel_a, fuelB=fuel_b, sand=sand, distance=distance))
 
 
 async def start_resampler():
