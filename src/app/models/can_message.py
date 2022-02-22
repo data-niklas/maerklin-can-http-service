@@ -27,7 +27,7 @@ class AbstractCANMessage(Base):
     response = Column(Boolean, primary_key=True)
 
     def from_schema(can_message):
-        current_date = datetime.now(timezone.utc)
+        current_date = datetime.now()
         timestamp = current_date
         timestamp_iso = time.mktime(current_date.timetuple())
         hash_value = can_message.hash_value

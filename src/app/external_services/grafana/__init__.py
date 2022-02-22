@@ -20,7 +20,7 @@ API_KEY = settings.grafana_api_key
 # Only works if a sqlite3 database was used and the path starts with an 'sqlite:///'
 DATASOURCE_PATH = settings.high_level_db_dump_database.split("///")[1]
 DATASOURCE_UID = "yyAw0-bnz"
-DATASOURDE_TYPE = "frser-sqlite-datasource"
+DATASOURCE_TYPE = "frser-sqlite-datasource"
 
 CAN_BASE_URL = f"http://{settings.can_host}:{settings.can_port}/"
 CAN_GET_HASH = CAN_BASE_URL + "general/hash"
