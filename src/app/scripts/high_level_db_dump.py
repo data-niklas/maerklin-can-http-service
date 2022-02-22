@@ -56,6 +56,8 @@ async def save_usage_message(session, obj, pydantic_abstract_message):
 
 async def save_locomotive_message(session, obj, pydantic_abstract_message):
     for lok in obj["lokomotive"]:
+        if log.get("name") is None:
+            continue # skip empty entries
         await dump_model(session, ConfigLocomotiveMessage.from_message(lok, pydantic_abstract_message))
 
 
