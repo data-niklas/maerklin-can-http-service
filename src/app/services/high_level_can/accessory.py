@@ -35,7 +35,7 @@ async def set_accessory(body: SwitchingAccessoriesModel, loc_id: int, x_can_hash
 @router.get("/list")
 async def list_mags(x_can_hash: str = Header(None)):
     def mag_loc_id(dectyp, id):
-        id = int(id, 0)
+        id = int(id)
         if dectyp == "mm2":
             return id + 0x3000 - 1 # Taken from the Märklin documentation. See 1.3.1.2 Einbindung bestehender Gleisprotokolle, Bildung der „Loc-ID“
         else:

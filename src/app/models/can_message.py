@@ -516,11 +516,11 @@ class ConfigUsageMessage(AbstractCANMessage):
         abstract_message = AbstractCANMessage.from_schema(
             base_pydantic_message)
         lok = obj["lok"]
-        mfxuid = int(lok["mfxuid"], 0)
-        maxFuelA = int(lok["maxFuelA"], 0)
-        maxFuelB = int(lok["maxFuelB"], 0)
-        maxSand = int(lok["maxSand"], 0)
-        faktorFuelA = int(lok["faktorFuelA"], 0)
+        mfxuid = int(lok["mfxuid"])
+        maxFuelA = int(lok["maxFuelA"])
+        maxFuelB = int(lok["maxFuelB"])
+        maxSand = int(lok["maxSand"])
+        faktorFuelA = int(lok["faktorFuelA"])
         fuelA = to_int_safe(lok.get("fuelA", None))
         fuelB = to_int_safe(lok.get("fuelB", None))
         sand = to_int_safe(lok.get("sand", None))
@@ -575,18 +575,18 @@ class ConfigLocomotiveMessage(AbstractCANMessage):
             base_pydantic_message)
         name = lok["name"]
         vorname = lok.get("vorname", None)
-        uid = int(lok["uid"], 0)
-        mfxuid = int(lok["mfxuid"], 0)
+        uid = int(lok["uid"])
+        mfxuid = int(lok["mfxuid"])
         adresse = lok["adresse"]
         icon = lok.get("icon", None)
         typ = lok["typ"]
         sid = to_int_safe(lok.get("sid", None))
         symbol = lok.get("symbol", None)
         tachomax = to_int_safe(lok.get("tachomax", None))
-        vmax = int(lok["vmax"], 0)
-        vmin = int(lok["vmin"], 0)
-        av = int(lok["av"], 0)
-        bv = int(lok["bv"], 0)
+        vmax = int(lok["vmax"])
+        vmin = int(lok["vmin"])
+        av = int(lok["av"])
+        bv = int(lok["bv"])
         volume = lok["volume"]
         spa = lok.get("spa", None) # TODO determine types
         spm = lok.get("spm", None)
