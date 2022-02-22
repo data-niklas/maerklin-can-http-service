@@ -1,0 +1,13 @@
+session_name: Grafana Märklin CAN
+windows:
+  - window_name: Grafana Märklin CAN
+    layout: tiled
+    shell_command_before:
+      - source ./venv/bin/activate
+    panes:
+      - python src/start.py raw_can_receiver
+      - python src/start.py can_receiver
+      - python src/start.py can
+      - python src/start.py high_level_db_dump
+      - python src/start.py database
+      - echo "sudo su; and run grafana"
