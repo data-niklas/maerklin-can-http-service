@@ -257,6 +257,7 @@ async def start_resampler():
             now = datetime.now()
             if now - last < resample_delta:
                 remaining = (last + resample_delta) - now
+                print(f"sleeping {remaining.seconds}s")
                 await asyncio.sleep(remaining.seconds)
                 continue
             start = last
