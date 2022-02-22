@@ -20,4 +20,4 @@ def bytes_to_int(val):
 def to_int_safe(val):
     if val is None:
         return None
-    return int(val)
+    return int(val, 0)

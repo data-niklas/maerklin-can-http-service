@@ -114,5 +114,5 @@ async def list_locs(x_can_hash: str = Header(None)):
     loks_config = await get_config(["loks"], x_can_hash, is_compressed=True, is_config=True)
     loks_list = loks_config["[lokomotive]"]["lokomotive"]
     for lok in loks_list:
-        lok["loc_id"] = int(lok["uid"])
+        lok["loc_id"] = int(lok["uid"], 0)
     return loks_list
