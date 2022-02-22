@@ -1,0 +1,504 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 0,
+        "y": 0
+      },
+      "id": 12,
+      "options": {
+        "content": "# LOC_NAME",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.4.0-pre",
+      "title": "Name",
+      "type": "text"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 6,
+      "panels": [],
+      "title": "Speed",
+      "type": "row"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 1000,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 333
+              },
+              {
+                "color": "red",
+                "value": 666
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 3,
+        "x": 0,
+        "y": 1
+      },
+      "id": 4,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "8.4.0-pre",
+      "targets": [
+        {
+          "datasource": {
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
+          },
+          "queryText": "SELECT timestamp_iso, speed FROM locomotive_speed  WHERE loc_id = LOC_ID",
+          "queryType": "table",
+          "rawQueryText": "SELECT timestamp_iso, speed FROM locomotive_speed  WHERE loc_id = LOC_ID",
+          "refId": "A",
+          "timeColumns": [
+            "timestamp_iso"
+          ]
+        }
+      ],
+      "title": "Current Speed",
+      "type": "gauge"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 3,
+        "y": 1
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
+          },
+          "hide": false,
+          "queryText": "SELECT timestamp_iso, speed FROM locomotive_speed WHERE loc_id = LOC_ID",
+          "queryType": "table",
+          "rawQueryText": "SELECT timestamp_iso, speed FROM locomotive_speed WHERE loc_id = LOC_ID",
+          "refId": "A",
+          "timeColumns": [
+            "timestamp_iso"
+          ]
+        }
+      ],
+      "title": "Speed",
+      "transformations": [
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+            ],
+            "fields": {}
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed"
+          },
+          "mappings": [
+            {
+              "options": {
+                "Backwards": {
+                  "color": "red",
+                  "index": 1,
+                  "text": "Backwards"
+                },
+                "Forwards": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "Forwards"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "max": 0,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 3,
+        "x": 0,
+        "y": 8
+      },
+      "id": 8,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^direction$/",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": false,
+        "text": {}
+      },
+      "pluginVersion": "8.4.0-pre",
+      "targets": [
+        {
+          "datasource": {
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
+          },
+          "queryText": "SELECT timestamp_iso, direction FROM locomotive_direction  WHERE loc_id = LOC_ID",
+          "queryType": "table",
+          "rawQueryText": "SELECT timestamp_iso, direction FROM locomotive_direction  WHERE loc_id = LOC_ID",
+          "refId": "A",
+          "timeColumns": [
+            "timestamp_iso"
+          ]
+        }
+      ],
+      "title": "Loc Direction",
+      "type": "gauge"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "id": 14,
+      "panels": [],
+      "title": "Usage",
+      "type": "row"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": LOC_FUELA_MAX,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 0,
+        "y": 18
+      },
+      "id": 16,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "8.4.0-pre",
+      "targets": [
+        {
+          "datasource": {
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
+          },
+          "queryText": "SELECT timestamp_iso,  fuelA FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "queryType": "table",
+          "rawQueryText": "SELECT timestamp_iso,  fuelA FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "refId": "A",
+          "timeColumns": [
+            "timestamp_iso"
+          ]
+        }
+      ],
+      "title": "Fuel 1",
+      "type": "gauge"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": LOC_FUELB_MAX,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 3,
+        "y": 18
+      },
+      "id": 17,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "8.4.0-pre",
+      "targets": [
+        {
+          "datasource": {
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
+          },
+          "queryText": "SELECT timestamp_iso,  fuelB FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "queryType": "table",
+          "rawQueryText": "SELECT timestamp_iso,  fuelB FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "refId": "A",
+          "timeColumns": [
+            "timestamp_iso"
+          ]
+        }
+      ],
+      "title": "Fuel 2",
+      "type": "gauge"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": LOC_SAND_MAX,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 6,
+        "y": 18
+      },
+      "id": 18,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "8.4.0-pre",
+      "targets": [
+        {
+          "datasource": {
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
+          },
+          "queryText": "SELECT timestamp_iso,  sand FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "queryType": "table",
+          "rawQueryText": "SELECT timestamp_iso,  sand FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "refId": "A",
+          "timeColumns": [
+            "timestamp_iso"
+          ]
+        }
+      ],
+      "title": "Sand",
+      "type": "gauge"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 34,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "LOC_NAME - LOC_ID",
+  "uid": "locLOC_ID",
+  "version": 2,
+  "weekStart": ""
+}

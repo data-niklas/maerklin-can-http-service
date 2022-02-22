@@ -12,7 +12,9 @@ FILE_DIR = os.path.dirname(os.path.realpath(__file__))
 
 # Router configs
 DEFAULT_ASGI_COMMAND = "uvicorn"
-DEFAULT_SCRIPT_COMMAND = os.path.join(os.path.dirname(FILE_DIR), "venv", "Scripts", "python.exe")
+
+# DEFAULT_SCRIPT_COMMAND = os.path.join(os.path.dirname(FILE_DIR), "venv", "Scripts", "python.exe")     # For windows
+DEFAULT_SCRIPT_COMMAND = os.path.join(os.path.dirname(FILE_DIR), "venv", "bin", "python")       # For unix
 
 # IP from which packages are received and sent to
 DEFAULT_RAW_CAN_IP = "192.168.1.3"
@@ -43,12 +45,16 @@ DEFAULT_DATABASE_HOST = "127.0.0.1"
 # Timeout in millis
 DEFAULT_CAN_TIMEOUT = 300
 
-DEFAULT_HIGH_LEVEL_DB_DUMP_DATABASE = "sqlite:///../out/high_level_dump.sqlite3"
-DEFAULT_RAW_DB_DUMP_DATABASE = "sqlite:///../out/raw_dump.sqlite3"
+DEFAULT_HIGH_LEVEL_DB_DUMP_DATABASE = f'sqlite+aiosqlite:///{os.path.join(os.path.dirname(FILE_DIR), "out", "high_level_dump.sqlite3")}'
+DEFAULT_RAW_DB_DUMP_DATABASE = f'sqlite:///{os.path.join(os.path.dirname(FILE_DIR), "out", "raw_dump.sqlite3")}'
 
 DEFAULT_WORKFLOW_TERMINAL_COMMAND = ["cmd.exe", "/c"]
 DEFAULT_WORKFLOW_TERMINAL_INTERVAL = 1
 
+DEFAULT_GRAFANA_PORT = 8044
+DEFAULT_GRAFANA_DIR = os.path.join("/usr", "share", "grafana")
+DEFAULT_GRAFANA_API_KEY = "REPLACE WITH YOUR OWN CREATED API KEY!"
+DEFAULT_GRAFANA_UPDATE_INTERVAL = 300
 
 # Scripts config
 DEFAULT_WEBSOCKET_LOGGER_PORT = DEFAULT_CAN_RECV_PORT
@@ -56,6 +62,9 @@ DEFAULT_WEBSOCKET_LOGGER_HOST = DEFAULT_CAN_RECV_HOST
 
 DEFAULT_WEBSOCKET_PRINTER_PORT = DEFAULT_CAN_RECV_PORT
 DEFAULT_WEBSOCKET_PRINTER_HOST = DEFAULT_CAN_RECV_HOST
+
+# Resample interval in seconds
+DEFAULT_HIGH_LEVEL_DB_DUMP_RESAMPLE_INTERVAL = 120
 
 
 
@@ -98,6 +107,13 @@ class Settings(BaseSettings):
     workflow_terminal_command: List[str] = DEFAULT_WORKFLOW_TERMINAL_COMMAND
     workflow_terminal_interval: int = DEFAULT_WORKFLOW_TERMINAL_INTERVAL
 
+    grafana_port: int = DEFAULT_GRAFANA_PORT
+    grafana_dir: str = DEFAULT_GRAFANA_DIR
+    grafana_api_key: str = DEFAULT_GRAFANA_API_KEY
+    grafana_update_interval: int = DEFAULT_GRAFANA_UPDATE_INTERVAL
+
+    high_level_db_dump_resample_interval: int = DEFAULT_HIGH_LEVEL_DB_DUMP_RESAMPLE_INTERVAL
+
     class Config():
         fields = {
             'asgi_command': {'env': 'asgi_command'},
@@ -131,7 +147,14 @@ class Settings(BaseSettings):
             'raw_db_dump_database': {'env': 'raw_db_dump_database'},
 
             'workflow_terminal_command': {'env': 'workflow_terminal_command'},
-            'workflow_terminal_interval': {'env': 'workflow_terminal_interval'}
+            'workflow_terminal_interval': {'env': 'workflow_terminal_interval'},
+
+            'grafana_port': {'env': 'grafana_port'},
+            'grafana_dir': {'env': 'grafana_dir'},
+            'grafana_api_key': {'env': 'grafana_api_key'},
+            'grafana_update_interval': {'env': 'grafana_update_interval'},
+
+            'high_level_db_dump_resample_interval': {'env': 'high_level_db_dump_resample_interval'}
         }
 
 

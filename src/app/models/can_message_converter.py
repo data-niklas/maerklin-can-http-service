@@ -25,6 +25,8 @@ registered_models.extend([
     S88PollingMessage,
     S88EventMessage,
     ConfigMessage,
+    ConfigUsageMessage,
+    ConfigLocomotiveMessage,
     ParticipantPingMessage,
     LocomotiveDiscoveryMessage,
     ServiceStatusDataConfigurationMessage,
@@ -51,4 +53,8 @@ registered_models.extend([
 registered_models.extend([
     MfxBindMessage,
     MfxVerifyMessage
+])
+
+registered_models.extend([
+    LocomotiveMetricMessage
 ])

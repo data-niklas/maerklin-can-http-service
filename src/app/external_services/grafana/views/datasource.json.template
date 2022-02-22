@@ -1,0 +1,20 @@
+{
+    "uid": "DATASOURCE_UID",
+    "orgId": 1,
+    "name": "Maerklin",
+    "type": "frser-sqlite-datasource",
+    "typeName": "SQLite",
+    "typeLogoUrl": "public/plugins/frser-sqlite-datasource/img/logo.svg",
+    "access": "proxy",
+    "url": "",
+    "password": "",
+    "user": "",
+    "database": "",
+    "basicAuth": false,
+    "isDefault": true,
+    "jsonData": {
+        "path": "DBPATH",
+        "pathPrefix": "file:"
+    },
+    "readOnly": false
+}

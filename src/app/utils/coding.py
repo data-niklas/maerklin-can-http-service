@@ -16,3 +16,8 @@ def str_to_bytes(val):
 
 def bytes_to_int(val):
     return int.from_bytes(val, "big")
+
+def to_int_safe(val):
+    if val is None:
+        return None
+    return int(val, 0)
