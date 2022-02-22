@@ -56,7 +56,7 @@ async def save_usage_message(session, obj, pydantic_abstract_message):
 
 async def save_locomotive_message(session, obj, pydantic_abstract_message):
     for lok in obj["lokomotive"]:
-        await dump_model(ConfigLocomotiveMessage.from_message(lok, pydantic_abstract_message))
+        await dump_model(session, ConfigLocomotiveMessage.from_message(lok, pydantic_abstract_message))
 
 
 CONFIG_MESSAGE_DICT = {
@@ -98,7 +98,7 @@ async def save_config_message(session, data, length, pydantic_abstract_message):
             await CONFIG_MESSAGE_DICT[message_type](session, obj, pydantic_abstract_message)
 
     # also save to normal ConfigMessage
-    await dump_model(ConfigMessage.from_message(data, length, pydantic_abstract_message))
+    await dump_model(session, ConfigMessage.from_message(data, length, pydantic_abstract_message))
 
 async def process_config_stream(session, websocket, pydantic_abstract_message):
     if pydantic_abstract_message.file_length is None:
@@ -242,7 +242,8 @@ async def resample(session, start, end):
         fuel_a, fuel_b, sand = await resample_fuel_for_loc(session, start, end, mfxuid)
 
         timestamp_iso = time.mktime(end.timetuple())
-        await dump_model(LocomotiveMetricMessage(timestamp=end, timestamp_iso=timestamp_iso, mfxuid=mfxuid, loc_id=loc_id, fuelA=fuel_a, fuelB=fuel_b, sand=sand, distance=distance))
+        await dump_model(session, \
+            LocomotiveMetricMessage(timestamp=end, timestamp_iso=timestamp_iso, mfxuid=mfxuid, loc_id=loc_id, fuelA=fuel_a, fuelB=fuel_b, sand=sand, distance=distance))
 
 
 async def start_resampler():
