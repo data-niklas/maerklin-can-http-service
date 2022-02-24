@@ -237,10 +237,8 @@ async def resample_fuel_for_loc(session, filter_after, filter_before, mfxuid):
 
 async def resample(session, start, end):
     loc_ids = (await session.execute(select(ConfigLocomotiveMessage.uid, ConfigLocomotiveMessage.mfxuid))).fetchall()
-    loc_ids = set((t[0], t[1]) for t in loc_ids)
-    for loc_id_result in loc_ids:
-        loc_id = loc_id_result[0]
-        mfxuid = loc_id_result[1]
+    loc_ids = set((t[0], t[1]) for t in loc_ids) # deduplicate
+    for (loc_id, mfxuid) in loc_ids:
         distance = await resample_speed_for_loc(session, start, end, loc_id)
         fuel_a, fuel_b, sand = await resample_fuel_for_loc(session, start, end, mfxuid)
 
@@ -256,7 +254,8 @@ async def start_resampler():
     async with SessionLocal() as session:
         while True:
             now = datetime.now()
-            if now < last or (now - last).seconds < resample_interval:
+            elapsed_seconds = (now - last).seconds
+            if now < last or elapsed_seconds < resample_interval:
                 remaining = resample_interval - (now - last).seconds
                 print(f"sleeping {remaining}s")
                 await asyncio.sleep(remaining)
