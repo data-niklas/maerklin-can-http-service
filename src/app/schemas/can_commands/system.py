@@ -241,7 +241,7 @@ class AccessoryDecoderSwitchingTimeCommand(AbstractSystemCommand):
         if subcommand != SystemSubcommandSchema.AccessoryDecoderSwitchingTime:
             return None
 
-        time = bytes_to_int(data[5:6])
+        time = bytes_to_int(data[5:7])
         return AccessoryDecoderSwitchingTimeCommand(time=time, **vars(abstract_message))
 
 
@@ -349,8 +349,6 @@ class SystemStatusCommand(AbstractSystemCommand):
     channel: int
     measured_value: int = None
 
-    # TODO research DLC 8 konfiguration value request and DLC 7 TRUE / FALSE response
-
     def get_subcommand(self) -> SystemSubcommandSchema:
         return SystemSubcommandSchema.SystemStatus
 
@@ -372,8 +370,10 @@ class SystemStatusCommand(AbstractSystemCommand):
 
         channel = bytes_to_int(data[5:6])
         measured_value = None
-        if len(data) > 6:
+        if len(data) == 8:
             measured_value = bytes_to_int(data[6:8])
+        if len(data) == 7:
+            measured_value = bool(data[6])
         return SystemStatusCommand(channel=channel, measured_value=measured_value, **vars(abstract_message))
 
 
