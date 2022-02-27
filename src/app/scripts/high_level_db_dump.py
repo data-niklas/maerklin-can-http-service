@@ -30,19 +30,6 @@ engine = create_async_engine(
 )
 SessionLocal = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
 
-
-async def save_usage_message(session, obj, pydantic_abstract_message):
-    session.add(ConfigUsageMessage.from_message(obj, pydantic_abstract_message))
-
-async def save_locomotive_message(session, obj, pydantic_abstract_message):
-    for lok in obj["lokomotive"]:
-        session.add(ConfigLocomotiveMessage.from_message(lok, pydantic_abstract_message))
-
-CONFIG_MESSAGE_DICT = {
-    "[verbrauch]": save_usage_message,
-    "[lokomotive]": save_locomotive_message
-}
-
 async def parse_message(message):
     t = message[:message.find("{")]
     payload = message[len(t):]
@@ -51,12 +38,33 @@ async def parse_message(message):
     return abstract_message
 
 
+async def dump_model(session, abstract_model):
+    session.add(abstract_model)
+    await session.commit()
+
+
 async def dump(session, pydantic_abstract_message):
     print("Dumping message")
     abstract_model = convert_to_model(pydantic_abstract_message)
     assert abstract_model is not None
-    session.add(abstract_model)
-    await session.commit()
+    await dump_model(session, abstract_model)
+
+
+async def save_usage_message(session, obj, pydantic_abstract_message):
+    await dump_model(session, ConfigUsageMessage.from_message(obj, pydantic_abstract_message))
+
+
+async def save_locomotive_message(session, obj, pydantic_abstract_message):
+    for lok in obj["lokomotive"]:
+        if not isinstance(lok, dict) or lok.get("name") is None:
+            continue # skip empty entries
+        await dump_model(session, ConfigLocomotiveMessage.from_message(lok, pydantic_abstract_message))
+
+
+CONFIG_MESSAGE_DICT = {
+    "[verbrauch]": save_usage_message,
+    "[lokomotive]": save_locomotive_message
+}
 
 
 async def get_next_config_stream(session, connection):
@@ -90,11 +98,9 @@ async def save_config_message(session, data, length, pydantic_abstract_message):
         if message_type in config_obj:
             obj = config_obj[message_type]
             await CONFIG_MESSAGE_DICT[message_type](session, obj, pydantic_abstract_message)
-            return
 
-    # fallback
-    session.add(ConfigMessage.from_message(
-        data, length, pydantic_abstract_message))
+    # also save to normal ConfigMessage
+    await dump_model(session, ConfigMessage.from_message(data, length, pydantic_abstract_message))
 
 async def process_config_stream(session, websocket, pydantic_abstract_message):
     if pydantic_abstract_message.file_length is None:
@@ -229,27 +235,35 @@ async def resample_fuel_for_loc(session, filter_after, filter_before, mfxuid):
     return fuel_a_sum, fuel_b_sum, sand_sum
 
 
-async def resample(session):
-    filter_before = datetime.now()
-    filter_after = filter_before - timedelta(seconds = settings.high_level_db_dump_resample_interval)
-
+async def resample(session, start, end):
     loc_ids = (await session.execute(select(ConfigLocomotiveMessage.uid, ConfigLocomotiveMessage.mfxuid))).fetchall()
-    for loc_id_result in loc_ids:
-        loc_id = loc_id_result[0]
-        mfxuid = loc_id_result[1]
-        distance = await resample_speed_for_loc(session, filter_after, filter_before, loc_id)
-        fuel_a, fuel_b, sand = await resample_fuel_for_loc(session, filter_after, filter_before, mfxuid)
+    loc_ids = set((t[0], t[1]) for t in loc_ids) # deduplicate
+    for (loc_id, mfxuid) in loc_ids:
+        distance = await resample_speed_for_loc(session, start, end, loc_id)
+        fuel_a, fuel_b, sand = await resample_fuel_for_loc(session, start, end, mfxuid)
 
-        timestamp_iso = time.mktime(filter_before.timetuple())
-        session.add(LocomotiveMetricMessage(timestamp=filter_before, timestamp_iso=timestamp_iso, mfxuid=mfxuid, loc_id=loc_id, fuelA=fuel_a, fuelB=fuel_b, sand=sand, distance=distance))
+        timestamp_iso = time.mktime(end.timetuple())
+        await dump_model(session, \
+            LocomotiveMetricMessage(timestamp=end, timestamp_iso=timestamp_iso, mfxuid=mfxuid, loc_id=loc_id, fuelA=fuel_a, fuelB=fuel_b, sand=sand, distance=distance))
 
 
 async def start_resampler():
+    last = datetime.now()
+    resample_interval = settings.high_level_db_dump_resample_interval
+    resample_delta = timedelta(seconds = resample_interval)
     async with SessionLocal() as session:
         while True:
-            await resample(session)
-            # TODO: Sleep is inaccurate - make it accurate
-            await asyncio.sleep(settings.high_level_db_dump_resample_interval)
+            now = datetime.now()
+            elapsed_seconds = (now - last).seconds
+            if now < last or elapsed_seconds < resample_interval:
+                remaining = resample_interval - (now - last).seconds
+                print(f"sleeping {remaining}s")
+                await asyncio.sleep(remaining)
+                continue
+            start = last
+            end = last + resample_delta
+            await resample(session, start, end)
+            last = end
 
 
 async def start_websocket_listener():
