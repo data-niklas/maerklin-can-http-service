@@ -1,6 +1,6 @@
-session_name: ablaufberg
+session_name: 4-window-receive-and-send
 windows:
-  - window_name: ablaufberg windos
+  - window_name: 4-window-rec-send.tmuxp window
     layout: tiled
     shell_command_before:
       - source ./venv/bin/activate
