@@ -1,0 +1,11 @@
+session_name: 4-window-receive-and-send
+windows:
+  - window_name: 4-window-rec-send.tmuxp window
+    layout: tiled
+    shell_command_before:
+      - source ./venv/bin/activate
+    panes:
+      - python src/start.py raw_can_receiver
+      - python src/start.py raw_can_sender
+      - python src/start.py can_receiver
+      - python src/start.py can_sender
