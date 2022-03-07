@@ -353,9 +353,9 @@
             "type": "DATASOURCE_TYPE",
             "uid": "DATASOURCE_UID"
           },
-          "queryText": "SELECT timestamp_iso,  fuelA FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "queryText": "SELECT timestamp_iso, (fuelA * LOC_FUELA_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp_iso,  fuelA FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "rawQueryText": "SELECT timestamp_iso, (fuelA * LOC_FUELA_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
@@ -412,9 +412,9 @@
             "type": "DATASOURCE_TYPE",
             "uid": "DATASOURCE_UID"
           },
-          "queryText": "SELECT timestamp_iso,  fuelB FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "queryText": "SELECT timestamp_iso, (fuelB * LOC_FUELB_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp_iso,  fuelB FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "rawQueryText": "SELECT timestamp_iso, (fuelB * LOC_FUELB_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
@@ -471,9 +471,9 @@
             "type": "DATASOURCE_TYPE",
             "uid": "DATASOURCE_UID"
           },
-          "queryText": "SELECT timestamp_iso,  sand FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "queryText": "SELECT timestamp_iso, (sand * LOC_SAND_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp_iso,  sand FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "rawQueryText": "SELECT timestamp_iso, (sand * LOC_SAND_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
@@ -484,7 +484,7 @@
       "type": "gauge"
     }
   ],
-  "refresh": false,
+  "refresh": "5s",
   "schemaVersion": 34,
   "style": "dark",
   "tags": [],

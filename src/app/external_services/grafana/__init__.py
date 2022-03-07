@@ -126,8 +126,8 @@ def read_loc_usage(mfxuid):
 
 def update():
     for loc in get_locs():
-#        max_fuel_a, max_fuel_b, max_sand = read_loc_usage(int(loc["mfxuid"], 0))
-        apply_loc(loc, 255, 255, 255, DATASOURCE_UID, DATASOURCE_TYPE)
+        max_fuel_a, max_fuel_b, max_sand = read_loc_usage(int(loc["mfxuid"], 0))
+        apply_loc(loc, max_fuel_a, max_fuel_b, max_sand, DATASOURCE_UID, DATASOURCE_TYPE)
 
 def main():
     apply_config(PORT)

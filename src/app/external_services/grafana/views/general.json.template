@@ -341,6 +341,7 @@
         "type": "logs"
       }
     ],
+    "refresh": "5s",
     "schemaVersion": 34,
     "style": "dark",
     "tags": [],
