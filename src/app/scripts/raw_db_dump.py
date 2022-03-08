@@ -41,15 +41,15 @@ async def listen_and_dump(session):
             await dump(session, message)
 
 async def main():
-    session = await create_sql_session()
-    while True:
-        try:
-            await listen_and_dump(session)
-        except KeyboardInterrupt:
-            print("KeyboardInterrupt")
-            break
-        except Exception as e:
-            print(f"Error: {repr(e)}")
+    async with await create_sql_session() as session:
+        while True:
+            try:
+                await listen_and_dump(session)
+            except KeyboardInterrupt:
+                print("KeyboardInterrupt")
+                break
+            except Exception as e:
+                print(f"Error: {repr(e)}")
         
 
 if __name__ == "__main__":
