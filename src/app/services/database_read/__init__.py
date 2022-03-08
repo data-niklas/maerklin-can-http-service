@@ -37,6 +37,8 @@ async def on_startup() -> None:
     async with engine.begin() as conn:
         for model in registered_models:
             await conn.run_sync(model.metadata.create_all)
+    async with raw_engine.begin() as conn:
+        await conn.run_sync(CANMessage.metadata.create_all)
 
 async def get_db():
     async with SessionLocal() as session:
