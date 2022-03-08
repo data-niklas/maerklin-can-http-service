@@ -218,7 +218,7 @@ async def resample_fuel_for_loc(session, start, end, mfxuid):
         if before[1] is not None:
             a_fuels = [(before_timestamp, before[1])] + a_fuels
         if before[2] is not None:
-            b_fuels = [(before_timestamp, before[2])] + a_fuels
+            b_fuels = [(before_timestamp, before[2])] + b_fuels
         if before[3] is not None:
             sands = [(before_timestamp, before[3])] + sands
 
