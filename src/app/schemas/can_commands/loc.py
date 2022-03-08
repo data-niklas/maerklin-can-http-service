@@ -36,7 +36,6 @@ class LocomotiveSpeedCommand(AbstractLocIDCommand):
     
     def get_other_data(self) -> bytes:
         if self.speed is None:
-            assert not self.response
             return bytes()
         assert self.speed <= 1000
         return int_to_bytes(self.speed, 2)
@@ -48,7 +47,9 @@ class LocomotiveSpeedCommand(AbstractLocIDCommand):
 
         abstract_message = AbstractLocIDCommand.from_can_message(message)
         data = message.get_data_bytes()
-        speed = bytes_to_int(data[4:6])
+        speed = None
+        if len(data) > 4:
+            speed = bytes_to_int(data[4:6])
 
         return LocomotiveSpeedCommand(speed=speed, **vars(abstract_message))
 
@@ -88,17 +89,14 @@ class LocomotiveDirectionCommand(AbstractLocIDCommand):
         assert len(data) < 6
         if len(data) > 4:
             direction = bytes_to_int(data[4:5])
-            if direction == 0:
-                direction = LocomotiveDirection.Keep
-            elif direction == 1:
+            if direction == 1:
                 direction = LocomotiveDirection.Forwards
             elif direction == 2:
                 direction = LocomotiveDirection.Backwards
             elif direction == 3:
                 direction = LocomotiveDirection.Toggle
             else:
-                # wrong value
-                return None
+                direction = LocomotiveDirection.Keep
 
         return LocomotiveDirectionCommand(direction=direction, **vars(abstract_message))
 
