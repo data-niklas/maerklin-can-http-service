@@ -46,7 +46,7 @@ DEFAULT_DATABASE_HOST = "127.0.0.1"
 DEFAULT_CAN_TIMEOUT = 300
 
 DEFAULT_HIGH_LEVEL_DB_DUMP_DATABASE = f'sqlite+aiosqlite:///{os.path.join(os.path.dirname(FILE_DIR), "out", "high_level_dump.sqlite3")}'
-DEFAULT_RAW_DB_DUMP_DATABASE = f'sqlite:///{os.path.join(os.path.dirname(FILE_DIR), "out", "raw_dump.sqlite3")}'
+DEFAULT_RAW_DB_DUMP_DATABASE = f'sqlite+aiosqlite:///{os.path.join(os.path.dirname(FILE_DIR), "out", "raw_dump.sqlite3")}'
 
 DEFAULT_WORKFLOW_TERMINAL_COMMAND = ["cmd.exe", "/c"]
 DEFAULT_WORKFLOW_TERMINAL_INTERVAL = 1
@@ -64,7 +64,7 @@ DEFAULT_WEBSOCKET_PRINTER_PORT = DEFAULT_CAN_RECV_PORT
 DEFAULT_WEBSOCKET_PRINTER_HOST = DEFAULT_CAN_RECV_HOST
 
 # Resample interval in seconds
-DEFAULT_HIGH_LEVEL_DB_DUMP_RESAMPLE_INTERVAL = 120
+DEFAULT_HIGH_LEVEL_DB_DUMP_RESAMPLE_INTERVAL = 30
 
 
 
