@@ -134,104 +134,112 @@ async def process_config_stream(session, websocket, pydantic_abstract_message):
 
 
 # Calculates 'distance points' = duration (in s) * speed
-async def resample_speed_for_loc(session, filter_after, filter_before, loc_id):
-    base_query = select(LocomotiveSpeedMessage.timestamp, LocomotiveSpeedMessage.speed).filter(LocomotiveSpeedMessage.loc_id == loc_id)
-    results_after = (await session.execute(base_query.order_by(asc(LocomotiveSpeedMessage.timestamp)).filter(LocomotiveSpeedMessage.timestamp >= filter_after).filter(LocomotiveSpeedMessage.timestamp < filter_before))).fetchall()
-    result_before = (await session.execute(base_query.order_by(desc(LocomotiveSpeedMessage.timestamp)).filter(LocomotiveSpeedMessage.timestamp < filter_after).limit(1))).fetchall()
+async def resample_speed_for_loc(session, start, end, loc_id):
+    base_query = select(LocomotiveSpeedMessage.timestamp, LocomotiveSpeedMessage.speed) \
+        .filter(LocomotiveSpeedMessage.loc_id == loc_id)
+    in_interval = (await session.execute( \
+        base_query \
+            .order_by(asc(LocomotiveSpeedMessage.timestamp)) \
+            .filter(LocomotiveSpeedMessage.timestamp >= start) \
+            .filter(LocomotiveSpeedMessage.timestamp < end) \
+        )).fetchall()
+    result_before = (await session.execute( \
+        base_query \
+            .order_by(desc(LocomotiveSpeedMessage.timestamp)) \
+            .filter(LocomotiveSpeedMessage.timestamp < start) \
+            .limit(1) \
+        )).fetchall()
 
-    results_after_count = len(results_after)
+    number_points = len(in_interval)
 
     has_before = len(result_before) == 1
+    if has_before:
+        before = result_before[0]
 
-    total_duration = (filter_before - filter_after).total_seconds()
+    total_duration = (end - start).total_seconds()
 
-    if results_after_count == 0:
+    if number_points == 0:
         if has_before:
-            return result_before[0][1] * total_duration
+            return before[1] * total_duration
         return 0
 
     distance_sum = 0
 
     # First data point; Boundary check
     if has_before:
-        previous_value = result_before[0][1]
+        previous_value = before[0][1]
     else:
-        previous_value = results_after[0][1]
+        previous_value = 0
 
-    duration = (results_after[0][0] - filter_after).total_seconds()
+    duration = (in_interval[0][0] - start).total_seconds()
     distance_sum += previous_value * duration
 
 
-    for i in range(0, results_after_count):
-        if i == results_after_count - 1:
-            duration = (filter_before - results_after[i][0]).total_seconds()
+    for i, (timestamp, distance) in enumerate(in_interval):
+        if i == number_points - 1:
+            next_timestamp = end
         else:
-            duration = (results_after[i + 1][0] - results_after[i][0]).total_seconds()
+            next_timestamp = in_interval[i + 1][0]
+        duration = (next_timestamp - timestamp).total_seconds()
         
-        distance_sum += results_after[i][1] * duration
+        distance_sum += distance * duration
 
     return distance_sum
 
 
-# TODO check if attributes are nullable
-async def resample_fuel_for_loc(session, filter_after, filter_before, mfxuid):
-    base_query = select(ConfigUsageMessage.timestamp, ConfigUsageMessage.fuelA, ConfigUsageMessage.fuelB, ConfigUsageMessage.sand).filter(ConfigUsageMessage.mfxuid == mfxuid)
-    results_after = (await session.execute(base_query.order_by(asc(ConfigUsageMessage.timestamp)).filter(ConfigUsageMessage.timestamp >= filter_after).filter(ConfigUsageMessage.timestamp < filter_before))).fetchall()
-    result_before = (await session.execute(base_query.order_by(desc(ConfigUsageMessage.timestamp)).filter(ConfigUsageMessage.timestamp < filter_after).limit(1))).fetchall()
+async def resample_fuel_for_loc(session, start, end, mfxuid):
+    base_query = select(ConfigUsageMessage.timestamp, ConfigUsageMessage.fuelA, ConfigUsageMessage.fuelB, ConfigUsageMessage.sand) \
+        .filter(ConfigUsageMessage.mfxuid == mfxuid)
+    in_interval = (await session.execute(
+        base_query \
+            .order_by(asc(ConfigUsageMessage.timestamp)) \
+            .filter(ConfigUsageMessage.timestamp >= start) \
+            .filter(ConfigUsageMessage.timestamp < end) \
+        )).fetchall()
+    result_before = (await session.execute( \
+        base_query \
+            .order_by(desc(ConfigUsageMessage.timestamp)) \
+            .filter(ConfigUsageMessage.timestamp < start) \
+            .limit(1) \
+        )).fetchall()
 
-    results_after_count = len(results_after)
+    in_interval_count = len(in_interval)
 
     has_before = len(result_before) == 1
 
-    total_duration = (filter_before - filter_after).total_seconds()
-
-    if results_after_count == 0:
-        return 0, 0, 0
-
-    def default_0(value):
-        if value is None:
-            return 0
-        return value
-
-    def fuel_a_at(index):
-        return default_0(results_after[index][1])
-
-    def fuel_b_at(index):
-        return default_0(results_after[index][2])
-
-    def sand_at(index):
-        return default_0(results_after[index][3])
-
-    fuel_a_sum = 0
-    fuel_b_sum = 0
-    sand_sum = 0
+    a_fuels = [(point[0], point[1]) for point in in_interval if point[1] is not None]
+    b_fuels = [(point[0], point[2]) for point in in_interval if point[2] is not None]
+    sands = [(point[0], point[3]) for point in in_interval if point[3] is not None]
 
     # First data point; Boundary check
     if has_before:
-        previous_a_value = default_0(result_before[0][1])
-        previous_b_value = default_0(result_before[0][2])
-        previous_sand_value = default_0(result_before[0][3])
-    else:
-        previous_a_value = fuel_a_at(0)
-        previous_b_value = fuel_b_at(0)
-        previous_sand_value = sand_at(0)
+        before = result_before[0]
+        before_timestamp = before[0]
+        if before[1] is not None:
+            a_fuels = [(before_timestamp, before[1])] + a_fuels
+        if before[2] is not None:
+            b_fuels = [(before_timestamp, before[2])] + a_fuels
+        if before[3] is not None:
+            sands = [(before_timestamp, before[3])] + a_fuels
 
-    duration = (results_after[0][0] - filter_after).total_seconds()
-    fuel_a_sum += (fuel_a_at(0) - previous_a_value) / duration
-    fuel_b_sum += (fuel_b_at(0) - previous_b_value) / duration
-    sand_sum += (sand_at(0) - previous_sand_value) / duration
+    def mean_interval_difference(values):
+        ret = 0
+        for (timestamp_before, value_before), (timestamp_now, value_now) in zip(values, values[1:]):
+            duration = (timestamp_now - timestamp_before).total_seconds()
+            ret += (value_now - value_before) / duration
+        return ret
 
+    fuel_a_sum = mean_interval_difference(a_fuels)
+    fuel_b_sum = mean_interval_difference(b_fuels)
+    sand_sum = mean_interval_difference(sands)
 
-    for i in range(1, results_after_count):
-        duration = (results_after[i][0] - results_after[i - 1][0]).total_seconds()
-        
-        fuel_a_sum += (fuel_a_at(i) - fuel_a_at(i - 1)) / duration
-        fuel_b_sum += (fuel_b_at(i) - fuel_b_at(i - 1)) / duration
-        sand_sum += (sand_at(i) - sand_at(i - 1)) / duration
-
-    fuel_a_sum /= results_after_count
-    fuel_b_sum /= results_after_count
-    sand_sum /= results_after_count
+    # we calculate n - 1 intervals for n values
+    if len(a_fuels) > 1:
+        fuel_a_sum /= len(a_fuels) - 1
+    if len(b_fuels) > 1:
+        fuel_b_sum /= len(b_fuels) - 1
+    if len(sands) > 1:
+        sand_sum /= len(sands) - 1
     return fuel_a_sum, fuel_b_sum, sand_sum
 
 
