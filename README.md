@@ -78,6 +78,13 @@ python ./src/start.py can_sender
 2. Navigate to the `/docs` subpage, e.g.: `http://127.0.0.1:8002/docs`
 3. Choose a command and press `Try it out`
 
+### Shortcut for running raw_can_sender, raw_can_receiver, can_sender, can_receiver
+You can use tmuxp profile for loading a preconfigured tmux session by running
+```
+tmuxp load ./assets/4-window-receive-and-send.tmuxp.yaml
+```
+Tmuxp will take care of activating the venv for you.
+
 ### Development
 When no Märklin CS3+ is available, the `dummy_central_station.py` script may be used. It will forward all received CAN messages to the connected `raw_can_receiver` service.
 ```sh
