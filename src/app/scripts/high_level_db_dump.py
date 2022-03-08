@@ -255,6 +255,14 @@ async def resample(session, start, end):
             LocomotiveMetricMessage(timestamp=end, timestamp_iso=timestamp_iso, mfxuid=mfxuid, loc_id=loc_id, fuelA=fuel_a, fuelB=fuel_b, sand=sand, distance=distance))
 
 
+async def refresh_loc_information():
+    loc_ids = (await session.execute(select(ConfigLocomotiveMessage.uid, ConfigLocomotiveMessage.mfxuid))).fetchall()
+    loc_ids = set((t[0], t[1]) for t in loc_ids) # deduplicate
+    # TODO: get can hash
+    for (loc_id, mfxuid) in loc_ids:
+        # TODO: send messages for speed, direction
+
+
 async def start_resampler():
     last = datetime.now()
     resample_interval = settings.high_level_db_dump_resample_interval
@@ -265,13 +273,29 @@ async def start_resampler():
             elapsed_seconds = (now - last).seconds
             if now < last or elapsed_seconds < resample_interval:
                 remaining = resample_interval - (now - last).seconds
-                print(f"sleeping {remaining}s")
                 await asyncio.sleep(remaining)
                 continue
             start = last
             end = last + resample_delta
             await resample(session, start, end)
             last = end
+
+
+async def start_refresher():
+    last = datetime.now()
+    resample_interval = settings.high_level_db_dump_resample_interval
+    resample_delta = timedelta(seconds = resample_interval)
+    while True:
+        now = datetime.now()
+        elapsed_seconds = (now - last).seconds
+        if now < last or elapsed_seconds < resample_interval:
+            remaining = resample_interval - (now - last).seconds
+            await asyncio.sleep(remaining)
+            continue
+        start = last
+        end = last + resample_delta
+        await refresh_loc_information()
+        last = end
 
 
 async def start_websocket_listener():
