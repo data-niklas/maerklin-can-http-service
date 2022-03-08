@@ -1,0 +1,13 @@
+session_name: Grafana Märklin CAN
+windows:
+  - window_name: Grafana Märklin CAN
+    layout: tiled
+    shell_command_before:
+      - source ./venv/bin/activate;clear
+    panes:
+      - python src/start.py raw_can_receiver
+      - sleep 2;python src/start.py can_receiver
+      - sleep 4;python src/start.py can
+      - sleep 4;python src/start.py high_level_db_dump
+      - sleep 6;python src/start.py database
+      - sleep 12;echo "pkill grafana;source ./venv/bin/activate; python src/start.py grafana" | sudo su
