@@ -21,6 +21,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
+  "id": 9,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -33,10 +34,10 @@
       },
       "id": 12,
       "options": {
-        "content": "# LOC_NAME",
+        "content": "# 6310 Crossrail",
         "mode": "markdown"
       },
-      "pluginVersion": "8.4.0-pre",
+      "pluginVersion": "8.3.4",
       "title": "Name",
       "type": "text"
     },
@@ -46,7 +47,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 3
       },
       "id": 6,
       "panels": [],
@@ -86,7 +87,7 @@
         "h": 7,
         "w": 3,
         "x": 0,
-        "y": 1
+        "y": 4
       },
       "id": 4,
       "options": {
@@ -101,16 +102,16 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "8.4.0-pre",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "datasource": {
-            "type": "DATASOURCE_TYPE",
-            "uid": "DATASOURCE_UID"
+            "type": "frser-sqlite-datasource",
+            "uid": "yyAw0-bnz"
           },
-          "queryText": "SELECT timestamp_iso, speed FROM locomotive_speed  WHERE loc_id = LOC_ID",
+          "queryText": "SELECT timestamp_iso, speed FROM locomotive_speed  WHERE loc_id = 16390",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp_iso, speed FROM locomotive_speed  WHERE loc_id = LOC_ID",
+          "rawQueryText": "SELECT timestamp_iso, speed FROM locomotive_speed  WHERE loc_id = 16390",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
@@ -175,7 +176,7 @@
         "h": 7,
         "w": 6,
         "x": 3,
-        "y": 1
+        "y": 4
       },
       "id": 2,
       "options": {
@@ -191,13 +192,13 @@
       "targets": [
         {
           "datasource": {
-            "type": "DATASOURCE_TYPE",
-            "uid": "DATASOURCE_UID"
+            "type": "frser-sqlite-datasource",
+            "uid": "yyAw0-bnz"
           },
           "hide": false,
-          "queryText": "SELECT timestamp_iso, speed FROM locomotive_speed WHERE loc_id = LOC_ID",
+          "queryText": "SELECT timestamp_iso, speed FROM locomotive_speed WHERE loc_id = 16390",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp_iso, speed FROM locomotive_speed WHERE loc_id = LOC_ID",
+          "rawQueryText": "SELECT timestamp_iso, speed FROM locomotive_speed WHERE loc_id = 16390",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
@@ -209,8 +210,7 @@
         {
           "id": "convertFieldType",
           "options": {
-            "conversions": [
-            ],
+            "conversions": [],
             "fields": {}
           }
         }
@@ -258,7 +258,7 @@
         "h": 5,
         "w": 3,
         "x": 0,
-        "y": 8
+        "y": 11
       },
       "id": 8,
       "options": {
@@ -274,16 +274,16 @@
         "showThresholdMarkers": false,
         "text": {}
       },
-      "pluginVersion": "8.4.0-pre",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "datasource": {
-            "type": "DATASOURCE_TYPE",
-            "uid": "DATASOURCE_UID"
+            "type": "frser-sqlite-datasource",
+            "uid": "yyAw0-bnz"
           },
-          "queryText": "SELECT timestamp_iso, direction FROM locomotive_direction  WHERE loc_id = LOC_ID",
+          "queryText": "SELECT timestamp_iso, direction FROM locomotive_direction  WHERE loc_id = 16390",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp_iso, direction FROM locomotive_direction  WHERE loc_id = LOC_ID",
+          "rawQueryText": "SELECT timestamp_iso, direction FROM locomotive_direction  WHERE loc_id = 16390",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
@@ -294,12 +294,34 @@
       "type": "gauge"
     },
     {
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 3,
+        "y": 11
+      },
+      "id": 27,
+      "options": {
+        "contentType": "application/json",
+        "icon": "arrow",
+        "isAuth": false,
+        "method": "POST",
+        "orientation": "center",
+        "text": "Change Direction",
+        "type": "header",
+        "url": "http://localhost:4000/",
+        "variant": "primary"
+      },
+      "title": "Change Direction",
+      "type": "cloudspout-button-panel"
+    },
+    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 16
       },
       "id": 14,
       "panels": [],
@@ -313,7 +335,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": LOC_FUELA_MAX,
+          "max": 6400,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -328,10 +350,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
+        "h": 8,
         "w": 3,
         "x": 0,
-        "y": 18
+        "y": 17
       },
       "id": 16,
       "options": {
@@ -346,16 +368,16 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "8.4.0-pre",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "datasource": {
-            "type": "DATASOURCE_TYPE",
-            "uid": "DATASOURCE_UID"
+            "type": "frser-sqlite-datasource",
+            "uid": "yyAw0-bnz"
           },
-          "queryText": "SELECT timestamp_iso, (fuelA * LOC_FUELA_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "queryText": "SELECT timestamp_iso, (fuelA * 6400 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp_iso, (fuelA * LOC_FUELA_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "rawQueryText": "SELECT timestamp_iso, (fuelA * 6400 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
@@ -369,10 +391,39 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": -1,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "mappings": [],
-          "max": LOC_FUELB_MAX,
+          "max": 6400,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -387,10 +438,150 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
-        "w": 3,
+        "h": 8,
+        "w": 10,
         "x": 3,
-        "y": 18
+        "y": 17
+      },
+      "id": 20,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "yyAw0-bnz"
+          },
+          "queryText": "SELECT timestamp_iso, (fuelA * 6400 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
+          "queryType": "table",
+          "rawQueryText": "SELECT timestamp_iso, (fuelA * 6400 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
+          "refId": "A",
+          "timeColumns": [
+            "timestamp_iso"
+          ]
+        }
+      ],
+      "title": "Fuel 1",
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": -1,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 11,
+        "x": 13,
+        "y": 17
+      },
+      "id": 23,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "yyAw0-bnz"
+          },
+          "queryText": "SELECT timestamp_iso, (fuelA * 6400 / 255) FROM locomotive_metrics WHERE mfxuid = 0x73f0c780",
+          "queryType": "table",
+          "rawQueryText": "SELECT timestamp_iso, (fuelA * 6400 / 255) FROM locomotive_metrics WHERE mfxuid = 0x73f0c780",
+          "refId": "A",
+          "timeColumns": [
+            "timestamp_iso"
+          ]
+        }
+      ],
+      "title": "Fuel 1 usage per minute",
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 255,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 3,
+        "x": 0,
+        "y": 25
       },
       "id": 17,
       "options": {
@@ -405,16 +596,16 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "8.4.0-pre",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "datasource": {
-            "type": "DATASOURCE_TYPE",
-            "uid": "DATASOURCE_UID"
+            "type": "frser-sqlite-datasource",
+            "uid": "yyAw0-bnz"
           },
-          "queryText": "SELECT timestamp_iso, (fuelB * LOC_FUELB_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "queryText": "SELECT timestamp_iso, (fuelB * 255 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp_iso, (fuelB * LOC_FUELB_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "rawQueryText": "SELECT timestamp_iso, (fuelB * 255 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
@@ -428,10 +619,39 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": -1,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "mappings": [],
-          "max": LOC_SAND_MAX,
+          "max": 255,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -446,10 +666,150 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
+        "h": 8,
+        "w": 10,
+        "x": 3,
+        "y": 25
+      },
+      "id": 21,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "yyAw0-bnz"
+          },
+          "queryText": "SELECT timestamp_iso, (fuelB * 255 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
+          "queryType": "table",
+          "rawQueryText": "SELECT timestamp_iso, (fuelB * 255 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
+          "refId": "A",
+          "timeColumns": [
+            "timestamp_iso"
+          ]
+        }
+      ],
+      "title": "Fuel 2",
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": -1,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 11,
+        "x": 13,
+        "y": 25
+      },
+      "id": 24,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "yyAw0-bnz"
+          },
+          "queryText": "SELECT timestamp_iso, (fuelB * 255 / 255) FROM locomotive_metrics WHERE mfxuid = 0x73f0c780",
+          "queryType": "table",
+          "rawQueryText": "SELECT timestamp_iso, (fuelB * 255 / 255) FROM locomotive_metrics WHERE mfxuid = 0x73f0c780",
+          "refId": "A",
+          "timeColumns": [
+            "timestamp_iso"
+          ]
+        }
+      ],
+      "title": "Fuel 2 usage per minute",
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 255,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
         "w": 3,
-        "x": 6,
-        "y": 18
+        "x": 0,
+        "y": 33
       },
       "id": 18,
       "options": {
@@ -464,16 +824,16 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "8.4.0-pre",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "datasource": {
-            "type": "DATASOURCE_TYPE",
-            "uid": "DATASOURCE_UID"
+            "type": "frser-sqlite-datasource",
+            "uid": "yyAw0-bnz"
           },
-          "queryText": "SELECT timestamp_iso, (sand * LOC_SAND_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "queryText": "SELECT timestamp_iso, (sand * 255 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp_iso, (sand * LOC_SAND_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
+          "rawQueryText": "SELECT timestamp_iso, (sand * 255 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
@@ -482,6 +842,175 @@
       ],
       "title": "Sand",
       "type": "gauge"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": -1,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "max": 255,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 10,
+        "x": 3,
+        "y": 33
+      },
+      "id": 22,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "yyAw0-bnz"
+          },
+          "queryText": "SELECT timestamp_iso, (sand * 6400 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
+          "queryType": "table",
+          "rawQueryText": "SELECT timestamp_iso, (sand * 6400 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
+          "refId": "A",
+          "timeColumns": [
+            "timestamp_iso"
+          ]
+        }
+      ],
+      "title": "Sand",
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": -1,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 11,
+        "x": 13,
+        "y": 33
+      },
+      "id": 25,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "yyAw0-bnz"
+          },
+          "queryText": "SELECT timestamp_iso, (sand * 255 / 255) FROM locomotive_metrics WHERE mfxuid = 0x73f0c780",
+          "queryType": "table",
+          "rawQueryText": "SELECT timestamp_iso, (sand * 255 / 255) FROM locomotive_metrics WHERE mfxuid = 0x73f0c780",
+          "refId": "A",
+          "timeColumns": [
+            "timestamp_iso"
+          ]
+        }
+      ],
+      "title": "Sand usage per minute",
+      "type": "timeseries"
     }
   ],
   "refresh": "5s",
@@ -497,8 +1026,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "LOC_NAME - LOC_ID",
-  "uid": "locLOC_ID",
-  "version": 2,
+  "title": "6310 Crossrail - 16390",
+  "uid": "loc16390",
+  "version": 54,
   "weekStart": ""
 }
