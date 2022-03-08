@@ -20,14 +20,16 @@ async def main():
             messages.append(f"{str(datetime.now())} - {message}")
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except Exception as e:
-        print(f"stopping with {e}")
-    except KeyboardInterrupt:
-        print("stopping with keyboard interrupt")
-        with open("../out/messages.log", "a") as f:
-            f.write("\n" + "\n".join(messages))
-    finally:
-        with open("../out/messages.log", "a") as f:
-            f.write("\n" + "\n".join(messages))
+    while True:
+        try:
+            asyncio.run(main())
+        except Exception as e:
+            print(f"need to restart with {repr(e)}")
+        except KeyboardInterrupt:
+            print("stopping with keyboard interrupt")
+            with open("../out/messages.log", "a") as f:
+                f.write("\n" + "\n".join(messages))
+            break
+        finally:
+            with open("../out/messages.log", "a") as f:
+                f.write("\n" + "\n".join(messages))
