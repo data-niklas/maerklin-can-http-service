@@ -167,7 +167,7 @@ async def resample_speed_for_loc(session, start, end, loc_id):
 
     # First data point; Boundary check
     if has_before:
-        previous_value = before[0][1]
+        previous_value = before[1]
     else:
         previous_value = 0
 
@@ -226,7 +226,7 @@ async def resample_fuel_for_loc(session, start, end, mfxuid):
         ret = 0
         for (timestamp_before, value_before), (timestamp_now, value_now) in zip(values, values[1:]):
             duration = (timestamp_now - timestamp_before).total_seconds()
-            ret += (value_now - value_before) / duration
+            ret += (value_now - value_before) * 60 / duration
         return ret
 
     fuel_a_sum = mean_interval_difference(a_fuels)
@@ -244,6 +244,7 @@ async def resample_fuel_for_loc(session, start, end, mfxuid):
 
 
 async def resample(session, start, end):
+    print("resampling")
     loc_ids = (await session.execute(select(ConfigLocomotiveMessage.uid, ConfigLocomotiveMessage.mfxuid))).fetchall()
     loc_ids = set((t[0], t[1]) for t in loc_ids) # deduplicate
     for (loc_id, mfxuid) in loc_ids:
@@ -262,9 +263,9 @@ async def start_resampler():
     async with SessionLocal() as session:
         while True:
             now = datetime.now()
-            elapsed_seconds = (now - last).seconds
+            elapsed_seconds = (now - last).total_seconds()
             if now < last or elapsed_seconds < resample_interval:
-                remaining = resample_interval - (now - last).seconds
+                remaining = resample_interval - elapsed_seconds
                 print(f"sleeping {remaining}s")
                 await asyncio.sleep(remaining)
                 continue
