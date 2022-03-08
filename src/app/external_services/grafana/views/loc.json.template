@@ -34,7 +34,7 @@
       },
       "id": 12,
       "options": {
-        "content": "# 6310 Crossrail",
+        "content": "# LOC_NAME",
         "mode": "markdown"
       },
       "pluginVersion": "8.3.4",
@@ -106,12 +106,12 @@
       "targets": [
         {
           "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "yyAw0-bnz"
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
           },
-          "queryText": "SELECT timestamp_iso, speed FROM locomotive_speed  WHERE loc_id = 16390",
+          "queryText": "SELECT timestamp_iso, speed FROM locomotive_speed  WHERE loc_id = LOC_ID",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp_iso, speed FROM locomotive_speed  WHERE loc_id = 16390",
+          "rawQueryText": "SELECT timestamp_iso, speed FROM locomotive_speed  WHERE loc_id = LOC_ID",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
@@ -192,13 +192,13 @@
       "targets": [
         {
           "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "yyAw0-bnz"
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
           },
           "hide": false,
-          "queryText": "SELECT timestamp_iso, speed FROM locomotive_speed WHERE loc_id = 16390",
+          "queryText": "SELECT timestamp_iso, speed FROM locomotive_speed WHERE loc_id = LOC_ID",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp_iso, speed FROM locomotive_speed WHERE loc_id = 16390",
+          "rawQueryText": "SELECT timestamp_iso, speed FROM locomotive_speed WHERE loc_id = LOC_ID",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
@@ -278,12 +278,12 @@
       "targets": [
         {
           "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "yyAw0-bnz"
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
           },
-          "queryText": "SELECT timestamp_iso, direction FROM locomotive_direction  WHERE loc_id = 16390",
+          "queryText": "SELECT timestamp_iso, direction FROM locomotive_direction  WHERE loc_id = LOC_ID",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp_iso, direction FROM locomotive_direction  WHERE loc_id = 16390",
+          "rawQueryText": "SELECT timestamp_iso, direction FROM locomotive_direction  WHERE loc_id = LOC_ID",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
@@ -309,8 +309,15 @@
         "orientation": "center",
         "text": "Change Direction",
         "type": "header",
-        "url": "http://localhost:4000/",
-        "variant": "primary"
+        "url": "http://CAN_HOST:CAN_PORT/lok/LOC_ID/direction",
+        "variant": "primary",
+        "payload": "{\"direction\": \"Toggle\"}",
+        "params": [
+          [
+            "x_can_hash",
+            "HASH"
+          ]
+        ]
       },
       "title": "Change Direction",
       "type": "cloudspout-button-panel"
@@ -335,7 +342,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 6400,
+          "max": LOC_FUELA_MAX,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -372,12 +379,12 @@
       "targets": [
         {
           "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "yyAw0-bnz"
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
           },
-          "queryText": "SELECT timestamp_iso, (fuelA * 6400 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
+          "queryText": "SELECT timestamp_iso, (fuelA * LOC_FUELA_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp_iso, (fuelA * 6400 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
+          "rawQueryText": "SELECT timestamp_iso, (fuelA * LOC_FUELA_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
@@ -423,7 +430,7 @@
             }
           },
           "mappings": [],
-          "max": 6400,
+          "max": LOC_FUELA_MAX,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -457,12 +464,12 @@
       "targets": [
         {
           "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "yyAw0-bnz"
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
           },
-          "queryText": "SELECT timestamp_iso, (fuelA * 6400 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
+          "queryText": "SELECT timestamp_iso, (fuelA * LOC_FUELA_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp_iso, (fuelA * 6400 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
+          "rawQueryText": "SELECT timestamp_iso, (fuelA * LOC_FUELA_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
@@ -541,12 +548,12 @@
       "targets": [
         {
           "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "yyAw0-bnz"
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
           },
-          "queryText": "SELECT timestamp_iso, (fuelA * 6400 / 255) FROM locomotive_metrics WHERE mfxuid = 0x73f0c780",
+          "queryText": "SELECT timestamp_iso, (fuelA * LOC_FUELA_MAX / 255) FROM locomotive_metrics WHERE mfxuid = LOC_MFXUID",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp_iso, (fuelA * 6400 / 255) FROM locomotive_metrics WHERE mfxuid = 0x73f0c780",
+          "rawQueryText": "SELECT timestamp_iso, (fuelA * LOC_FUELA_MAX / 255) FROM locomotive_metrics WHERE mfxuid = LOC_MFXUID",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
@@ -563,7 +570,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 255,
+          "max": LOC_FUELB_MAX,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -600,12 +607,12 @@
       "targets": [
         {
           "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "yyAw0-bnz"
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
           },
-          "queryText": "SELECT timestamp_iso, (fuelB * 255 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
+          "queryText": "SELECT timestamp_iso, (fuelB * LOC_FUELB_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp_iso, (fuelB * 255 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
+          "rawQueryText": "SELECT timestamp_iso, (fuelB * LOC_FUELB_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
@@ -651,7 +658,7 @@
             }
           },
           "mappings": [],
-          "max": 255,
+          "max": LOC_FUELB_MAX,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -685,12 +692,12 @@
       "targets": [
         {
           "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "yyAw0-bnz"
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
           },
-          "queryText": "SELECT timestamp_iso, (fuelB * 255 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
+          "queryText": "SELECT timestamp_iso, (fuelB * LOC_FUELB_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp_iso, (fuelB * 255 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
+          "rawQueryText": "SELECT timestamp_iso, (fuelB * LOC_FUELB_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
@@ -769,12 +776,12 @@
       "targets": [
         {
           "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "yyAw0-bnz"
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
           },
-          "queryText": "SELECT timestamp_iso, (fuelB * 255 / 255) FROM locomotive_metrics WHERE mfxuid = 0x73f0c780",
+          "queryText": "SELECT timestamp_iso, (fuelB * LOC_FUELB_MAX / 255) FROM locomotive_metrics WHERE mfxuid = LOC_MFXUID",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp_iso, (fuelB * 255 / 255) FROM locomotive_metrics WHERE mfxuid = 0x73f0c780",
+          "rawQueryText": "SELECT timestamp_iso, (fuelB * LOC_FUELB_MAX / 255) FROM locomotive_metrics WHERE mfxuid = LOC_MFXUID",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
@@ -791,7 +798,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 255,
+          "max": LOC_SAND_MAX,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -828,12 +835,12 @@
       "targets": [
         {
           "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "yyAw0-bnz"
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
           },
-          "queryText": "SELECT timestamp_iso, (sand * 255 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
+          "queryText": "SELECT timestamp_iso, (sand * LOC_SAND_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp_iso, (sand * 255 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
+          "rawQueryText": "SELECT timestamp_iso, (sand * LOC_SAND_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
@@ -879,7 +886,7 @@
             }
           },
           "mappings": [],
-          "max": 255,
+          "max": LOC_SAND_MAX,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -913,12 +920,12 @@
       "targets": [
         {
           "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "yyAw0-bnz"
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
           },
-          "queryText": "SELECT timestamp_iso, (sand * 6400 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
+          "queryText": "SELECT timestamp_iso, (sand * LOC_SAND_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp_iso, (sand * 6400 / 255) FROM config_usage WHERE mfxuid = 0x73f0c780",
+          "rawQueryText": "SELECT timestamp_iso, (sand * LOC_SAND_MAX / 255) FROM config_usage WHERE mfxuid = LOC_MFXUID",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
@@ -997,12 +1004,12 @@
       "targets": [
         {
           "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "yyAw0-bnz"
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
           },
-          "queryText": "SELECT timestamp_iso, (sand * 255 / 255) FROM locomotive_metrics WHERE mfxuid = 0x73f0c780",
+          "queryText": "SELECT timestamp_iso, (sand * LOC_SAND_MAX / 255) FROM locomotive_metrics WHERE mfxuid = LOC_MFXUID",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp_iso, (sand * 255 / 255) FROM locomotive_metrics WHERE mfxuid = 0x73f0c780",
+          "rawQueryText": "SELECT timestamp_iso, (sand * LOC_SAND_MAX / 255) FROM locomotive_metrics WHERE mfxuid = LOC_MFXUID",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
@@ -1026,8 +1033,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "6310 Crossrail - 16390",
-  "uid": "loc16390",
+  "title": "LOC_NAME - LOC_ID",
+  "uid": "locLOC_ID",
   "version": 54,
   "weekStart": ""
 }

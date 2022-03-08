@@ -108,8 +108,8 @@
       "targets": [
         {
           "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "yyAw0-bnz"
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
           },
           "queryText": "SELECT timestamp_iso, CASE\n    WHEN state == \"go\" THEN 100\n    WHEN state == \"stop\" THEN 0\n    WHEN state == \"halt\" THEN 50\nEND AS state\nFROM system_state",
           "queryType": "table",
@@ -153,8 +153,8 @@
       "targets": [
         {
           "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "yyAw0-bnz"
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
           },
           "queryText": "SELECT timestamp_iso, CASE\n    WHEN state == \"go\" THEN 100\n    WHEN state == \"stop\" THEN 0\n    WHEN state == \"halt\" THEN 50\nEND AS state\nFROM system_state",
           "queryType": "table",
@@ -203,8 +203,15 @@
         "orientation": "center",
         "text": "Pause System",
         "type": "header",
-        "url": "http://api.example.com/",
-        "variant": "primary"
+        "url": "http://CAN_HOST:CAN_PORT/system/status",
+        "variant": "primary",
+        "payload": "Stop",
+        "params": [
+          [
+            "x_can_hash",
+            "HASH"
+          ]
+        ]
       },
       "title": "Pause System",
       "type": "cloudspout-button-panel"
@@ -221,12 +228,19 @@
         "contentType": "application/json",
         "icon": "play",
         "isAuth": false,
-        "method": "GET",
+        "method": "POST",
         "orientation": "center",
         "text": "Unpause System",
         "type": "header",
-        "url": "http://api.example.com/",
-        "variant": "primary"
+        "url": "http://CAN_HOST:CAN_PORT/system/status",
+        "variant": "primary",
+        "payload": "Go",
+        "params": [
+          [
+            "x_can_hash",
+            "HASH"
+          ]
+        ]
       },
       "title": "Unpause System",
       "type": "cloudspout-button-panel"
@@ -266,12 +280,12 @@
       "targets": [
         {
           "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "yyAw0-bnz"
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
           },
-          "queryText": "SELECT timestamp_iso,config FROM config LIMIT 200",
+          "queryText": "SELECT timestamp_iso,config FROM config LIMIT LOG_LIMIT",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp_iso,config FROM config LIMIT 200",
+          "rawQueryText": "SELECT timestamp_iso,config FROM config LIMIT LOG_LIMIT",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
@@ -303,12 +317,12 @@
       "targets": [
         {
           "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "yyAw0-bnz"
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
           },
-          "queryText": "SELECT timestamp_iso,contact_id,hash_value,response,device_id,state_old,state_new FROM s88_event LIMIT 200",
+          "queryText": "SELECT timestamp_iso,contact_id,hash_value,response,device_id,state_old,state_new FROM s88_event LIMIT LOG_LIMIT",
           "queryType": "table",
-          "rawQueryText": "SELECT timestamp_iso,contact_id,hash_value,response,device_id,state_old,state_new FROM s88_event LIMIT 200",
+          "rawQueryText": "SELECT timestamp_iso,contact_id,hash_value,response,device_id,state_old,state_new FROM s88_event LIMIT LOG_LIMIT",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
@@ -353,12 +367,12 @@
       "targets": [
         {
           "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "yyAw0-bnz"
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
           },
-          "queryText": "SELECT * FROM participant_ping LIMIT 200",
+          "queryText": "SELECT * FROM participant_ping LIMIT LOG_LIMIT",
           "queryType": "table",
-          "rawQueryText": "SELECT * FROM participant_ping LIMIT 200",
+          "rawQueryText": "SELECT * FROM participant_ping LIMIT LOG_LIMIT",
           "refId": "A",
           "timeColumns": [
             "timestamp_iso"
