@@ -117,7 +117,7 @@ def apply_general():
     general_map["HASH"] = get_hash()
 
     def map_data(data):
-        for k in loc_map:
+        for k in general_map:
             data = data.replace(k, general_map[k])
         return data
     apply_dashboard(general_template_path, map_data)
