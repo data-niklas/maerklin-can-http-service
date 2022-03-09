@@ -85,7 +85,7 @@ def get_hash():
 def get_locs():
     return requests.get(CAN_LOC_LIST, headers={'x-can-hash': get_hash()}).json()
 
-def apply_loc(loc, max_fuel_a, max_fuel_b, max_sand, datasource_uid, datasource_type):
+def apply_loc(loc, max_fuel_a, max_fuel_b, max_sand):
     loc_template_path = os.path.join(VIEWS_DIR, "loc.json.template")
     loc_map = dict()
     loc_map["LOC_ID"] = str(loc["loc_id"])
