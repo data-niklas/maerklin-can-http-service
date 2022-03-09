@@ -40,6 +40,8 @@ DEFAULT_FUELA_MAX = 255
 DEFAULT_FUELB_MAX = 255
 DEFAULT_SAND_MAX = 255
 
+LOG_LIMIT = 200
+
 def apply_config(port):
     os.system(f'sed -E "s/http_port = [0-9]+$/http_port = {port}/g" {CONFIG_TEMPLATE_FILE} > {CONFIG_FILE}')
 
@@ -83,7 +85,7 @@ def get_hash():
 def get_locs():
     return requests.get(CAN_LOC_LIST, headers={'x-can-hash': get_hash()}).json()
 
-def apply_loc(loc, max_fuel_a, max_fuel_b, max_sand, datasource_uid, datasource_type):
+def apply_loc(loc, max_fuel_a, max_fuel_b, max_sand):
     loc_template_path = os.path.join(VIEWS_DIR, "loc.json.template")
     loc_map = dict()
     loc_map["LOC_ID"] = str(loc["loc_id"])
@@ -92,14 +94,33 @@ def apply_loc(loc, max_fuel_a, max_fuel_b, max_sand, datasource_uid, datasource_
     loc_map["LOC_FUELA_MAX"] = str(max_fuel_a)
     loc_map["LOC_FUELB_MAX"] = str(max_fuel_b)
     loc_map["LOC_SAND_MAX"] = str(max_sand)
-    loc_map["DATASOURCE_UID"] = datasource_uid
-    loc_map["DATASOURCE_TYPE"] = datasource_type
+    loc_map["DATASOURCE_UID"] = DATASOURCE_UID
+    loc_map["DATASOURCE_TYPE"] = DATASOURCE_TYPE
+    loc_map["CAN_PORT"] = str(settings.can_port)
+    loc_map["CAN_HOST"] = settings.can_host
+    loc_map["HASH"] = get_hash()
 
     def map_data(data):
         for k in loc_map:
             data = data.replace(k, loc_map[k])
         return data
     apply_dashboard(loc_template_path, map_data)
+
+def apply_general():
+    general_template_path = os.path.join(VIEWS_DIR, "general.json.template")
+    general_map = dict()
+    general_map["LOG_LIMIT"] = str(LOG_LIMIT)
+    general_map["DATASOURCE_UID"] = DATASOURCE_UID
+    general_map["DATASOURCE_TYPE"] = DATASOURCE_TYPE
+    general_map["CAN_PORT"] = str(settings.can_port)
+    general_map["CAN_HOST"] = settings.can_host
+    general_map["HASH"] = get_hash()
+
+    def map_data(data):
+        for k in general_map:
+            data = data.replace(k, general_map[k])
+        return data
+    apply_dashboard(general_template_path, map_data)
 
 
 def read_loc_usage(mfxuid):
@@ -126,8 +147,8 @@ def read_loc_usage(mfxuid):
 
 def update():
     for loc in get_locs():
-#        max_fuel_a, max_fuel_b, max_sand = read_loc_usage(int(loc["mfxuid"], 0))
-        apply_loc(loc, 255, 255, 255, DATASOURCE_UID, DATASOURCE_TYPE)
+        max_fuel_a, max_fuel_b, max_sand = read_loc_usage(int(loc["mfxuid"], 0))
+        apply_loc(loc, max_fuel_a, max_fuel_b, max_sand)
 
 def main():
     apply_config(PORT)
@@ -137,7 +158,7 @@ def main():
 
 
     apply_datasource(os.path.join(VIEWS_DIR, "datasource.json.template"), DATASOURCE_UID)
-    apply_dashboard(os.path.join(VIEWS_DIR, "general.json.template"), lambda data: data.replace("DATASOURCE_TYPE", DATASOURCE_TYPE).replace("DATASOURCE_UID", DATASOURCE_UID))
+    apply_general()
 
     CAN_HASH = get_hash()
     while True:
