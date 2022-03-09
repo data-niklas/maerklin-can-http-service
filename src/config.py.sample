@@ -65,6 +65,7 @@ DEFAULT_WEBSOCKET_PRINTER_HOST = DEFAULT_CAN_RECV_HOST
 
 # Resample interval in seconds
 DEFAULT_HIGH_LEVEL_DB_DUMP_RESAMPLE_INTERVAL = 30
+DEFAULT_HIGH_LEVEL_DB_DUMP_REFRESH_INTERVAL = 10
 
 
 
@@ -113,6 +114,7 @@ class Settings(BaseSettings):
     grafana_update_interval: int = DEFAULT_GRAFANA_UPDATE_INTERVAL
 
     high_level_db_dump_resample_interval: int = DEFAULT_HIGH_LEVEL_DB_DUMP_RESAMPLE_INTERVAL
+    high_level_db_dump_refresh_interval: int = DEFAULT_HIGH_LEVEL_DB_DUMP_REFRESH_INTERVAL
 
     class Config():
         fields = {
@@ -154,7 +156,8 @@ class Settings(BaseSettings):
             'grafana_api_key': {'env': 'grafana_api_key'},
             'grafana_update_interval': {'env': 'grafana_update_interval'},
 
-            'high_level_db_dump_resample_interval': {'env': 'high_level_db_dump_resample_interval'}
+            'high_level_db_dump_resample_interval': {'env': 'high_level_db_dump_resample_interval'},
+            'high_level_db_dump_refresh_interval': {'env': 'high_level_db_dump_refresh_interval'}
         }
 
 
