@@ -7,6 +7,7 @@ windows:
     panes:
       - python src/start.py raw_can_receiver
       - sleep 2;python src/start.py can_receiver
+      - sleep 2;python src/start.py can_sender
       - sleep 4;python src/start.py can
       - sleep 4;python src/start.py high_level_db_dump
       - sleep 6;python src/start.py database
