@@ -1,11 +1,11 @@
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "src/"))
-from app.schemas import can_commands
+from app.models import can_message
 
 import inspect
 
-file_name = os.path.join(os.path.dirname(os.path.abspath(__file__)), "schemas.puml")
+file_name = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models.puml")
 
 
 file = open(file_name, "w")
@@ -25,31 +25,41 @@ file.write("""
 
 """)
 
+
 filter_classes = [
     "Enum",
     "object",
-    "Representation"
+    "Base"
 ]
 
 def is_class_variable(var, value):
     return type(value) != "function" and not inspect.isclass(value) and not var.startswith("__") and not var.endswith("__")
 
 def find_class_variables(clas):
-    if "__fields__" in clas.__dict__:
-        return [vardef for var, vardef in clas.__dict__["__fields__"].items()]
+    if "__table__" in clas.__dict__:
+        return clas.__dict__["__table__"].columns
     return []
 
+def find_class_table_name(clas):
+    if "__table__" in clas.__dict__:
+        return '"' + clas.__name__ + " - " + clas.__dict__["__table__"].name + '"'
+    return clas.__name__
+
 def show_class(clas):
-    file.write(f"class {clas.__name__}{{\n")
-    for vardef in find_class_variables(clas):
-        file.write(f"{vardef.name}: {vardef.type_.__name__}\n")
+    name = find_class_table_name(clas)
+    file.write(f"class {name} {{\n")
+    columns = find_class_variables(clas)
+    for column in columns:
+        file.write(f"{column.name}: {column.type}\n")
     file.write(f"}}\n")
 
+    #file.write(f"class {clas.__name__} as {name}\n")
+
     if inspect.isabstract(clas) or clas.__name__.startswith("Abstract"):
-        file.write(f"abstract class {clas.__name__}\n")
+        file.write(f"abstract class {name}\n")
     for base in clas.__bases__:
-        if not is_filtered(base):
-            file.write(f"{base.__name__} <|-- {clas.__name__}\n")
+        #if not is_filtered(base):
+        file.write(f"{base.__name__} <|-- {name}\n")
 
 def is_enum(clas):
     for base in clas.__bases__:
@@ -59,9 +69,9 @@ def is_enum(clas):
     return False
 
 def is_filtered(clas):
-    return clas.__name__ in filter_classes
+    return ("__table__" not in clas.__dict__ and "__abstract__" not in clas.__dict__) or clas.__name__ in filter_classes
 
-for attr, value in can_commands.__dict__.items():
+for attr, value in can_message.__dict__.items():
     if inspect.isclass(value) and not is_enum(value) and not is_filtered(value):
         show_class(value)
 
