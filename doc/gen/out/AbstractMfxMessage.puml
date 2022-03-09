@@ -1,0 +1,37 @@
+@startuml
+skinparam useBetaStyle true
+skinparam linetype ortho
+
+<style>
+    classDiagram{
+        FontColor Black
+        BackgroundColor White
+        LineThickness 2
+        LineColor Black
+        RoundCorner 10
+    }
+</style>
+
+class AbstractMfxMessage {
+}
+abstract class AbstractMfxMessage
+class "MfxBindMessage - mfx_bind" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+mfx_uid: INTEGER
+mfx_sid: INTEGER
+}
+AbstractMfxMessage <|-- "MfxBindMessage - mfx_bind"
+class "MfxVerifyMessage - mfx_verify" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+mfx_uid: INTEGER
+mfx_sid: INTEGER
+ask_ratio: INTEGER
+}
+AbstractMfxMessage <|-- "MfxVerifyMessage - mfx_verify"
+@enduml

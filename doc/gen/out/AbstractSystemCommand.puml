@@ -1,0 +1,121 @@
+@startuml
+skinparam useBetaStyle true
+skinparam linetype ortho
+
+<style>
+    classDiagram{
+        FontColor Black
+        BackgroundColor White
+        LineThickness 2
+        LineColor Black
+        RoundCorner 10
+    }
+</style>
+
+class AbstractSystemCommand {
+hash_value: int
+response: bool
+id: int
+}
+abstract class AbstractSystemCommand
+class SystemStopCommand {
+hash_value: int
+response: bool
+id: int
+}
+AbstractSystemCommand <|-- SystemStopCommand
+class SystemGoCommand {
+hash_value: int
+response: bool
+id: int
+}
+AbstractSystemCommand <|-- SystemGoCommand
+class SystemHaltCommand {
+hash_value: int
+response: bool
+id: int
+}
+AbstractSystemCommand <|-- SystemHaltCommand
+class LocomotiveEmergencyStopCommand {
+hash_value: int
+response: bool
+id: int
+}
+AbstractSystemCommand <|-- LocomotiveEmergencyStopCommand
+class LocomotiveCycleStopCommand {
+hash_value: int
+response: bool
+id: int
+}
+AbstractSystemCommand <|-- LocomotiveCycleStopCommand
+class LocomotiveDataProtocolCommand {
+hash_value: int
+response: bool
+id: int
+protocol: RailProtocolSchema
+}
+AbstractSystemCommand <|-- LocomotiveDataProtocolCommand
+class AccessoryDecoderSwitchingTimeCommand {
+hash_value: int
+response: bool
+id: int
+time: int
+}
+AbstractSystemCommand <|-- AccessoryDecoderSwitchingTimeCommand
+class MfxFastReadCommand {
+hash_value: int
+response: bool
+id: int
+mfx_sid: int
+}
+AbstractSystemCommand <|-- MfxFastReadCommand
+class EnableRailProtocolCommand {
+hash_value: int
+response: bool
+id: int
+bitset: int
+}
+AbstractSystemCommand <|-- EnableRailProtocolCommand
+class SetMfxRegisterCounterCommand {
+hash_value: int
+response: bool
+id: int
+counter: int
+}
+AbstractSystemCommand <|-- SetMfxRegisterCounterCommand
+class SystemOverloadCommand {
+hash_value: int
+response: bool
+id: int
+channel: int
+}
+AbstractSystemCommand <|-- SystemOverloadCommand
+class SystemStatusCommand {
+hash_value: int
+response: bool
+id: int
+channel: int
+measured_value: int
+}
+AbstractSystemCommand <|-- SystemStatusCommand
+class SetSystemIdentifierCommand {
+hash_value: int
+response: bool
+id: int
+system_id: int
+}
+AbstractSystemCommand <|-- SetSystemIdentifierCommand
+class MfxSeekCommand {
+hash_value: int
+response: bool
+id: int
+}
+AbstractSystemCommand <|-- MfxSeekCommand
+class SystemResetCommand {
+hash_value: int
+response: bool
+id: int
+target: int
+}
+AbstractSystemCommand <|-- SystemResetCommand
+@enduml

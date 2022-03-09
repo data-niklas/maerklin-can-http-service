@@ -1,81 +1,34 @@
-import sys
 import os
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "src/"))
+from utils import write_uml_file, is_valid_class, is_table
 from app.models import can_message
 
-import inspect
-
-file_name = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models.puml")
-
-
-file = open(file_name, "w")
-file.write(f"@startuml\n")
-file.write("skinparam useBetaStyle true\n")
-file.write("skinparam linetype ortho\n")
-file.write("""
-<style>
-    classDiagram{
-        FontColor Black
-        BackgroundColor White
-        LineThickness 2
-        LineColor Black
-        RoundCorner 10
-    }
-</style>
-
-""")
-
-
-filter_classes = [
-    "Enum",
-    "object",
-    "Base"
+SUBDIAGRAM_CLASSES = [ \
+    can_message.AbstractLocomotiveMessage, \
+    can_message.AbstractSystemMessage,  \
+    can_message.AbstractMfxMessage \
 ]
 
-def is_class_variable(var, value):
-    return type(value) != "function" and not inspect.isclass(value) and not var.startswith("__") and not var.endswith("__")
+base_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out")
+general_path = os.path.join(base_dir, "models.puml")
+subdiagram_paths = {clas.__name__ : os.path.join(base_dir, f"{clas.__name__}.puml") \
+    for clas in SUBDIAGRAM_CLASSES}
 
-def find_class_variables(clas):
-    if "__table__" in clas.__dict__:
-        return clas.__dict__["__table__"].columns
-    return []
+def belongs_to_subdiagram(clas):
+    return any(issubclass(clas, c) and not clas is c for c in SUBDIAGRAM_CLASSES)
 
-def find_class_table_name(clas):
-    if "__table__" in clas.__dict__:
-        return '"' + clas.__name__ + " - " + clas.__dict__["__table__"].name + '"'
-    return clas.__name__
-
-def show_class(clas):
-    name = find_class_table_name(clas)
-    file.write(f"class {name} {{\n")
-    columns = find_class_variables(clas)
-    for column in columns:
-        file.write(f"{column.name}: {column.type}\n")
-    file.write(f"}}\n")
-
-    #file.write(f"class {clas.__name__} as {name}\n")
-
-    if inspect.isabstract(clas) or clas.__name__.startswith("Abstract"):
-        file.write(f"abstract class {name}\n")
-    for base in clas.__bases__:
-        #if not is_filtered(base):
-        file.write(f"{base.__name__} <|-- {name}\n")
-
-def is_enum(clas):
-    for base in clas.__bases__:
-        if base.__name__ == "Enum":
-            return True
-
-    return False
-
-def is_filtered(clas):
-    return ("__table__" not in clas.__dict__ and "__abstract__" not in clas.__dict__) or clas.__name__ in filter_classes
-
-for attr, value in can_message.__dict__.items():
-    if inspect.isclass(value) and not is_enum(value) and not is_filtered(value):
-        show_class(value)
-
-
-file.write(f"@enduml")
-file.close()
-os.system(f"plantuml -tsvg {file_name}")
+if __name__ == "__main__":
+    general = list()
+    subdiagrams = {clas.__name__:list() for clas in SUBDIAGRAM_CLASSES}
+    for attr, value in can_message.__dict__.items():
+        if not is_valid_class(value):
+            continue
+        if not is_table(value):
+            continue
+        if not belongs_to_subdiagram(value):
+            general.append(value)
+        for clas in SUBDIAGRAM_CLASSES:
+            if issubclass(value, clas):
+                subdiagrams[clas.__name__].append(value)
+    write_uml_file(general_path, general)
+    for clas in SUBDIAGRAM_CLASSES:
+        write_uml_file(subdiagram_paths[clas.__name__], subdiagrams[clas.__name__])
