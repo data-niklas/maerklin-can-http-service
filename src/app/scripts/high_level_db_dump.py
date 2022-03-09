@@ -271,8 +271,8 @@ async def refresh_loc_information():
         direction_command = LocomotiveDirectionCommand(direction=None, loc_id=loc_id, response=false, hash_value=get_hash())
         speed_command = LocomotiveSpeedCommand(speed=None, loc_id=loc_id, response=false, hash_value=get_hash())
 
-        requests.post(CAN_SENDER_GET_LOC_DIRECTION, data=direction_command)
-        requests.post(CAN_SENDER_GET_LOC_SPEED, data=speed_command)
+        requests.post(CAN_SENDER_GET_LOC_DIRECTION, data=direction_command.json())
+        requests.post(CAN_SENDER_GET_LOC_SPEED, data=speed_command.json())
 
 
 @lru_cache
