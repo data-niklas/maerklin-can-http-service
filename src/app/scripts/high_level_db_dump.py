@@ -3,6 +3,7 @@ import zlib
 import websockets
 from datetime import datetime, timedelta
 import time
+import requests
 
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm.session import sessionmaker
@@ -15,7 +16,7 @@ from app.schemas.can import CANMessage as PydanticCANMessage
 from app.models.can_message import Base, ConfigMessage, ConfigUsageMessage, ConfigLocomotiveMessage, LocomotiveMetricMessage, LocomotiveSpeedMessage
 from app.models.can_message_converter import registered_models, convert_to_model
 from app.services.high_level_can_recv.converter import type_map as pydantic_type_map
-from app.schemas.can_commands import CommandSchema
+from app.schemas.can_commands import CommandSchema, LocomotiveDirectionCommand, LocomotiveDirection, LocomotiveSpeedCommand
 from app.services.high_level_can.helper import parse_config
 
 settings = get_settings()
@@ -24,6 +25,14 @@ HOST = settings.can_receiver_host
 PORT = settings.can_receiver_port
 
 DB = settings.high_level_db_dump_database
+
+CAN_BASE_URL = f"http://{settings.can_host}:{settings.can_port}/"
+CAN_GET_HASH = CAN_BASE_URL + "general/hash"
+CAN_LOC_LIST = CAN_BASE_URL + "lok/list"
+
+CAN_SENDER_BASE_URL = f"http://{settings.can_sender_host}:{settings.can_sender_port}/"
+CAN_SENDER_GET_LOC_SPEED = CAN_SENDER_BASE_URL + "loc/speed"
+CAN_SENDER_GET_LOC_DIRECTION = CAN_SENDER_BASE_URL + "loc/direction"
 
 engine = create_async_engine(
     DB, connect_args={"check_same_thread": False}
@@ -255,6 +264,26 @@ async def resample(session, start, end):
             LocomotiveMetricMessage(timestamp=end, timestamp_iso=timestamp_iso, mfxuid=mfxuid, loc_id=loc_id, fuelA=fuel_a, fuelB=fuel_b, sand=sand, distance=distance))
 
 
+async def refresh_loc_information():
+    for loc in get_locs():
+        loc_id = loc["loc_id"]
+
+        direction_command = LocomotiveDirectionCommand(direction=None, loc_id=loc_id, response=false, hash_value=get_hash())
+        speed_command = LocomotiveSpeedCommand(speed=None, loc_id=loc_id, response=false, hash_value=get_hash())
+
+        requests.post(CAN_SENDER_GET_LOC_DIRECTION, data=direction_command.json())
+        requests.post(CAN_SENDER_GET_LOC_SPEED, data=speed_command.json())
+
+
+@lru_cache
+def get_hash():
+    return str(requests.get(CAN_GET_HASH).json())
+
+
+def get_locs():
+    return requests.get(CAN_LOC_LIST, headers={'x-can-hash': get_hash()}).json()
+
+
 async def start_resampler():
     last = datetime.now()
     resample_interval = settings.high_level_db_dump_resample_interval
@@ -265,13 +294,29 @@ async def start_resampler():
             elapsed_seconds = (now - last).seconds
             if now < last or elapsed_seconds < resample_interval:
                 remaining = resample_interval - (now - last).seconds
-                print(f"sleeping {remaining}s")
                 await asyncio.sleep(remaining)
                 continue
             start = last
             end = last + resample_delta
             await resample(session, start, end)
             last = end
+
+
+async def start_refresher():
+    last = datetime.now()
+    refresh_interval = settings.high_level_db_dump_refresh_interval
+    refresh_delta = timedelta(seconds = refresh_interval)
+    while True:
+        now = datetime.now()
+        elapsed_seconds = (now - last).seconds
+        if now < last or elapsed_seconds < refresh_interval:
+            remaining = refresh_interval - elapsed_seconds.seconds
+            await asyncio.sleep(remaining)
+            continue
+        start = last
+        end = last + refresh_delta
+        await refresh_loc_information()
+        last = end
 
 
 async def start_websocket_listener():
@@ -290,6 +335,7 @@ async def start_websocket_listener():
 def main():
     loop = asyncio.get_event_loop()
     loop.run_until_complete(init_db())
+    loop.create_task(start_refresher())
     loop.create_task(start_resampler())
     loop.create_task(start_websocket_listener())
     loop.run_forever()
