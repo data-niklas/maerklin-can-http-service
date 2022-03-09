@@ -1,0 +1,37 @@
+@startuml
+skinparam useBetaStyle true
+skinparam linetype ortho
+
+<style>
+    classDiagram{
+        FontColor Black
+        BackgroundColor White
+        LineThickness 2
+        LineColor Black
+        RoundCorner 10
+    }
+</style>
+
+class AbstractMfxCommand {
+hash_value: int
+response: bool
+mfx_uid: int
+mfx_sid: int
+}
+abstract class AbstractMfxCommand
+class MfxBindCommand {
+hash_value: int
+response: bool
+mfx_uid: int
+mfx_sid: int
+}
+AbstractMfxCommand <|-- MfxBindCommand
+class MfxVerifyCommand {
+hash_value: int
+response: bool
+mfx_uid: int
+mfx_sid: int
+ask_ratio: int
+}
+AbstractMfxCommand <|-- MfxVerifyCommand
+@enduml

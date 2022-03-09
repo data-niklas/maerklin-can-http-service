@@ -15,7 +15,6 @@ skinparam linetype ortho
 class AbstractCANMessage {
 }
 abstract class AbstractCANMessage
-Base <|-- AbstractCANMessage
 class AbstractLocomotiveMessage {
 }
 abstract class AbstractLocomotiveMessage
@@ -43,7 +42,6 @@ fuelB: INTEGER
 sand: INTEGER
 distance: INTEGER
 }
-Base <|-- "LocomotiveMetricMessage - locomotive_metrics"
 class "ConfigUsageMessage - config_usage" {
 timestamp: DATETIME
 timestamp_iso: INTEGER
