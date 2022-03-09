@@ -68,8 +68,12 @@ def is_enum(clas):
 
     return False
 
+def is_subclass_of_abstract(clas):
+    filters = [can_message.AbstractLocomotiveMessage, can_message.AbstractSystemMessage, can_message.AbstractMfxMessage]
+    return clas.__name__ in filter_classes or any(issubclass(clas, c) and not clas is c for c in filters)
+
 def is_filtered(clas):
-    return ("__table__" not in clas.__dict__ and "__abstract__" not in clas.__dict__) or clas.__name__ in filter_classes
+    return ("__table__" not in clas.__dict__ and "__abstract__" not in clas.__dict__) or is_subclass_of_abstract(clas)
 
 for attr, value in can_message.__dict__.items():
     if inspect.isclass(value) and not is_enum(value) and not is_filtered(value):
