@@ -2,6 +2,7 @@ import asyncio
 import zlib
 import websockets
 from datetime import datetime, timedelta
+from functools import lru_cache
 import time
 import requests
 
@@ -150,12 +151,14 @@ async def resample_speed_for_loc(session, start, end, loc_id):
         base_query \
             .order_by(asc(LocomotiveSpeedMessage.timestamp)) \
             .filter(LocomotiveSpeedMessage.timestamp >= start) \
+            .filter(LocomotiveSpeedMessage.speed != None) \
             .filter(LocomotiveSpeedMessage.timestamp < end) \
         )).fetchall()
     result_before = (await session.execute( \
         base_query \
             .order_by(desc(LocomotiveSpeedMessage.timestamp)) \
             .filter(LocomotiveSpeedMessage.timestamp < start) \
+            .filter(LocomotiveSpeedMessage.speed != None) \
             .limit(1) \
         )).fetchall()
 
@@ -266,11 +269,15 @@ async def resample(session, start, end):
 
 
 async def refresh_loc_information():
-    for loc in get_locs():
+    locs = get_locs()
+    if locs is None:
+        print("Got no locs")
+        return
+    for loc in locs:
         loc_id = loc["loc_id"]
 
-        direction_command = LocomotiveDirectionCommand(direction=None, loc_id=loc_id, response=false, hash_value=get_hash())
-        speed_command = LocomotiveSpeedCommand(speed=None, loc_id=loc_id, response=false, hash_value=get_hash())
+        direction_command = LocomotiveDirectionCommand(direction=None, loc_id=loc_id, response=False, hash_value=get_hash())
+        speed_command = LocomotiveSpeedCommand(speed=None, loc_id=loc_id, response=False, hash_value=get_hash())
 
         requests.post(CAN_SENDER_GET_LOC_DIRECTION, data=direction_command.json())
         requests.post(CAN_SENDER_GET_LOC_SPEED, data=speed_command.json())
@@ -282,7 +289,10 @@ def get_hash():
 
 
 def get_locs():
-    return requests.get(CAN_LOC_LIST, headers={'x-can-hash': get_hash()}).json()
+    res = requests.get(CAN_LOC_LIST, headers={'x-can-hash': get_hash()}).json()
+    if isinstance(res, list):
+        return res
+    return None
 
 
 async def start_resampler():
@@ -295,7 +305,6 @@ async def start_resampler():
             elapsed_seconds = (now - last).total_seconds()
             if now < last or elapsed_seconds < resample_interval:
                 remaining = resample_interval - elapsed_seconds
-                print(f"sleeping {remaining}s")
                 await asyncio.sleep(remaining)
                 continue
             start = last
@@ -305,14 +314,16 @@ async def start_resampler():
 
 
 async def start_refresher():
+    print("started refresher")
     last = datetime.now()
     refresh_interval = settings.high_level_db_dump_refresh_interval
     refresh_delta = timedelta(seconds = refresh_interval)
     while True:
         now = datetime.now()
-        elapsed_seconds = (now - last).seconds
+        elapsed_seconds = (now - last).total_seconds()
         if now < last or elapsed_seconds < refresh_interval:
-            remaining = refresh_interval - elapsed_seconds.seconds
+            remaining = refresh_interval - elapsed_seconds
+            print(remaining)
             await asyncio.sleep(remaining)
             continue
         start = last
@@ -322,17 +333,21 @@ async def start_refresher():
 
 
 async def start_websocket_listener():
-    async with websockets.connect(f"ws://{HOST}:{PORT}") as websocket:
-        async with SessionLocal() as session:
-            print("connected")
-            async for message in websocket:
-                print(message)
-                pydantic_abstract_message = await parse_message(message)
-                print(pydantic_abstract_message.get_command())
-                if pydantic_abstract_message.get_command() == CommandSchema.ConfigDataStream:
-                    await process_config_stream(session, websocket, pydantic_abstract_message)
-                else:
-                    await dump(session, pydantic_abstract_message)
+    try:
+        async with websockets.connect(f"ws://{HOST}:{PORT}") as websocket:
+            async with SessionLocal() as session:
+                print("connected")
+                async for message in websocket:
+                    print(message)
+                    pydantic_abstract_message = await parse_message(message)
+                    print(pydantic_abstract_message.get_command())
+                    if pydantic_abstract_message.get_command() == CommandSchema.ConfigDataStream:
+                        await process_config_stream(session, websocket, pydantic_abstract_message)
+                    else:
+                        await dump(session, pydantic_abstract_message)
+    except Exception as e:
+        print("restarting websocket listener")
+        await start_websocket_listener()
 
 def main():
     loop = asyncio.get_event_loop()

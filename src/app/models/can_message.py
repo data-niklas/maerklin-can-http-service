@@ -51,7 +51,7 @@ class LocomotiveSpeedMessage(AbstractLocomotiveMessage):
         'concrete': True
     }
     __tablename__ = 'locomotive_speed'
-    speed = Column(Integer, nullable=False)
+    speed = Column(Integer, nullable=True)
 
     def from_schema(can_message):
         if not can_message.get_command() == CommandSchema.LocomotiveSpeed:
@@ -68,14 +68,16 @@ class LocomotiveDirectionMessage(AbstractLocomotiveMessage):
         'concrete': True
     }
     __tablename__ = 'locomotive_direction'
-    direction = Column(Text, nullable=False)
+    direction = Column(Text, nullable=True)
 
     def from_schema(can_message):
         if not can_message.get_command() == CommandSchema.LocomotiveDirection:
             return None
 
         locomotive_message = AbstractLocomotiveMessage.from_schema(can_message)
-        direction = can_message.direction.value
+        direction = None
+        if can_message.direction is not None:
+            direction = can_message.direction.value
 
         return LocomotiveDirectionMessage(direction=direction, **vars(locomotive_message))
 

@@ -21,7 +21,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 9,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -314,12 +313,99 @@
         "payload": "{\"direction\": \"Toggle\"}",
         "params": [
           [
-            "x_can_hash",
+            "x-can-hash",
             "HASH"
           ]
         ]
       },
       "title": "Change Direction",
+      "type": "cloudspout-button-panel"
+    },
+    {
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 9,
+        "y": 4
+      },
+      "id": 277,
+      "options": {
+        "contentType": "application/json",
+        "icon": "arrow",
+        "isAuth": false,
+        "method": "POST",
+        "orientation": "center",
+        "text": "Low Speed",
+        "type": "header",
+        "url": "http://CAN_HOST:CAN_PORT/lok/LOC_ID/speed",
+        "variant": "primary",
+        "payload": "{\"speed\": 100}",
+        "params": [
+          [
+            "x-can-hash",
+            "HASH"
+          ]
+        ]
+      },
+      "title": "Low Speed",
+      "type": "cloudspout-button-panel"
+    },
+    {
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 13,
+        "y": 4
+      },
+      "id": 2777,
+      "options": {
+        "contentType": "application/json",
+        "icon": "arrow",
+        "isAuth": false,
+        "method": "POST",
+        "orientation": "center",
+        "text": "Medium Speed",
+        "type": "header",
+        "url": "http://CAN_HOST:CAN_PORT/lok/LOC_ID/speed",
+        "variant": "primary",
+        "payload": "{\"speed\": 500}",
+        "params": [
+          [
+            "x-can-hash",
+            "HASH"
+          ]
+        ]
+      },
+      "title": "Medium Speed",
+      "type": "cloudspout-button-panel"
+    },
+    {
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 17,
+        "y": 4
+      },
+      "id": 27777,
+      "options": {
+        "contentType": "application/json",
+        "icon": "arrow",
+        "isAuth": false,
+        "method": "POST",
+        "orientation": "center",
+        "text": "High Speed",
+        "type": "header",
+        "url": "http://CAN_HOST:CAN_PORT/lok/LOC_ID/speed",
+        "variant": "primary",
+        "payload": "{\"speed\": 1000}",
+        "params": [
+          [
+            "x-can-hash",
+            "HASH"
+          ]
+        ]
+      },
+      "title": "High Speed",
       "type": "cloudspout-button-panel"
     },
     {
@@ -343,7 +429,6 @@
           },
           "mappings": [],
           "max": LOC_FUELA_MAX,
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -515,7 +600,6 @@
             }
           },
           "mappings": [],
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -743,7 +827,6 @@
             }
           },
           "mappings": [],
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -971,7 +1054,6 @@
             }
           },
           "mappings": [],
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1018,6 +1100,91 @@
       ],
       "title": "Sand usage per minute",
       "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": -1,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "max": DISTANCE_MAX,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 9,
+        "y": 7
+      },
+      "id": 25,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "DATASOURCE_TYPE",
+            "uid": "DATASOURCE_UID"
+          },
+          "queryText": "SELECT timestamp_iso, distance FROM locomotive_metrics WHERE mfxuid = LOC_MFXUID",
+          "queryType": "table",
+          "rawQueryText": "SELECT timestamp_iso, distance FROM locomotive_metrics WHERE mfxuid = LOC_MFXUID",
+          "refId": "A",
+          "timeColumns": [
+            "timestamp_iso"
+          ]
+        }
+      ],
+      "title": "Distance",
+      "type": "timeseries"
     }
   ],
   "refresh": "5s",
@@ -1028,7 +1195,7 @@
     "list": []
   },
   "time": {
-    "from": "now-24h",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {},

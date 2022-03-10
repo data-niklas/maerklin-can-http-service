@@ -68,7 +68,7 @@ async def set_direction(loc_id: int, direction: DirectionModel, x_can_hash: str 
     def check(m):
         if not m.response or m.get_command() != CommandSchema.LocomotiveDirection:
             return False
-        if m.loc_id != loc_id or m.direction != direction.direction:
+        if m.loc_id != loc_id or m.direction is None:
             return False
         return True
 
