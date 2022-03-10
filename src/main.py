@@ -8,7 +8,7 @@ from app.services import high_level_can_send
 from app.services import raw_can_recv
 from app.services import high_level_can_recv
 from app.services import high_level_can
-from app.services import database_read
+from app.services import database_read as database_read_module
 
 
 def get_base():
@@ -36,4 +36,4 @@ can = get_base()
 can.include_router(high_level_can.router)
 
 database_read = get_base()
-database_read.include_router(database_read.router)
+database_read.include_router(database_read_module.router)
