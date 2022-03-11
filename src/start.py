@@ -15,7 +15,7 @@ SCRIPT_POSTFIX = ".py"
 ASGI_SERVICES = ["raw_can_receiver", "raw_can_sender", "can_receiver", "can_sender", "can", "database"]
 EXTERNAL_SERVICES = ["grafana"]
 SCRIPTS = ["dummy_central_station", "websocket_logger", "websocket_printer", "high_level_db_dump", \
-    "raw_db_dump", "websocket_config_stream", "websocket_replay"]
+    "raw_db_dump", "websocket_config_stream", "websocket_replay", "database_refresher", "database_resampler"]
 
 WORKFLOW_TERMINAL_COMMAND = settings.workflow_terminal_command
 WORKFLOW_INTERVAL = settings.workflow_terminal_interval
