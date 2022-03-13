@@ -1,0 +1,3971 @@
+# Usage:
+# 1. Copy this file to config.py
+# 2. Change the DEFAULT_ values
+# 3. Enjoy and use the scripts / ASGI routers
+import os
+from pydantic import BaseSettings
+from functools import lru_cache
+from typing import List
+FILE_DIR = os.path.dirname(os.path.realpath(__file__))
+# Router configs
+DEFAULT_ASGI_COMMAND = "uvicorn"
+# DEFAULT_SCRIPT_COMMAND = os.path.join(os.path.dirname(FILE_DIR), "venv", "Scripts", "python.exe")     # For windows
+DEFAULT_SCRIPT_COMMAND = os.path.join(os.path.dirname(FILE_DIR), "venv", "bin", "python")       # For unix
+# IP from which packages are received and sent to
+DEFAULT_RAW_CAN_IP = "192.168.1.3"
+DEFAULT_RAW_CAN_PORT = 15731
+# On which the raw_can_recv is hosted
+DEFAULT_RAW_CAN_RECV_PORT = 8888
+DEFAULT_RAW_CAN_RECV_HOST = "127.0.0.1"
+# On which the raw_can_send is hosted
+DEFAULT_RAW_CAN_SEND_PORT = 8000
+DEFAULT_RAW_CAN_SEND_HOST = "127.0.0.1"
+# On which the can_recv is hosted
+DEFAULT_CAN_RECV_PORT = 8001
+DEFAULT_CAN_RECV_HOST = "127.0.0.1"
+# On which the can_send is hosted
+DEFAULT_CAN_SEND_PORT = 8002
+DEFAULT_CAN_SEND_HOST = "127.0.0.1"
+DEFAULT_CAN_PORT = 8042
+DEFAULT_CAN_HOST = "127.0.0.1"
+DEFAULT_DATABASE_PORT = 8043
+DEFAULT_DATABASE_HOST = "127.0.0.1"
+# Timeout in millis
+DEFAULT_CAN_TIMEOUT = 300
+DEFAULT_HIGH_LEVEL_DB_DUMP_DATABASE = f'sqlite+aiosqlite:///{os.path.join(os.path.dirname(FILE_DIR), "out", "high_level_dump.sqlite3")}'
+DEFAULT_RAW_DB_DUMP_DATABASE = f'sqlite+aiosqlite:///{os.path.join(os.path.dirname(FILE_DIR), "out", "raw_dump.sqlite3")}'
+DEFAULT_WORKFLOW_TERMINAL_COMMAND = ["cmd.exe", "/c"]
+DEFAULT_WORKFLOW_TERMINAL_INTERVAL = 1
+DEFAULT_GRAFANA_PORT = 8044
+DEFAULT_GRAFANA_DIR = os.path.join("/usr", "share", "grafana")
+DEFAULT_GRAFANA_API_KEY = "REPLACE WITH YOUR OWN CREATED API KEY!"
+DEFAULT_GRAFANA_UPDATE_INTERVAL = 300
+# Scripts config
+DEFAULT_WEBSOCKET_LOGGER_PORT = DEFAULT_CAN_RECV_PORT
+DEFAULT_WEBSOCKET_LOGGER_HOST = DEFAULT_CAN_RECV_HOST
+DEFAULT_WEBSOCKET_PRINTER_PORT = DEFAULT_CAN_RECV_PORT
+DEFAULT_WEBSOCKET_PRINTER_HOST = DEFAULT_CAN_RECV_HOST
+# Resample interval in seconds
+DEFAULT_HIGH_LEVEL_DB_DUMP_RESAMPLE_INTERVAL = 30
+DEFAULT_HIGH_LEVEL_DB_DUMP_REFRESH_INTERVAL = 10
+class Settings(BaseSettings):
+    asgi_command: str = DEFAULT_ASGI_COMMAND
+    script_command: str = DEFAULT_SCRIPT_COMMAND
+    raw_can_ip: str = DEFAULT_RAW_CAN_IP
+    raw_can_port: int = DEFAULT_RAW_CAN_PORT
+    raw_can_receiver_port: int = DEFAULT_RAW_CAN_RECV_PORT
+    raw_can_sender_port: int = DEFAULT_RAW_CAN_SEND_PORT
+    can_receiver_port: int = DEFAULT_CAN_RECV_PORT
+    can_sender_port: int = DEFAULT_CAN_SEND_PORT
+    can_port: int = DEFAULT_CAN_PORT
+    database_port: int = DEFAULT_DATABASE_PORT
+    raw_can_receiver_host: str = DEFAULT_RAW_CAN_RECV_HOST
+    raw_can_sender_host: str = DEFAULT_RAW_CAN_SEND_HOST
+    can_receiver_host: str = DEFAULT_CAN_RECV_HOST
+    can_sender_host: str = DEFAULT_CAN_SEND_HOST
+    can_host: str = DEFAULT_CAN_HOST
+    database_host: str = DEFAULT_DATABASE_HOST
+    can_timeout: int = DEFAULT_CAN_TIMEOUT
+    high_level_db_dump_database: str = DEFAULT_HIGH_LEVEL_DB_DUMP_DATABASE
+    raw_db_dump_database: str = DEFAULT_RAW_DB_DUMP_DATABASE
+    
+    websocket_printer_host: str = DEFAULT_WEBSOCKET_PRINTER_HOST
+    websocket_printer_port: int = DEFAULT_WEBSOCKET_PRINTER_PORT
+    websocket_logger_host: str = DEFAULT_WEBSOCKET_LOGGER_HOST
+    websocket_logger_port: int = DEFAULT_WEBSOCKET_LOGGER_PORT
+    workflow_terminal_command: List[str] = DEFAULT_WORKFLOW_TERMINAL_COMMAND
+    workflow_terminal_interval: int = DEFAULT_WORKFLOW_TERMINAL_INTERVAL
+    grafana_port: int = DEFAULT_GRAFANA_PORT
+    grafana_dir: str = DEFAULT_GRAFANA_DIR
+    grafana_api_key: str = DEFAULT_GRAFANA_API_KEY
+    grafana_update_interval: int = DEFAULT_GRAFANA_UPDATE_INTERVAL
+    high_level_db_dump_resample_interval: int = DEFAULT_HIGH_LEVEL_DB_DUMP_RESAMPLE_INTERVAL
+    high_level_db_dump_refresh_interval: int = DEFAULT_HIGH_LEVEL_DB_DUMP_REFRESH_INTERVAL
+    class Config():
+        fields = {
+            'asgi_command': {'env': 'asgi_command'},
+            'script_command': {'env': 'script_command'},
+            'raw_can_ip': {'env': 'raw_can_ip'},
+            'raw_can_port': {'env': 'raw_can_port'},
+            'raw_can_receiver_port': {'env': 'raw_can_recv_port'},
+            'raw_can_sender_port': {'env': 'raw_can_sender_port'},
+            'can_receiver_port': {'env': 'can_receiver_port'},
+            'can_sender_port': {'env': 'can_sender_port'},
+            'can_port': {'env': 'can_port'},
+            'database_port': {'env': 'database_port'},
+            'raw_can_receiver_host': {'env': 'raw_can_recv_host'},
+            'raw_can_sender_host': {'env': 'raw_can_sender_host'},
+            'can_receiver_host': {'env': 'can_receiver_host'},
+            'can_sender_host': {'env': 'can_sender_host'},
+            'can_host': {'env': 'can_host'},
+            'database_host': {'env': 'database_host'},
+            'can_timeout': {'env': 'can_timeout'},
+            'websocket_printer_host': {'env': 'websocket_printer_host'},
+            'websocket_printer_port': {'env': 'websocket_printer_port'},
+            'websocket_logger_host': {'env': 'websocket_logger_host'},
+            'websocket_logger_port': {'env': 'websocket_logger_port'},
+            
+            'high_level_db_dump_database': {'env': 'high_level_db_dump_database'},
+            'raw_db_dump_database': {'env': 'raw_db_dump_database'},
+            'workflow_terminal_command': {'env': 'workflow_terminal_command'},
+            'workflow_terminal_interval': {'env': 'workflow_terminal_interval'},
+            'grafana_port': {'env': 'grafana_port'},
+            'grafana_dir': {'env': 'grafana_dir'},
+            'grafana_api_key': {'env': 'grafana_api_key'},
+            'grafana_update_interval': {'env': 'grafana_update_interval'},
+            'high_level_db_dump_resample_interval': {'env': 'high_level_db_dump_resample_interval'},
+            'high_level_db_dump_refresh_interval': {'env': 'high_level_db_dump_refresh_interval'}
+        }
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()
+import sys
+import os
+import subprocess
+import signal
+import requests
+from requests.utils import requote_uri
+import time
+from functools import lru_cache
+# Plugins needed: https://github.com/cloudspout/cloudspout-button-panel 
+# Installation: grafana-cli --pluginUrl https://github.com/cloudspout/cloudspout-button-panel/releases/download/7.0.23/cloudspout-button-panel.zip plugins install cloudspout-button-panel
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(CURRENT_DIR))))
+from config import get_settings
+settings = get_settings()
+PORT = settings.grafana_port
+HOMEFOLDER = settings.grafana_dir
+API_KEY = settings.grafana_api_key
+# Only works if a sqlite3 database was used and the path starts with an 'sqlite:///'
+DATASOURCE_PATH = settings.high_level_db_dump_database.split("///")[1]
+DATASOURCE_UID = "yyAw0-bnz"
+DATASOURCE_TYPE = "frser-sqlite-datasource"
+CAN_BASE_URL = f"http://{settings.can_host}:{settings.can_port}/"
+CAN_GET_HASH = CAN_BASE_URL + "general/hash"
+CAN_LOC_LIST = CAN_BASE_URL + "lok/list"
+DATABASE_PORT = settings.database_port
+DATABASE_HOST = settings.database_host
+GRAFANA_UPDATE_INTERVAL = settings.grafana_update_interval
+CONFIG_FILE = os.path.join(HOMEFOLDER, "conf", "defaults.ini")
+CONFIG_TEMPLATE_FILE =  os.path.join(CURRENT_DIR, "defaults.ini.template")
+VIEWS_DIR = os.path.join(CURRENT_DIR, "views")
+AUTHORIZATION_HEADER = {'Authorization': f'Bearer {API_KEY}', 'Content-Type': 'application/json'}
+DEFAULT_FUELA_MAX = 255
+DEFAULT_FUELB_MAX = 255
+DEFAULT_SAND_MAX = 255
+LOG_LIMIT = 200
+def apply_config(port):
+    os.system(f'sed -E "s/http_port = [0-9]+$/http_port = {port}/g" {CONFIG_TEMPLATE_FILE} > {CONFIG_FILE}')
+def start_grafana():
+    active_process = subprocess.Popen(["grafana-server", "--homepath", HOMEFOLDER], stdout=subprocess.DEVNULL)
+    def signal_handler(sig, frame):
+        active_process.terminate()
+        active_process.wait()
+        sys.exit(0)
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+    print(f'Serving grafana on http://localhost:{PORT}')
+def apply_template(template_path, url, fill_template_callback):
+    with open(template_path, 'r', encoding="utf-8") as f:
+        template = f.read()
+        template = fill_template_callback(template)
+        print(url)
+        print(template)
+        result = requests.post(url, data=template, headers=AUTHORIZATION_HEADER)
+        print(result.content)
+def apply_datasource(datasource_template_path, datasource_uid):
+    apply_template(
+        datasource_template_path,
+        f'http://localhost:{PORT}/api/datasources', 
+        lambda data: data.replace("DBPATH", DATASOURCE_PATH).replace("DATASOURCE_UID", datasource_uid)
+    )
+def apply_dashboard(dashboard_template_path, fill_dashboard_callback):
+    apply_template(dashboard_template_path, f'http://localhost:{PORT}/api/dashboards/db', lambda data: """{
+            "dashboard": """ + fill_dashboard_callback(data) +  """,
+            "overwrite": true
+    }""")
+@lru_cache
+def get_hash():
+    return str(requests.get(CAN_GET_HASH).json())
+def get_locs():
+    return requests.get(CAN_LOC_LIST, headers={'x-can-hash': get_hash()}).json()
+def apply_loc(loc, max_fuel_a, max_fuel_b, max_sand):
+    loc_template_path = os.path.join(VIEWS_DIR, "loc.json.template")
+    loc_map = dict()
+    loc_map["LOC_ID"] = str(loc["loc_id"])
+    loc_map["LOC_MFXUID"] = str(loc["mfxuid"])
+    loc_map["LOC_NAME"] = loc["name"]
+    loc_map["LOC_FUELA_MAX"] = str(max_fuel_a)
+    loc_map["LOC_FUELB_MAX"] = str(max_fuel_b)
+    loc_map["LOC_SAND_MAX"] = str(max_sand)
+    loc_map["DATASOURCE_UID"] = DATASOURCE_UID
+    loc_map["DATASOURCE_TYPE"] = DATASOURCE_TYPE
+    loc_map["CAN_PORT"] = str(settings.can_port)
+    loc_map["CAN_HOST"] = settings.can_host
+    loc_map["HASH"] = get_hash()
+    def map_data(data):
+        for k in loc_map:
+            data = data.replace(k, loc_map[k])
+        return data
+    apply_dashboard(loc_template_path, map_data)
+def apply_general():
+    general_template_path = os.path.join(VIEWS_DIR, "general.json.template")
+    general_map = dict()
+    general_map["LOG_LIMIT"] = str(LOG_LIMIT)
+    general_map["DATASOURCE_UID"] = DATASOURCE_UID
+    general_map["DATASOURCE_TYPE"] = DATASOURCE_TYPE
+    general_map["CAN_PORT"] = str(settings.can_port)
+    general_map["CAN_HOST"] = settings.can_host
+    general_map["HASH"] = get_hash()
+    def map_data(data):
+        for k in general_map:
+            data = data.replace(k, general_map[k])
+        return data
+    apply_dashboard(general_template_path, map_data)
+def read_loc_usage(mfxuid):
+    loc_filter = requote_uri(f'mfxuid eq {mfxuid}')
+    url = f'http://{DATABASE_HOST}:{DATABASE_PORT}/getConfigUsageMessage?filter={loc_filter}&limit=1'
+    usage_data = requests.get(url).json()
+    print(usage_data)
+    if usage_data["total"] == 0:
+        return DEFAULT_FUELA_MAX, DEFAULT_FUELB_MAX, DEFAULT_SAND_MAX
+    
+    max_fuel_a = usage_data["items"][0].get("maxFuelA", None)
+    max_fuel_b = usage_data["items"][0].get("maxFuelB", None)
+    max_sand = usage_data["items"][0].get("maxSand", None)
+    if max_fuel_a is None:
+        max_fuel_a = DEFAULT_FUELA_MAX
+    if max_fuel_b is None:
+        max_fuel_b = DEFAULT_FUELB_MAX
+    if max_sand is None:
+        max_sand = DEFAULT_SAND_MAX
+    return max_fuel_a, max_fuel_b, max_sand
+def update():
+    for loc in get_locs():
+        max_fuel_a, max_fuel_b, max_sand = read_loc_usage(int(loc["mfxuid"], 0))
+        apply_loc(loc, max_fuel_a, max_fuel_b, max_sand)
+def main():
+    apply_config(PORT)
+    start_grafana()
+    # Let grafana initialize the server
+    time.sleep(5)
+    apply_datasource(os.path.join(VIEWS_DIR, "datasource.json.template"), DATASOURCE_UID)
+    apply_general()
+    CAN_HASH = get_hash()
+    while True:
+        update()
+        time.sleep(GRAFANA_UPDATE_INTERVAL)
+if __name__ == "__main__":
+    main()from app.models.can_message import *
+from ..schemas.can_commands import AbstractCANMessage as PydanticAbstractCANMessage
+registered_models = list()
+def convert_to_model(message: PydanticAbstractCANMessage) -> AbstractCANMessage:
+    for model in registered_models:
+        abstract_message = model.from_schema(message)
+        if abstract_message is not None:
+            return abstract_message
+    return None
+registered_models.extend([
+    LocomotiveSpeedMessage,
+    LocomotiveDirectionMessage,
+    LocomotiveFunctionMessage,
+    ReadConfigMessage,
+    WriteConfigMessage,
+    RequestConfigDataMessage
+])
+registered_models.extend([
+    SwitchingAccessoriesMessage,
+    S88PollingMessage,
+    S88EventMessage,
+    ConfigMessage,
+    ConfigUsageMessage,
+    ConfigLocomotiveMessage,
+    ParticipantPingMessage,
+    LocomotiveDiscoveryMessage,
+    ServiceStatusDataConfigurationMessage,
+    BootloaderCANBoundMessage
+])
+registered_models.extend([
+    SystemStateMessage,
+    LocomotiveEmergencyStopMessage,
+    LocomotiveCycleStopMessage,
+    LocomotiveDataProtocolMessage,
+    AccessoryDecoderSwitchingTimeMessage,
+    MfxFastReadMessage,
+    EnableRailProtocolCommand,
+    SetMfxRegisterCounterMessage,
+    SystemOverloadMessage,
+    SystemStatusMessage,
+    SetSystemIdentifierMessage,
+    MfxSeekMessage,
+    SystemResetMessage
+])
+registered_models.extend([
+    MfxBindMessage,
+    MfxVerifyMessage
+])
+registered_models.extend([
+    LocomotiveMetricMessage
+])from sqlalchemy import (
+    Column,
+    DateTime,
+    Integer,
+    Boolean,
+    Text,
+)
+from sqlalchemy.ext.declarative import declarative_base
+from datetime import datetime, timezone
+import time
+from typing import List
+from app.schemas.can import Command
+from ..schemas.can_commands import CommandSchema
+from ..schemas.can_commands.system import SystemSubcommand, SystemSubcommandSchema
+from ..utils.coding import to_int_safe
+Base = declarative_base()
+class AbstractCANMessage(Base):
+    __abstract__ = True
+    timestamp = Column(DateTime, primary_key=True)
+    timestamp_iso = Column(Integer, primary_key=True)
+    hash_value = Column(Integer, primary_key=True)
+    response = Column(Boolean, primary_key=True)
+    def from_schema(can_message):
+        current_date = datetime.now()
+        timestamp = current_date
+        timestamp_iso = time.mktime(current_date.timetuple())
+        hash_value = can_message.hash_value
+        response = can_message.response
+        return AbstractCANMessage(timestamp=timestamp, timestamp_iso=timestamp_iso, hash_value=hash_value, response=response)
+class AbstractLocomotiveMessage(AbstractCANMessage):
+    __abstract__ = True
+    loc_id = Column(Integer, primary_key=True)
+    def from_schema(can_message):
+        abstract_message = AbstractCANMessage.from_schema(can_message)
+        loc_id = can_message.loc_id
+        return AbstractLocomotiveMessage(loc_id=loc_id, **vars(abstract_message))
+class LocomotiveSpeedMessage(AbstractLocomotiveMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'locomotive_speed'
+    speed = Column(Integer, nullable=False)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.LocomotiveSpeed:
+            return None
+        locomotive_message = AbstractLocomotiveMessage.from_schema(can_message)
+        speed = can_message.speed
+        return LocomotiveSpeedMessage(speed=speed, **vars(locomotive_message))
+class LocomotiveDirectionMessage(AbstractLocomotiveMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'locomotive_direction'
+    direction = Column(Text, nullable=False)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.LocomotiveDirection:
+            return None
+        locomotive_message = AbstractLocomotiveMessage.from_schema(can_message)
+        direction = can_message.direction.value
+        return LocomotiveDirectionMessage(direction=direction, **vars(locomotive_message))
+class LocomotiveFunctionMessage(AbstractLocomotiveMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'locomotive_function'
+    function = Column(Integer, nullable=False)
+    value = Column(Integer)
+    function_value = Column(Integer)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.LocomotiveFunction:
+            return None
+        locomotive_message = AbstractLocomotiveMessage.from_schema(can_message)
+        function = can_message.function
+        value = can_message.value
+        function_value = can_message.function_value
+        return LocomotiveFunctionMessage(function=function, value=value, function_value=function_value, **vars(locomotive_message))
+class SwitchingAccessoriesMessage(AbstractLocomotiveMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'switching_accessories'
+    position = Column(Integer, nullable=False)
+    power = Column(Integer, nullable=False)
+    value = Column(Integer)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.SwitchingAccessories:
+            return None
+        locomotive_message = AbstractLocomotiveMessage.from_schema(can_message)
+        position = can_message.position
+        power = can_message.power
+        value = can_message.value
+        return SwitchingAccessoriesMessage(position=position, power=power, value=value, **vars(locomotive_message))
+class S88PollingMessage(AbstractLocomotiveMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 's88_polling'
+    module_count = Column(Integer)
+    module = Column(Integer)
+    state = Column(Integer)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.S88Polling:
+            return None
+        locomotive_message = AbstractLocomotiveMessage.from_schema(can_message)
+        module_count = can_message.module_count
+        module = can_message.module
+        state = can_message.state
+        return S88PollingMessage(module_count=module_count, module=module, state=state, **vars(locomotive_message))
+class ReadConfigMessage(AbstractLocomotiveMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'read_config'
+    index = Column(Integer, primary_key=True)
+    number = Column(Integer, primary_key=True)
+    count = Column(Integer)
+    value = Column(Integer)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.ReadConfig:
+            return None
+        locomotive_message = AbstractLocomotiveMessage.from_schema(can_message)
+        index = can_message.index
+        number = can_message.number
+        count = can_message.count
+        value = can_message.value
+        return ReadConfigMessage(index=index, number=number, count=count, value=value, **vars(locomotive_message))
+class WriteConfigMessage(AbstractLocomotiveMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'write_config'
+    index = Column(Integer, primary_key=True)
+    number = Column(Integer, primary_key=True)
+    value = Column(Integer, nullable=False)
+    is_main = Column(Boolean)
+    is_multi_byte = Column(Boolean)
+    dcc_programming = Column(Text)
+    is_write_successful = Column(Boolean)
+    is_verify_successful = Column(Boolean)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.WriteConfig:
+            return None
+        locomotive_message = AbstractLocomotiveMessage.from_schema(can_message)
+        index = can_message.index
+        number = can_message.number
+        value = can_message.value
+        is_main = None
+        is_multi_byte = None
+        dcc_programming = None
+        is_write_successful = None
+        is_verify_successful = None
+        if not can_message.control is None:
+            is_main = can_message.control.is_main
+            is_multi_byte = can_message.control.is_multi_byte
+            dcc_programming = can_message.control.dcc_programming.value
+        if not can_message.result is None:
+            is_write_successful = can_message.result.is_write_successful
+            is_verify_successful = can_message.result.is_verify_successful
+        return WriteConfigMessage(index=index, number=number, value=value, is_main=is_main, is_multi_byte=is_multi_byte, dcc_programming=dcc_programming, is_write_successful=is_write_successful, is_verify_successful=is_verify_successful, **vars(locomotive_message))
+class AbstractSystemMessage(AbstractCANMessage):
+    __abstract__ = True
+    id = Column(Integer, primary_key=True)
+    def from_schema(can_message):
+        abstract_message = AbstractCANMessage.from_schema(can_message)
+        id = can_message.id
+        return AbstractSystemMessage(id=id, **vars(abstract_message))
+class SystemStateMessage(AbstractSystemMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'system_state'
+    state = Column(Text, nullable=False)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.SystemCommand:
+            return None
+        sub_command = can_message.get_subcommand()
+        if not sub_command in [SystemSubcommandSchema.SystemStop, SystemSubcommandSchema.SystemGo, SystemSubcommandSchema.SystemHalt]:
+            return None
+        abstract_message = AbstractSystemMessage.from_schema(can_message)
+        state = ""
+        if sub_command == SystemSubcommandSchema.SystemStop:
+            state = "stop"
+        elif sub_command == SystemSubcommandSchema.SystemGo:
+            state = "go"
+        elif sub_command == SystemSubcommandSchema.SystemHalt:
+            state = "halt"
+        assert not state == ""
+        return SystemStateMessage(state=state, **vars(abstract_message))
+class LocomotiveEmergencyStopMessage(AbstractSystemMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'locomotive_emergency_stop'
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.SystemCommand:
+            return None
+        if not can_message.get_subcommand() == SystemSubcommandSchema.LocomotiveEmergencyStop:
+            return None
+        abstract_message = AbstractSystemMessage.from_schema(can_message)
+        return LocomotiveEmergencyStopMessage(**vars(abstract_message))
+class LocomotiveCycleStopMessage(AbstractSystemMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'locomotive_cycle_stop'
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.SystemCommand:
+            return None
+        if not can_message.get_subcommand() == SystemSubcommandSchema.LocomotiveCycleStop:
+            return None
+        abstract_message = AbstractSystemMessage.from_schema(can_message)
+        return LocomotiveCycleStopMessage(**vars(abstract_message))
+class LocomotiveDataProtocolMessage(AbstractSystemMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'locomotive_data_protocol'
+    protocol = Column(Text, nullable=False)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.SystemCommand:
+            return None
+        if not can_message.get_subcommand() == SystemSubcommandSchema.LocomotiveDataProtocol:
+            return None
+        abstract_message = AbstractSystemMessage.from_schema(can_message)
+        protocol = can_message.protocol.value
+        return LocomotiveDataProtocolMessage(protocol=protocol, **vars(abstract_message))
+class AccessoryDecoderSwitchingTimeMessage(AbstractSystemMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'accessory_decoder_switching_time'
+    time = Column(Integer, nullable=False)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.SystemCommand:
+            return None
+        if not can_message.get_subcommand() == SystemSubcommandSchema.AccessoryDecoderSwitchingTime:
+            return None
+        abstract_message = AbstractSystemMessage.from_schema(can_message)
+        time = can_message.time
+        return AccessoryDecoderSwitchingTimeMessage(time=time, **vars(abstract_message))
+class MfxFastReadMessage(AbstractSystemMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'mfx_fast_read'
+    mfx_sid = Column(Integer, nullable=False)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.SystemCommand:
+            return None
+        if not can_message.get_subcommand() == SystemSubcommandSchema.MfxFastRead:
+            return None
+        abstract_message = AbstractSystemMessage.from_schema(can_message)
+        mfx_sid = can_message.mfx_sid
+        return MfxFastReadMessage(mfx_sid=mfx_sid, **vars(abstract_message))
+class EnableRailProtocolCommand(AbstractSystemMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'enable_rail_protocol'
+    bitset = Column(Integer, nullable=False)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.SystemCommand:
+            return None
+        if not can_message.get_subcommand() == SystemSubcommandSchema.EnableRailProtocol:
+            return None
+        abstract_message = AbstractSystemMessage.from_schema(can_message)
+        bitset = can_message.bitset
+        return EnableRailProtocolCommand(bitset=bitset, **vars(abstract_message))
+class SetMfxRegisterCounterMessage(AbstractSystemMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'set_mfx_register_counter'
+    counter = Column(Integer, nullable=False)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.SystemCommand:
+            return None
+        if not can_message.get_subcommand() == SystemSubcommandSchema.SetMfxRegisterCounter:
+            return None
+        abstract_message = AbstractSystemMessage.from_schema(can_message)
+        counter = can_message.counter
+        return SetMfxRegisterCounterMessage(counter=counter, **vars(abstract_message))
+class SystemOverloadMessage(AbstractSystemMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'system_overload'
+    channel = Column(Integer, nullable=False)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.SystemCommand:
+            return None
+        if not can_message.get_subcommand() == SystemSubcommandSchema.SystemOverload:
+            return None
+        abstract_message = AbstractSystemMessage.from_schema(can_message)
+        channel = can_message.channel
+        return SystemOverloadMessage(channel=channel, **vars(abstract_message))
+class SystemStatusMessage(AbstractSystemMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'system_status'
+    channel = Column(Integer, nullable=False)
+    measured_value = Column(Integer)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.SystemCommand:
+            return None
+        if not can_message.get_subcommand() == SystemSubcommandSchema.SystemStatus:
+            return None
+        abstract_message = AbstractSystemMessage.from_schema(can_message)
+        channel = can_message.channel
+        measured_value = can_message.measured_value
+        return SystemStatusMessage(channel=channel, measured_value=measured_value, **vars(abstract_message))
+class SetSystemIdentifierMessage(AbstractSystemMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'set_system_identifier'
+    system_id = Column(Integer)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.SystemCommand:
+            return None
+        if not can_message.get_subcommand() == SystemSubcommandSchema.SetSystemIdentifier:
+            return None
+        abstract_message = AbstractSystemMessage.from_schema(can_message)
+        system_id = can_message.system_id
+        return SetSystemIdentifierMessage(system_id=system_id, **vars(abstract_message))
+class MfxSeekMessage(AbstractSystemMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'mfx_seek'
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.SystemCommand:
+            return None
+        if not can_message.get_subcommand() == SystemSubcommandSchema.MfxSeek:
+            return None
+        abstract_message = AbstractSystemMessage.from_schema(can_message)
+        return MfxSeekMessage(**vars(abstract_message))
+class SystemResetMessage(AbstractSystemMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'system_reset'
+    target = Column(Integer, primary_key=True)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.SystemCommand:
+            return None
+        if not can_message.get_subcommand() == SystemSubcommandSchema.SystemReset:
+            return None
+        abstract_message = AbstractSystemMessage.from_schema(can_message)
+        target = can_message.target
+        return SystemResetMessage(target=target, **vars(abstract_message))
+class ConfigMessage(AbstractCANMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'config'
+    config = Column(Text, nullable=False)
+    length = Column(Integer, nullable=False)
+    def from_schema(abstract_pydantic_message):
+        return None
+    def from_message(data, length, base_pydantic_message):
+        abstract_message = AbstractCANMessage.from_schema(
+            base_pydantic_message)
+        return ConfigMessage(config=data, length=length, **vars(abstract_message))
+class LocomotiveMetricMessage(Base):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'locomotive_metrics'
+    timestamp = Column(DateTime, primary_key=True)
+    timestamp_iso = Column(Integer, primary_key=True)
+    mfxuid = Column(Integer, primary_key=True)
+    loc_id = Column(Integer, primary_key=True)
+    fuelA = Column(Integer)
+    fuelB = Column(Integer)
+    sand = Column(Integer)
+    distance = Column(Integer)
+    def from_schema(abstract_pydantic_message):
+        return None
+class ConfigUsageMessage(AbstractCANMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'config_usage'
+    mfxuid = Column(Integer, primary_key=True)
+    maxFuelA = Column(Integer)
+    maxFuelB = Column(Integer)
+    maxSand = Column(Integer)
+    faktorFuelA = Column(Integer)
+    fuelA = Column(Integer)
+    fuelB = Column(Integer)
+    sand = Column(Integer)
+    alter = Column(Integer)
+    def from_schema(abstract_pydantic_message):
+        return None
+    def from_message(obj, base_pydantic_message):
+        abstract_message = AbstractCANMessage.from_schema(
+            base_pydantic_message)
+        lok = obj["lok"]
+        mfxuid = int(lok["mfxuid"], 0)
+        maxFuelA = to_int_safe(lok.get("maxFuelA"))
+        maxFuelB = to_int_safe(lok.get("maxFuelB"))
+        maxSand = to_int_safe(lok.get("maxSand"))
+        faktorFuelA = to_int_safe(lok.get("faktorFuelA"))
+        fuelA = to_int_safe(lok.get("fuelA", None))
+        fuelB = to_int_safe(lok.get("fuelB", None))
+        sand = to_int_safe(lok.get("sand", None))
+        alter = to_int_safe(lok.get("alter", None))
+        return ConfigUsageMessage(
+            mfxuid=mfxuid,
+            maxFuelA=maxFuelA,
+            maxFuelB=maxFuelB,
+            maxSand=maxSand,
+            faktorFuelA=faktorFuelA,
+            fuelA=fuelA,
+            fuelB=fuelB,
+            sand=sand,
+            alter=alter,
+            **vars(abstract_message)
+        )
+class ConfigLocomotiveMessage(AbstractCANMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'config_locomotive'
+    name = Column(Text, nullable=False)
+    vorname = Column(Text)
+    uid = Column(Integer, nullable=False)
+    mfxuid = Column(Integer, nullable=False)
+    adresse = Column(Integer, nullable=False)
+    icon = Column(Text)
+    typ = Column(Text, nullable=None)
+    sid = Column(Integer)
+    symbol = Column(Integer)
+    tachomax = Column(Integer)
+    vmax = Column(Integer, nullable=False)
+    vmin = Column(Integer, nullable=False)
+    av = Column(Integer, nullable=False)
+    bv = Column(Integer, nullable=False)
+    volume = Column(Integer, nullable=False)
+    spa = Column(Integer)
+    spm = Column(Integer)
+    ft = Column(Integer)
+    velocity = Column(Integer)
+    richtung = Column(Integer)
+    mfxtyp = Column(Integer)
+    blocks = Column(Text)
+    def from_schema(abstract_pydantic_message):
+        return None
+    def from_message(lok, base_pydantic_message):
+        abstract_message = AbstractCANMessage.from_schema(
+            base_pydantic_message)
+        name = lok["name"]
+        vorname = lok.get("vorname", None)
+        uid = int(lok["uid"], 0)
+        mfxuid = int(lok["mfxuid"], 0)
+        adresse = lok["adresse"]
+        icon = lok.get("icon", None)
+        typ = lok["typ"]
+        sid = to_int_safe(lok.get("sid", None))
+        symbol = lok.get("symbol", None)
+        tachomax = to_int_safe(lok.get("tachomax", None))
+        vmax = int(lok["vmax"], 0)
+        vmin = int(lok["vmin"], 0)
+        av = int(lok["av"], 0)
+        bv = int(lok["bv"], 0)
+        volume = lok["volume"]
+        spa = lok.get("spa", None) # TODO determine types
+        spm = lok.get("spm", None)
+        ft = lok.get("ft", None)
+        velocity = to_int_safe(lok.get("velocity", None))
+        richtung = lok.get("richtung", None)
+        mfxtyp = lok.get("mfxtyp", None)
+        blocks = lok.get("blocks", None)
+        return ConfigLocomotiveMessage(
+            name=name,
+            vorname=vorname,
+            uid=uid,
+            mfxuid=mfxuid,
+            adresse=adresse,
+            icon=icon,
+            typ=typ,
+            sid=sid,
+            symbol=symbol,
+            tachomax=tachomax,
+            vmax=vmax,
+            vmin=vmin,
+            av=av,
+            bv=bv,
+            volume=volume,
+            spa=spa,
+            spm=spm,
+            ft=ft,
+            velocity=velocity,
+            richtung=richtung,
+            mfxtyp=mfxtyp,
+            blocks=blocks,
+            **vars(abstract_message)
+        )
+class RequestConfigDataMessage(AbstractCANMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'request_config_data'
+    filename = Column(Text, nullable=False)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.RequestConfigData:
+            return None
+        abstract_message = AbstractCANMessage.from_schema(can_message)
+        filename = can_message.filename
+        return RequestConfigDataMessage(filename=filename, **vars(abstract_message))
+class ParticipantPingMessage(AbstractCANMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'participant_ping'
+    sender_id = Column(Integer)
+    software_version = Column(Integer)
+    device_id = Column(Integer)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.ParticipantPing:
+            return None
+        abstract_message = AbstractCANMessage.from_schema(can_message)
+        sender_id = can_message.sender_id
+        software_version = can_message.software_version
+        device_id = can_message.device_id
+        return ParticipantPingMessage(sender_id=sender_id, software_version=software_version, device_id=device_id, **vars(abstract_message))
+class LocomotiveDiscoveryMessage(AbstractCANMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'locomotive_discovery'
+    loc_id = Column(Integer)
+    protocol = Column(Text)
+    mfx_range = Column(Integer)
+    ask_ratio = Column(Integer)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.LocomotiveDiscovery:
+            return None
+        abstract_message = AbstractCANMessage.from_schema(can_message)
+        loc_id = can_message.loc_id
+        protocol = ""
+        if not can_message.protocol is None:
+            protocol = can_message.protocol.value
+        mfx_range = can_message.mfx_range
+        ask_ratio = can_message.ask_ratio
+        return LocomotiveDiscoveryMessage(loc_id=loc_id, protocol=protocol, mfx_range=mfx_range, ask_ratio=ask_ratio, **vars(abstract_message))
+class S88EventMessage(AbstractCANMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 's88_event'
+    device_id = Column(Integer, primary_key=True)
+    contact_id = Column(Integer, primary_key=True)
+    state_old = Column(Integer)
+    state_new = Column(Integer)
+    time = Column(Integer)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.S88Event:
+            return None
+        abstract_message = AbstractCANMessage.from_schema(can_message)
+        device_id = can_message.device_id
+        contact_id = can_message.contact_id
+        state_old = can_message.state_old
+        state_new = can_message.state_new
+        time = can_message.time
+        return S88EventMessage(device_id=device_id, contact_id=contact_id, state_old=state_old, state_new=state_new, time=time, **vars(abstract_message))
+class ServiceStatusDataConfigurationMessage(AbstractCANMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'service_status_data_configuration'
+    device_id = Column(Integer)
+    index = Column(Integer)
+    count = Column(Integer)
+    data = Column(Text)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.ServiceStatusDataConfiguration:
+            return None
+        abstract_message = AbstractCANMessage.from_schema(can_message)
+        device_id = can_message.device_id
+        index = can_message.index
+        count = can_message.count
+        data = can_message.data
+        return ServiceStatusDataConfigurationMessage(device_id=device_id, index=index, count=count, data=data, **vars(abstract_message))
+class BootloaderCANBoundMessage(AbstractCANMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'bootloader_can_bound'
+    data = Column(Text)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.BootloaderCANBound:
+            return None
+        abstract_message = AbstractCANMessage.from_schema(can_message)
+        data = can_message.data
+        return BootloaderCANBoundMessage(data=data, **vars(abstract_message))
+class AbstractMfxMessage(AbstractCANMessage):
+    __abstract__ = True
+    mfx_uid = Column(Integer, primary_key=True)
+    mfx_sid = Column(Integer, primary_key=True)
+    def from_schema(can_message):
+        abstract_message = AbstractCANMessage.from_schema(can_message)
+        mfx_uid = can_message.mfx_uid
+        mfx_sid = can_message.mfx_sid
+        return AbstractMfxMessage(mfx_uid=mfx_uid, mfx_sid=mfx_sid, **vars(abstract_message))
+class MfxBindMessage(AbstractMfxMessage):
+    __tablename__ = 'mfx_bind'
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.MFXBind:
+            return None
+        abstract_message = AbstractMfxMessage.from_schema(can_message)
+        return MfxBindMessage(**vars(abstract_message))
+class MfxVerifyMessage(AbstractMfxMessage):
+    __mapper_args__ = {
+        'concrete': True
+    }
+    __tablename__ = 'mfx_verify'
+    ask_ratio = Column(Integer)
+    def from_schema(can_message):
+        if not can_message.get_command() == CommandSchema.MFXVerify:
+            return None
+        abstract_message = AbstractMfxMessage.from_schema(can_message)
+        ask_ratio = can_message.ask_ratio
+        return MfxVerifyMessage(ask_ratio=ask_ratio, **vars(abstract_message))
+from sqlalchemy import (
+    Column, 
+    DateTime,
+    Integer,
+    Boolean,
+    Text,
+)
+from sqlalchemy.ext.declarative import declarative_base
+from datetime import datetime
+Base = declarative_base()
+class CANMessage(Base):
+    __tablename__ = 'can_message'
+    timestamp = Column(DateTime, primary_key=True)
+    priority = Column(Integer, nullable=False)
+    command = Column(Text, nullable=False)
+    is_response = Column(Boolean, nullable=False)
+    hash = Column(Integer, nullable=False)
+    data = Column(Text, nullable=False)
+    def from_schema(can_message):
+        message_id = can_message.message_id
+        timestamp = datetime.now()
+        priority = message_id.priority
+        command = message_id.command.value
+        is_response = message_id.response
+        hash = message_id.hash_value
+        data = can_message.data
+        return CANMessage(timestamp=timestamp, priority=priority, command=command, is_response=is_response, hash=hash, data=data)import json
+from fastapi.encoders import jsonable_encoder
+def obj_to_json(obj):
+    return json.dumps(jsonable_encoder(obj))
+def bytes_to_str(data):
+    return " ".join(f"{byte:02x}" for byte in data)
+def int_to_bytes(val, length):
+    return val.to_bytes(length, "big")
+def str_to_bytes(val):
+    return val.encode("utf-8")
+def bytes_to_int(val):
+    return int.from_bytes(val, "big")
+def to_int_safe(val):
+    if val is None:
+        return None
+    return int(val, 0)
+import socket
+import asyncio
+from config import get_settings
+settings = get_settings()
+IP = settings.raw_can_ip
+PORT = settings.raw_can_port
+async def send(message):
+    sock = socket.socket(socket.AF_INET,
+                         socket.SOCK_STREAM)
+    sock.connect((IP, PORT))
+    sock.sendall(message)
+    sock.close()
+async def recv():
+    sock = socket.socket(socket.AF_INET,
+                         socket.SOCK_STREAM)
+    sock.connect((IP, PORT))
+    
+    data = sock.recv(13)
+    
+    sock.close()
+    return data
+async def send_async(message, writer=None):
+    got_writer = True
+    if writer is None:
+        got_writer = False
+        _, writer = await asyncio.open_connection(IP, PORT)
+    writer.write(message)
+    await writer.drain()
+    
+    if not got_writer:
+        writer.close()
+    await writer.wait_closed()
+async def recv_async(reader=None):
+    got_reader = True
+    if reader is None:
+        got_reader = False
+        reader, writer = await asyncio.open_connection(IP, PORT)
+    data = await reader.read(13)
+    if not got_reader:
+        writer.close()
+        await writer.wait_closed()
+    return datafrom fastapi import WebSocket
+from .tcp import send_async, recv_async
+from ..schemas.can import CANMessage
+from ..schemas.can_commands.base import AbstractCANMessage
+async def send_raw_can_message(message: CANMessage, writer=None):
+    data = message.to_bytes()
+    return await send_async(data, writer)
+async def send_can_message(message: AbstractCANMessage, writer=None):
+    message = message.to_can_message()
+    return await send_raw_can_message(message)
+async def recv_raw_can_message(reader=None) -> CANMessage:
+    data = await recv_async(reader)
+    if len(data) != 13:
+        return None
+    return CANMessage.from_bytes(data)
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: List[WebSocket] = []
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+    async def broadcast(self, message: str):
+        for connection in self.active_connections:
+            try:
+                await connection.send_text(message)
+            except:
+                passimport asyncio
+import websockets
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm.session import sessionmaker
+from config_wrapper import get_settings
+from app.schemas.can import CANMessage as PydanticCANMessage
+from app.models.raw_can_message import CANMessage, Base
+settings = get_settings()
+HOST = settings.raw_can_receiver_host
+PORT = settings.raw_can_receiver_port
+DB = settings.raw_db_dump_database
+async def dump(session, message):
+    print("Dumping message")
+    pydantic_can_message = PydanticCANMessage.parse_raw(message)
+    can_message = CANMessage.from_schema(pydantic_can_message)
+    session.add(can_message)
+    await session.commit()
+async def create_sql_session():
+    engine = create_async_engine(
+        DB, connect_args={"check_same_thread": False}
+    )
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession, expire_on_commit=False)
+    return SessionLocal()
+async def listen_and_dump(session):
+    async with websockets.connect(f"ws://{HOST}:{PORT}") as websocket:
+        print("connected")
+        async for message in websocket:
+            print(message)
+            await dump(session, message)
+async def main():
+    async with await create_sql_session() as session:
+        while True:
+            try:
+                await listen_and_dump(session)
+            except KeyboardInterrupt:
+                print("KeyboardInterrupt")
+                break
+            except Exception as e:
+                print(f"Error: {repr(e)}")
+        
+if __name__ == "__main__":
+    asyncio.run(main())import asyncio
+import websockets
+from config_wrapper import get_settings
+settings = get_settings()
+lines = list()
+async def echo(websocket, path):
+    for line in lines:
+        await websocket.send(line)
+async def main():
+    async with websockets.serve(echo, "localhost", settings.can_receiver_port):
+        await asyncio.Future()  # run forever
+if __name__ == "__main__":
+    with open("../out/messages.log", "r") as f:
+        lines = f.readlines()
+    lines = [line[line.find("- ")+2:] for line in lines]
+    asyncio.run(main())import asyncio
+import websockets
+from datetime import datetime
+from config_wrapper import get_settings
+settings = get_settings()
+HOST = settings.websocket_logger_host
+PORT = settings.websocket_logger_port
+messages = list()
+async def main():
+    async with websockets.connect(f"ws://{HOST}:{PORT}") as websocket:
+        print("connected")
+        async for message in websocket:
+            message = str(message)
+            print(message)
+            messages.append(f"{str(datetime.now())} - {message}")
+if __name__ == "__main__":
+    while True:
+        try:
+            asyncio.run(main())
+        except Exception as e:
+            print(f"need to restart with {repr(e)}")
+        except KeyboardInterrupt:
+            print("stopping with keyboard interrupt")
+            with open("../out/messages.log", "a") as f:
+                f.write("\n" + "\n".join(messages))
+            break
+        finally:
+            with open("../out/messages.log", "a") as f:
+                f.write("\n" + "\n".join(messages))import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from config import get_settingsimport asyncio
+import zlib
+import websockets
+from datetime import datetime, timedelta
+import time
+import requests
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm.session import sessionmaker
+from sqlalchemy import asc, desc
+from sqlalchemy.future import select
+from config_wrapper import get_settings
+from app.schemas.can import CANMessage as PydanticCANMessage
+from app.models.can_message import Base, ConfigMessage, ConfigUsageMessage, ConfigLocomotiveMessage, LocomotiveMetricMessage, LocomotiveSpeedMessage
+from app.models.can_message_converter import registered_models, convert_to_model
+from app.services.high_level_can_recv.converter import type_map as pydantic_type_map
+from app.schemas.can_commands import CommandSchema, LocomotiveDirectionCommand, LocomotiveDirection, LocomotiveSpeedCommand
+from app.services.high_level_can.helper import parse_config
+settings = get_settings()
+HOST = settings.can_receiver_host
+PORT = settings.can_receiver_port
+DB = settings.high_level_db_dump_database
+CAN_BASE_URL = f"http://{settings.can_host}:{settings.can_port}/"
+CAN_GET_HASH = CAN_BASE_URL + "general/hash"
+CAN_LOC_LIST = CAN_BASE_URL + "lok/list"
+CAN_SENDER_BASE_URL = f"http://{settings.can_sender_host}:{settings.can_sender_port}/"
+CAN_SENDER_GET_LOC_SPEED = CAN_SENDER_BASE_URL + "loc/speed"
+CAN_SENDER_GET_LOC_DIRECTION = CAN_SENDER_BASE_URL + "loc/direction"
+engine = create_async_engine(
+    DB, connect_args={"check_same_thread": False}
+)
+SessionLocal = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
+async def parse_message(message):
+    t = message[:message.find("{")]
+    payload = message[len(t):]
+    clas = pydantic_type_map[t]  # hacky
+    abstract_message = clas.parse_raw(payload)
+    return abstract_message
+async def dump_model(session, abstract_model):
+    session.add(abstract_model)
+    await session.commit()
+async def dump(session, pydantic_abstract_message):
+    print("Dumping message")
+    abstract_model = convert_to_model(pydantic_abstract_message)
+    assert abstract_model is not None
+    await dump_model(session, abstract_model)
+async def save_usage_message(session, obj, pydantic_abstract_message):
+    await dump_model(session, ConfigUsageMessage.from_message(obj, pydantic_abstract_message))
+async def save_locomotive_message(session, obj, pydantic_abstract_message):
+    for lok in obj["lokomotive"]:
+        if not isinstance(lok, dict) or lok.get("name") is None:
+            continue # skip empty entries
+        await dump_model(session, ConfigLocomotiveMessage.from_message(lok, pydantic_abstract_message))
+CONFIG_MESSAGE_DICT = {
+    "[verbrauch]": save_usage_message,
+    "[lokomotive]": save_locomotive_message
+}
+async def get_next_config_stream(session, connection):
+    async for message in connection:
+        pydantic_abstract_message = await parse_message(message)
+        if not pydantic_abstract_message.get_command() == CommandSchema.ConfigDataStream:
+            await dump(session, pydantic_abstract_message)
+            continue
+        return pydantic_abstract_message
+async def get_next_config_stream_timeout(session, connection):
+    try:
+        return await asyncio.wait_for(get_next_config_stream(session, connection), 1)
+    except Exception as e:
+        print(f"{e}")
+        return None
+async def init_db():
+    async with engine.begin() as conn:
+        for model in registered_models:
+            await conn.run_sync(model.metadata.create_all)
+    
+async def save_config_message(session, data, length, pydantic_abstract_message):
+    _, config_obj = parse_config(data)
+    for message_type in CONFIG_MESSAGE_DICT:
+        if message_type in config_obj:
+            obj = config_obj[message_type]
+            await CONFIG_MESSAGE_DICT[message_type](session, obj, pydantic_abstract_message)
+    # also save to normal ConfigMessage
+    await dump_model(session, ConfigMessage.from_message(data, length, pydantic_abstract_message))
+async def process_config_stream(session, websocket, pydantic_abstract_message):
+    if pydantic_abstract_message.file_length is None:
+        return
+    length = pydantic_abstract_message.file_length
+    received_count = 0
+    received_data = ""
+    while received_count < length:
+        next_message = await get_next_config_stream_timeout(session, websocket)
+        if next_message is None:
+            break
+        data = next_message.data
+        if not isinstance(data, str):
+            break
+        if received_count > 0:
+            received_data += " "
+        received_count += 8
+        received_data += data
+    data = bytes.fromhex(received_data)[:length]
+    try:
+        data = zlib.decompress(data[4:])
+    except Exception as e:
+        pass
+    try:
+        data = data.decode("utf-8")
+    except Exception as e:
+        pass
+    await save_config_message(session, data, length, pydantic_abstract_message)
+# Calculates 'distance points' = duration (in s) * speed
+async def resample_speed_for_loc(session, start, end, loc_id):
+    base_query = select(LocomotiveSpeedMessage.timestamp, LocomotiveSpeedMessage.speed) \
+        .filter(LocomotiveSpeedMessage.loc_id == loc_id)
+    in_interval = (await session.execute( \
+        base_query \
+            .order_by(asc(LocomotiveSpeedMessage.timestamp)) \
+            .filter(LocomotiveSpeedMessage.timestamp >= start) \
+            .filter(LocomotiveSpeedMessage.timestamp < end) \
+        )).fetchall()
+    result_before = (await session.execute( \
+        base_query \
+            .order_by(desc(LocomotiveSpeedMessage.timestamp)) \
+            .filter(LocomotiveSpeedMessage.timestamp < start) \
+            .limit(1) \
+        )).fetchall()
+    number_points = len(in_interval)
+    has_before = len(result_before) == 1
+    if has_before:
+        before = result_before[0]
+    total_duration = (end - start).total_seconds()
+    if number_points == 0:
+        if has_before:
+            return before[1] * total_duration
+        return 0
+    distance_sum = 0
+    # First data point; Boundary check
+    if has_before:
+        previous_value = before[1]
+    else:
+        previous_value = 0
+    duration = (in_interval[0][0] - start).total_seconds()
+    distance_sum += previous_value * duration
+    for i, (timestamp, distance) in enumerate(in_interval):
+        if i == number_points - 1:
+            next_timestamp = end
+        else:
+            next_timestamp = in_interval[i + 1][0]
+        duration = (next_timestamp - timestamp).total_seconds()
+        
+        distance_sum += distance * duration
+    return distance_sum
+async def resample_fuel_for_loc(session, start, end, mfxuid):
+    base_query = select(ConfigUsageMessage.timestamp, ConfigUsageMessage.fuelA, ConfigUsageMessage.fuelB, ConfigUsageMessage.sand) \
+        .filter(ConfigUsageMessage.mfxuid == mfxuid)
+    in_interval = (await session.execute(
+        base_query \
+            .order_by(asc(ConfigUsageMessage.timestamp)) \
+            .filter(ConfigUsageMessage.timestamp >= start) \
+            .filter(ConfigUsageMessage.timestamp < end) \
+        )).fetchall()
+    result_before = (await session.execute( \
+        base_query \
+            .order_by(desc(ConfigUsageMessage.timestamp)) \
+            .filter(ConfigUsageMessage.timestamp < start) \
+            .limit(1) \
+        )).fetchall()
+    in_interval_count = len(in_interval)
+    has_before = len(result_before) == 1
+    a_fuels = [(point[0], point[1]) for point in in_interval if point[1] is not None]
+    b_fuels = [(point[0], point[2]) for point in in_interval if point[2] is not None]
+    sands = [(point[0], point[3]) for point in in_interval if point[3] is not None]
+    # First data point; Boundary check
+    if has_before:
+        before = result_before[0]
+        before_timestamp = before[0]
+        if before[1] is not None:
+            a_fuels = [(before_timestamp, before[1])] + a_fuels
+        if before[2] is not None:
+            b_fuels = [(before_timestamp, before[2])] + b_fuels
+        if before[3] is not None:
+            sands = [(before_timestamp, before[3])] + sands
+    def mean_interval_difference(values):
+        ret = 0
+        for (timestamp_before, value_before), (timestamp_now, value_now) in zip(values, values[1:]):
+            duration = (timestamp_now - timestamp_before).total_seconds()
+            ret += (value_now - value_before) * 60 / duration
+        return ret
+    fuel_a_sum = mean_interval_difference(a_fuels)
+    fuel_b_sum = mean_interval_difference(b_fuels)
+    sand_sum = mean_interval_difference(sands)
+    # we calculate n - 1 intervals for n values
+    if len(a_fuels) > 1:
+        fuel_a_sum /= len(a_fuels) - 1
+    if len(b_fuels) > 1:
+        fuel_b_sum /= len(b_fuels) - 1
+    if len(sands) > 1:
+        sand_sum /= len(sands) - 1
+    return fuel_a_sum, fuel_b_sum, sand_sum
+async def resample(session, start, end):
+    print("resampling")
+    loc_ids = (await session.execute(select(ConfigLocomotiveMessage.uid, ConfigLocomotiveMessage.mfxuid))).fetchall()
+    loc_ids = set((t[0], t[1]) for t in loc_ids) # deduplicate
+    for (loc_id, mfxuid) in loc_ids:
+        distance = await resample_speed_for_loc(session, start, end, loc_id)
+        fuel_a, fuel_b, sand = await resample_fuel_for_loc(session, start, end, mfxuid)
+        timestamp_iso = time.mktime(end.timetuple())
+        await dump_model(session, \
+            LocomotiveMetricMessage(timestamp=end, timestamp_iso=timestamp_iso, mfxuid=mfxuid, loc_id=loc_id, fuelA=fuel_a, fuelB=fuel_b, sand=sand, distance=distance))
+async def refresh_loc_information():
+    for loc in get_locs():
+        loc_id = loc["loc_id"]
+        direction_command = LocomotiveDirectionCommand(direction=None, loc_id=loc_id, response=false, hash_value=get_hash())
+        speed_command = LocomotiveSpeedCommand(speed=None, loc_id=loc_id, response=false, hash_value=get_hash())
+        requests.post(CAN_SENDER_GET_LOC_DIRECTION, data=direction_command.json())
+        requests.post(CAN_SENDER_GET_LOC_SPEED, data=speed_command.json())
+@lru_cache
+def get_hash():
+    return str(requests.get(CAN_GET_HASH).json())
+def get_locs():
+    return requests.get(CAN_LOC_LIST, headers={'x-can-hash': get_hash()}).json()
+async def start_resampler():
+    last = datetime.now()
+    resample_interval = settings.high_level_db_dump_resample_interval
+    resample_delta = timedelta(seconds = resample_interval)
+    async with SessionLocal() as session:
+        while True:
+            now = datetime.now()
+            elapsed_seconds = (now - last).total_seconds()
+            if now < last or elapsed_seconds < resample_interval:
+                remaining = resample_interval - elapsed_seconds
+                print(f"sleeping {remaining}s")
+                await asyncio.sleep(remaining)
+                continue
+            start = last
+            end = last + resample_delta
+            await resample(session, start, end)
+            last = end
+async def start_refresher():
+    last = datetime.now()
+    refresh_interval = settings.high_level_db_dump_refresh_interval
+    refresh_delta = timedelta(seconds = refresh_interval)
+    while True:
+        now = datetime.now()
+        elapsed_seconds = (now - last).seconds
+        if now < last or elapsed_seconds < refresh_interval:
+            remaining = refresh_interval - elapsed_seconds.seconds
+            await asyncio.sleep(remaining)
+            continue
+        start = last
+        end = last + refresh_delta
+        await refresh_loc_information()
+        last = end
+async def start_websocket_listener():
+    async with websockets.connect(f"ws://{HOST}:{PORT}") as websocket:
+        async with SessionLocal() as session:
+            print("connected")
+            async for message in websocket:
+                print(message)
+                pydantic_abstract_message = await parse_message(message)
+                print(pydantic_abstract_message.get_command())
+                if pydantic_abstract_message.get_command() == CommandSchema.ConfigDataStream:
+                    await process_config_stream(session, websocket, pydantic_abstract_message)
+                else:
+                    await dump(session, pydantic_abstract_message)
+def main():
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(init_db())
+    loop.create_task(start_refresher())
+    loop.create_task(start_resampler())
+    loop.create_task(start_websocket_listener())
+    loop.run_forever()
+if __name__ == "__main__":
+    main()
+from config_wrapper import get_settings
+import asyncio
+settings = get_settings()
+IP = settings.raw_can_ip
+PORT = settings.raw_can_port
+writers = set()
+queue = asyncio.Queue()
+async def handle_client(reader, writer):
+    writers.add(writer)
+    async def client_loop(reader, writer):
+        while True:
+            data = await reader.read(13)
+            if len(data) == 0:
+                # connection was closed
+                return
+            queue.put_nowait(data)
+    try:
+        await client_loop(reader, writer)
+    finally:
+        writers.remove(writer)
+async def run_server():
+    server = await asyncio.start_server(handle_client, IP, PORT)
+    async with server:
+        await server.serve_forever()
+async def run_broadcaster():
+    while True:
+        data = await queue.get()
+        for writer in writers:
+            try:
+                writer.write(data)
+            except:
+                pass
+        queue.task_done()
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    loop.create_task(run_broadcaster())
+    loop.create_task(run_server())
+    loop.run_forever()
+import zlib
+import asyncio
+import websockets
+from config_wrapper import get_settings
+from app.schemas.can_commands import *
+from app.services.high_level_can_recv.converter import type_map
+settings = get_settings()
+HOST = settings.raw_can_receiver_host
+PORT = settings.raw_can_receiver_port
+async def main():
+    async with websockets.connect(f"ws://{HOST}:{PORT}") as websocket:
+        print("connected")
+        data = str()
+        async for message in websocket:
+            try:
+                t = message[:message.find("{")]
+                payload = message[len(t):]
+                clas = type_map[t] # hacky
+                if t != "ConfigDataStreamCommand":
+                    continue
+                abstract_message = clas.parse_raw(payload)
+                # is config data stream
+                if abstract_message.crc is not None:
+                    if len(data) > 0:
+                        data = bytes.fromhex(data)
+                        success = True
+                        try:
+                            print(data.decode("utf-8"))
+                        except:
+                            # not a string
+                            success = False
+                        if not success:
+                            try:
+                                decompressed = zlib.decompress(data[4:])
+                                print(decompressed.decode("utf-8"))
+                            except:
+                                print("could not decode data")
+                    data = str()
+                else:
+                    if len(data) > 0:
+                        data += " "
+                        data += abstract_message.data
+                    else:
+                        data = abstract_message.data
+            except Exception as e:
+                print(e)
+if __name__ == "__main__":
+    asyncio.run(main())import asyncio
+import websockets
+from config_wrapper import get_settings
+settings = get_settings()
+HOST = settings.websocket_printer_host
+PORT = settings.websocket_printer_port
+async def hello():
+    async with websockets.connect(f'ws://{HOST}:{PORT}') as websocket:
+        print("connected")
+        async for message in websocket:
+            print(message)
+asyncio.run(hello())from enum import Enum
+from pydantic import BaseModel
+from .base import AbstractCANMessage
+from ..can import CommandSchema, CANMessage
+from ...utils.coding import int_to_bytes, bytes_to_int
+class AbstractLocIDCommand(AbstractCANMessage):
+    loc_id: int
+    def get_other_data(self) -> bytes:
+        raise NotImplementedError()
+    def get_data(self) -> bytes:
+        data = bytes()
+        data += int_to_bytes(self.loc_id, 4)
+        data += self.get_other_data()
+        return data
+    
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        abstract_message = AbstractCANMessage.from_can_message(message)
+        data = message.get_data_bytes()
+        assert len(data) >= 4
+        loc_id = bytes_to_int(data[:4])
+        return AbstractLocIDCommand(loc_id=loc_id, **vars(abstract_message))
+class LocomotiveSpeedCommand(AbstractLocIDCommand):
+    speed: int = None
+    def get_command(self) -> CommandSchema:
+        return CommandSchema.LocomotiveSpeed
+    
+    def get_other_data(self) -> bytes:
+        if self.speed is None:
+            return bytes()
+        assert self.speed <= 1000
+        return int_to_bytes(self.speed, 2)
+    
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.LocomotiveSpeed:
+            return None
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        speed = None
+        if len(data) > 4:
+            speed = bytes_to_int(data[4:6])
+        return LocomotiveSpeedCommand(speed=speed, **vars(abstract_message))
+class LocomotiveDirection(str, Enum):
+    Keep = "Keep"
+    Forwards = "Forwards"
+    Backwards = "Backwards"
+    Toggle = "Toggle"
+class LocomotiveDirectionCommand(AbstractLocIDCommand):
+    direction: LocomotiveDirection = None
+    def get_command(self) -> CommandSchema:
+        return CommandSchema.LocomotiveDirection
+    
+    def get_other_data(self) -> bytes:
+        if self.direction is None:
+            assert not self.response
+            return bytes()
+        if self.direction == LocomotiveDirection.Keep:
+            return int_to_bytes(0, 1)
+        if self.direction == LocomotiveDirection.Forwards:
+            return int_to_bytes(1, 1)
+        if self.direction == LocomotiveDirection.Backwards:
+            return int_to_bytes(2, 1)
+        if self.direction == LocomotiveDirection.Toggle:
+            return int_to_bytes(3, 1)
+    
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.LocomotiveDirection:
+            return None
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        direction = None
+        assert len(data) < 6
+        if len(data) > 4:
+            direction = bytes_to_int(data[4:5])
+            if direction == 1:
+                direction = LocomotiveDirection.Forwards
+            elif direction == 2:
+                direction = LocomotiveDirection.Backwards
+            elif direction == 3:
+                direction = LocomotiveDirection.Toggle
+            else:
+                direction = LocomotiveDirection.Keep
+        return LocomotiveDirectionCommand(direction=direction, **vars(abstract_message))
+class LocomotiveFunctionCommand(AbstractLocIDCommand):
+    function: int
+    value: int = None
+    function_value: int = None
+    def get_command(self) -> CommandSchema:
+        return CommandSchema.LocomotiveFunction
+    
+    def get_other_data(self) -> bytes:
+        ret = bytes()
+        ret += int_to_bytes(self.function, 1)
+        if self.value is not None:
+            ret += int_to_bytes(self.value, 1)
+        else:
+            assert self.function_value is None
+        if self.function_value is not None:
+            ret += int_to_bytes(self.function_value, 2)
+        return ret
+    
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.LocomotiveFunction:
+            return None
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        function = bytes_to_int(data[4:5])
+        
+        value = None
+        if len(data) > 5:
+            value = bytes_to_int(data[5:6])
+        
+        function_value = None
+        if len(data) > 6:
+            assert len(data) == 8
+            function_value = bytes_to_int(data[6:8])
+        return LocomotiveFunctionCommand(function=function, value=value, function_value=function_value, **vars(abstract_message))
+class ReadConfigCommand(AbstractLocIDCommand):
+    index: int # 6 bit
+    number: int # 10 bit
+    count: int = None
+    value: int = None
+    def get_command(self) -> CommandSchema:
+        return CommandSchema.ReadConfig
+    
+    def get_other_data(self) -> bytes:
+        ret = bytes()
+        byte4 = self.index << 2
+        byte4 |= (self.number >> 8) & 0b0000_0011
+        ret += int_to_bytes(byte4, 1)
+        ret += int_to_bytes(self.number & 0b11111111, 1)
+        if self.count is not None:
+            assert self.value is None
+            assert not self.response
+            ret += int_to_bytes(self.count, 1)
+        elif self.value is not None:
+            assert self.count is None
+            assert self.response
+            ret += int_to_bytes(self.value, 1)
+        return ret
+    
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.ReadConfig:
+            return None
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        
+        assert len(data) == 6 or len(data) == 7
+        byte4 = bytes_to_int(data[4:5])
+        byte5 = bytes_to_int(data[5:6])
+        index = byte4 >> 2
+        number = (byte4 & 0b0000_0011) << 8
+        number |= byte5
+        count = None
+        value = None
+        if len(data) == 7:
+            byte6 = bytes_to_int(data[6:7])
+            if message.message_id.response:
+                value = byte6
+            else:
+                count = byte6
+        return ReadConfigCommand(index=index, number=number, count=count, value=value, **vars(abstract_message))
+class DCCProgramming(str, Enum):
+    DirectProgramming = "DirectProgramming"
+    RegisterProgramming = "RegisterProgramming"
+    BitProgramming = "BitProgramming"
+class WriteConfigControlByte(BaseModel):
+    is_main: bool
+    is_multi_byte: bool
+    dcc_programming: DCCProgramming
+    def get_value(self):
+        ret = 0
+        if self.is_main:
+            ret |= 0b1000_0000
+        if self.is_multi_byte:
+            ret |= 0b0100_0000
+        
+        if self.dcc_programming == DCCProgramming.DirectProgramming:
+            ret |= 0b0000_0000
+        elif self.dcc_programming == DCCProgramming.RegisterProgramming:
+            ret |= 0b0001_0000
+        elif self.dcc_programming == DCCProgramming.BitProgramming:
+            ret |= 0b0010_0000
+        else:
+            raise NotImplementedError()
+        return ret
+    
+    def from_value(value: int):
+        is_main = (value & 0b1000_0000) > 0
+        is_multi_byte = (value & 0b0100_0000) > 0
+        dcc_programming = DCCProgramming.DirectProgramming
+        if (value & 0b0001_0000) > 0:
+            dcc_programming = DCCProgramming.RegisterProgramming
+        if (value & 0b0010_0000) > 0:
+            dcc_programming = DCCProgramming.BitProgramming
+        assert bin(value).count("1") < 4 # either Register or BitProgramming
+        return WriteConfigControlByte(is_main=is_main, is_multi_byte=is_multi_byte, dcc_programming=dcc_programming)
+class WriteConfigResultByte(BaseModel):
+    is_write_successful: bool
+    is_verify_successful: bool
+    def get_value(self):
+        ret = 0
+        if self.is_write_successful:
+            ret |= 1 << 7
+        if self.is_verify_successful:
+            ret |= 1 << 6
+        return ret
+    
+    def from_value(value):
+        is_write_successful = (value & 0b1000_0000) > 0
+        is_verify_successful = (value & 0b0100_0000) > 0
+        return WriteConfigResultByte(is_write_successful=is_write_successful, is_verify_successful=is_verify_successful)
+class WriteConfigCommand(AbstractLocIDCommand):
+    index: int # 6 bit
+    number: int # 10 bit
+    value: int
+    control: WriteConfigControlByte = None
+    result: WriteConfigResultByte = None
+    def get_command(self) -> CommandSchema:
+        return CommandSchema.WriteConfig
+    
+    def get_other_data(self) -> bytes:
+        ret = bytes()
+        byte4 = self.index << 2
+        byte4 |= (self.number >> 8) & 0b0000_0011
+        ret += int_to_bytes(byte4, 1)
+        ret += int_to_bytes(self.number & 0b1111_1111, 1)
+        
+        ret += int_to_bytes(self.value, 1)
+        
+        assert (self.control is None) ^ (self.result is None) # exactly one of them is set
+        if self.control is not None:
+            assert not self.response
+            ret += int_to_bytes(self.control.get_value(), 1)
+        if self.result is not None:
+            assert self.response
+            ret += int_to_bytes(self.result.get_value(), 1)
+        return ret
+    
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.WriteConfig:
+            return None
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        
+        assert len(data) == 8
+        byte4 = bytes_to_int(data[4:5])
+        byte5 = bytes_to_int(data[5:6])
+        index = byte4 >> 2
+        number = (byte4 & 0b0000_0011) << 8
+        number |= byte5
+        value = bytes_to_int(data[6:7])
+        control = None
+        result = None
+        byte7 = bytes_to_int(data[7:8])
+        if message.message_id.response:
+            result = WriteConfigResultByte.from_value(byte7)
+        else:
+            control = WriteConfigControlByte.from_value(byte7)
+        return WriteConfigCommand(index=index, number=number, value=value, control=control, result=result, **vars(abstract_message))
+class SwitchingAccessoriesCommand(AbstractLocIDCommand):
+    position: int
+    power: int
+    value: int = None # time or special value. Time: t*10 ms
+    def get_command(self) -> CommandSchema:
+        return CommandSchema.SwitchingAccessories
+    
+    def get_other_data(self) -> bytes:
+        ret = bytes()
+        ret += int_to_bytes(self.position, 1)
+        ret += int_to_bytes(self.power, 1)
+        if self.value is not None:
+            ret += int_to_bytes(self.value, 2)
+        return ret
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SwitchingAccessories:
+            return None
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        assert len(data) in [6,8]
+        position = bytes_to_int(data[4:5])
+        power = bytes_to_int(data[5:6])
+        value = None
+        if len(data) == 8:
+            value = bytes_to_int(data[6:8])
+        return SwitchingAccessoriesCommand(position=position, power=power, value=value, **vars(abstract_message))
+class S88PollingCommand(AbstractLocIDCommand):
+    module_count: int = None
+    module: int = None
+    state: int = None 
+    def get_command(self) -> CommandSchema:
+        return CommandSchema.S88Polling
+    
+    def get_other_data(self) -> bytes:
+        ret = bytes()
+        if not self.module_count is None:
+            ret += int_to_bytes(self.module_count, 1)
+            assert not self.response
+            assert self.module is None
+            assert self.state is None
+            return ret
+        assert not self.module is None
+        assert not self.state is None
+        assert self.response
+        ret += int_to_bytes(self.module, 1)
+        ret += int_to_bytes(self.state, 2)
+        return ret
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.S88Polling:
+            return None
+        abstract_message = AbstractLocIDCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        assert len(data) in [5,7]
+        module_count = None
+        module = None
+        state = None 
+        if len(data) == 5:
+            module_count = bytes_to_int(data[4:5])
+        else: # data has len 7
+            module = bytes_to_int(data[4:5])
+            state = bytes_to_int(data[5:7])
+        return S88PollingCommand(module_count=module_count, module=module, state=state, **vars(abstract_message))
+from .base import AbstractCANMessage
+from ..can import CommandSchema, CANMessage
+from ...utils.coding import int_to_bytes, str_to_bytes, bytes_to_int, bytes_to_str
+from enum import Enum
+class ParticipantPingCommand(AbstractCANMessage):
+    sender_id: int = None
+    software_version: int = None
+    device_id: int = None
+    def get_command(self) -> CommandSchema:
+        return CommandSchema.ParticipantPing
+    
+    def get_data(self) -> bytes:
+        if self.sender_id is None:
+            assert self.software_version is None
+            assert self.device_id is None
+            return bytes()
+        ret = bytes()
+        assert self.sender_id is not None
+        assert self.software_version is not None
+        assert self.device_id is not None
+        ret += int_to_bytes(self.sender_id, 4)
+        ret += int_to_bytes(self.software_version, 2)
+        ret += int_to_bytes(self.device_id, 2)
+        return ret
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.ParticipantPing:
+            return None
+        abstract_message = AbstractCANMessage.from_can_message(message)
+        data = message.get_data_bytes()
+        sender_id = None
+        software_version = None
+        device_id = None
+        if len(data) > 0:
+            sender_id = bytes_to_int(data[:4])
+        if len(data) > 4:
+            software_version = bytes_to_int(data[4:6])
+        if len(data) > 6:
+            device_id = bytes_to_int(data[6:8])
+        return ParticipantPingCommand(sender_id=sender_id, software_version=software_version, device_id=device_id, **vars(abstract_message))
+class ProtocolSchema(str, Enum):
+    MFX = "MFX"
+    MM2_20 =  "MM2_20"
+    MM2_40 =  "MM2_40"
+    DCC_read_short = "DCC_read_short"
+    DCC_read_long = "DCC_read_long"
+    DCC_identify = "DCC_identify"
+    SX1_read = "SX1_read"
+    SX1_identify = "SX1_identify"
+    MFX_main = "MFX_main" 
+class Protocol(Enum):
+    MFX =  0
+    MM2_20 =  33
+    MM2_40 =  34
+    DCC_read_short = 35
+    DCC_read_long = 36
+    DCC_identify = 37
+    SX1_read = 38
+    SX1_identify = 39
+    MFX_main = 64 
+class LocomotiveDiscoveryCommand(AbstractCANMessage):
+    loc_id: int = None
+    protocol: ProtocolSchema = None
+    mfx_range: int = None
+    ask_ratio: int = None
+    def get_command(self) -> CommandSchema:
+        return CommandSchema.LocomotiveDiscovery
+    
+    def get_data(self) -> bytes:
+        ret = bytes()
+        if self.protocol is None:
+            assert self.loc_id is None
+            assert self.mfx_range is None
+            assert self.ask_ratio is None
+            return ret
+        if not self.loc_id is None:
+            ret += int_to_bytes(self.loc_id, 4)
+        protocol = Protocol[self.protocol.value].value
+        if not self.mfx_range is None:
+            assert not self.protocol is None
+            assert self.protocol in [ProtocolSchema.MFX, ProtocolSchema.MFX_main]
+            ret += int_to_bytes(self.mfx_range + protocol, 1)
+        else:
+            print(protocol)
+            ret += int_to_bytes(protocol, 1)
+        if not self.ask_ratio is None:
+            ret += int_to_bytes(self.ask_ratio, 1)
+            assert not self.loc_id is None
+        return ret
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.LocomotiveDiscovery:
+            return None
+        abstract_message = AbstractCANMessage.from_can_message(message)
+        data = message.get_data_bytes()
+        loc_id = None
+        protocol = None
+        mfx_range = None # 0 or 64
+        ask_ratio = None
+        if len(data) == 1:
+            protocol_number = bytes_to_int(data[:1])
+            if protocol_number > 0 and protocol_number <= 32:
+                mfx_range = protocol_number
+                protocol_number = 0
+            elif protocol_number > 64 and protocol_number <= 96:
+                mfx_range = protocol_number - 64
+                protocol_number = 64
+            protocol = ProtocolSchema(Protocol(protocol_number).name)
+        if len(data) > 1:
+            loc_id = bytes_to_int(data[:4])
+            protocol_number = bytes_to_int(data[4:5])
+            if protocol_number > 0 and protocol_number <= 32:
+                mfx_range = protocol_number
+                protocol_number = 0
+            elif protocol_number > 64 and protocol_number <= 96:
+                mfx_range = protocol_number - 64
+                protocol_number = 64
+            protocol = ProtocolSchema(Protocol(protocol_number).name)
+        if len(data) > 5:
+            ask_ratio = bytes_to_int(data[5:6])
+        return LocomotiveDiscoveryCommand(loc_id=loc_id, protocol=protocol, mfx_range=mfx_range, ask_ratio=ask_ratio, **vars(abstract_message))
+class S88EventCommand(AbstractCANMessage):
+    device_id: int
+    contact_id: int
+    parameter: int = None 
+    state_old: int = None 
+    state_new: int = None 
+    time: int = None 
+    def get_command(self) -> CommandSchema:
+        return CommandSchema.S88Event
+    
+    def get_data(self) -> bytes:
+        ret = bytes()
+        ret += int_to_bytes(self.device_id, 2)
+        ret += int_to_bytes(self.contact_id, 2)
+        
+        if not self.parameter is None:
+            assert self.state_old is None
+            assert self.state_new is None
+            assert self.time is None
+            ret += int_to_bytes(self.parameter, 1)
+            return ret
+        
+        if self.state_old is None and self.state_new is None and self.time is None:
+            return ret
+        assert not self.state_old is None
+        assert not self.state_new is None
+        assert not self.time is None
+        ret += int_to_bytes(self.state_old, 1)
+        ret += int_to_bytes(self.state_new, 1)
+        ret += int_to_bytes(self.time, 2)
+        return ret
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.S88Event:
+            return None
+        abstract_message = AbstractCANMessage.from_can_message(message)
+        data = message.get_data_bytes()
+        device_id = bytes_to_int(data[:2])
+        contact_id = bytes_to_int(data[2:4])
+        parameter = None 
+        state_old = None 
+        state_new = None 
+        time = None 
+        if len(data) == 5:
+            parameter = bytes_to_int(data[4:5])
+        elif len(data) > 5:
+            state_old = bytes_to_int(data[4:5])
+            state_new = bytes_to_int(data[5:6])
+            time = bytes_to_int(data[6:8])
+        return S88EventCommand(data=data, device_id=device_id, contact_id=contact_id, parameter=parameter, state_old=state_old, state_new=state_new,time=time, **vars(abstract_message))
+class RequestConfigDataCommand(AbstractCANMessage):
+    filename: str
+    def get_command(self) -> CommandSchema:
+        return CommandSchema.RequestConfigData
+    
+    def get_data(self) -> bytes:
+        ret = bytes()
+        ret += str_to_bytes(self.filename)
+        ret_len = len(ret)
+        assert ret_len <= 8
+        ret += bytes(8 - ret_len)# Padding
+        return ret
+    
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        if message.message_id.command != CommandSchema.RequestConfigData:
+            return None
+        abstract_message = AbstractCANMessage.from_can_message(message)
+        
+        
+        data = message.get_data_bytes()
+        assert len(data) == 8
+        filename = bytes(filter(lambda b: b != 0, data)).decode("utf-8") # remove padding and decode
+        return RequestConfigDataCommand(filename=filename, **vars(abstract_message))
+class ServiceStatusDataConfigurationCommand(AbstractCANMessage):
+    device_id: int = None
+    index: int = None
+    count: int = None
+    data: str = None
+    def get_command(self) -> CommandSchema:
+        return CommandSchema.ServiceStatusDataConfiguration
+    
+    def get_data(self) -> bytes:
+        ret = bytes()
+        
+        if not self.data is None:
+            assert self.device_id is None
+            assert self.index is None
+            assert self.count is None
+            assert self.response
+            ret = bytes.fromhex(self.data)
+            assert len(ret) == 8
+            return ret
+        assert self.device_id is not None
+        assert self.index is not None
+        
+        ret += int_to_bytes(self.device_id, 4)
+        ret += int_to_bytes(self.index, 1)
+        
+        if self.count is not None:
+            assert self.response
+            ret += int_to_bytes(self.count, 1)
+        else:
+            assert not self.response
+        return ret
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.ServiceStatusDataConfiguration:
+            return None
+        abstract_message = AbstractCANMessage.from_can_message(message)
+        raw_data = message.get_data_bytes()
+        device_id = None
+        index = None
+        count = None
+        data = None
+        if len(raw_data) > 0 and len(raw_data) < 8:
+            device_id = bytes_to_int(raw_data[:4])
+            index = bytes_to_int(raw_data[4:5])
+            if len(raw_data) == 6:
+                count = bytes_to_int(raw_data[5:6])
+        elif len(raw_data) == 8:
+            data = bytes_to_str(raw_data)
+        return ServiceStatusDataConfigurationCommand(device_id=device_id, index=index, count=count, data=data, **vars(abstract_message))
+class ConfigDataStreamCommand(AbstractCANMessage):
+    file_length: int = None
+    crc: int = None
+    byte6: int = None
+    data: str = None
+    def get_command(self) -> CommandSchema:
+        return CommandSchema.ConfigDataStream
+    
+    def get_data(self) -> bytes:
+        ret = bytes()
+        if not self.data is None:
+            assert self.byte6 is None
+            assert self.file_length is None
+            assert self.crc is None
+            ret += bytes.fromhex(self.data)
+            return ret
+        assert not self.file_length is None
+        assert not self.crc is None
+        ret += int_to_bytes(self.file_length, 4)
+        ret += int_to_bytes(self.crc, 2)
+        if not self.byte6 is None:
+            ret += int_to_bytes(self.byte6, 1)
+        return ret
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.ConfigDataStream:
+            return None
+        abstract_message = AbstractCANMessage.from_can_message(message)
+        raw_data = message.get_data_bytes()
+        file_length = None
+        crc = None
+        byte6 = None
+        data = None
+        if len(raw_data) > 0 and len(raw_data) < 8:
+            file_length = bytes_to_int(raw_data[:4])
+            crc = bytes_to_int(raw_data[4:6])
+            if len(raw_data) == 7:
+                byte6 = bytes_to_int(raw_data[6:7])
+        elif len(raw_data) == 8:
+            data = bytes_to_str(raw_data)
+        return ConfigDataStreamCommand(file_length=file_length, crc=crc, byte6=byte6, data=data, **vars(abstract_message))
+class BootloaderCANBoundCommand(AbstractCANMessage):
+    data: str = None
+    def get_command(self) -> CommandSchema:
+        return CommandSchema.BootloaderCANBound
+    
+    def get_data(self) -> bytes:
+        if self.data is None:
+            return bytes()
+        return bytes.fromhex(self.data)
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.BootloaderCANBound:
+            return None
+        abstract_message = AbstractCANMessage.from_can_message(message)
+        data = message.get_data_bytes()
+        if len(data) == 0:
+            data = None
+        else:
+            data = bytes_to_str(data)
+        return BootloaderCANBoundCommand(data=data, **vars(abstract_message))
+from pydantic import BaseModel
+from ..can import CANMessage, MessageIdentifier, CommandSchema
+from ...utils.coding import bytes_to_str
+class AbstractCANMessage(BaseModel):
+    hash_value: int
+    response: bool
+    def get_command(self) -> CommandSchema:
+        raise Exception("Not implemented, do not use abstract class directly")
+    
+    def get_data(self) -> bytes:
+        raise Exception("Not implemented, do not use abstract class directly")
+    def to_can_message(self) -> CANMessage:
+        message_identifier = MessageIdentifier(priority=0, command=self.get_command(), response=self.response, hash_value=self.hash_value)
+        data = bytes_to_str(self.get_data())
+        return CANMessage(message_id = message_identifier, data = data)
+    
+    def from_can_message(message: CANMessage):
+        message_id = message.message_id
+        return AbstractCANMessage(hash_value=message_id.hash_value, response=message_id.response)from .loc import *
+from .system import *
+from .general import *
+from .mfx import *from enum import Enum
+from .base import AbstractCANMessage
+from ..can import CommandSchema, CANMessage
+from ...utils.coding import int_to_bytes, bytes_to_int
+class SystemSubcommandSchema(str, Enum):
+    SystemStop = "SystemStop"
+    SystemGo = "SystemGo"
+    SystemHalt = "SystemHalt"
+    LocomotiveEmergencyStop = "LocomotiveEmergencyStop"
+    LocomotiveCycleStop = "LocomotiveCycleStop"
+    LocomotiveDataProtocol = "LocomotiveDataProtocol"
+    AccessoryDecoderSwitchingTime = "AccessoryDecoderSwitchingTime"
+    MfxFastRead = "MfxFastRead"
+    EnableRailProtocol = "EnableRailProtocol"
+    SetMfxRegisterCounter = "SetMfxRegisterCounter"
+    SystemOverload = "SystemOverload"
+    SystemStatus = "SystemStatus"
+    SetSystemIdentifier = "SetSystemIdentifier"
+    MfxSeek = "MfxSeek"
+    SystemReset = "SystemReset"
+class SystemSubcommand(Enum):
+    SystemStop = 0x00
+    SystemGo = 0x01
+    SystemHalt = 0x02
+    LocomotiveEmergencyStop = 0x03
+    LocomotiveCycleStop = 0x04
+    LocomotiveDataProtocol = 0x05
+    AccessoryDecoderSwitchingTime = 0x06
+    MfxFastRead = 0x07
+    EnableRailProtocol = 0x08
+    SetMfxRegisterCounter = 0x09
+    SystemOverload = 0x0A
+    SystemStatus = 0x0B
+    SetSystemIdentifier = 0x0C
+    MfxSeek = 0x30
+    SystemReset = 0x80
+class RailProtocolSchema(str, Enum):
+    MM2_2040 = "MM2_2040"
+    MM2_20 = "MM2_20"
+    MM2_40 = "MM2_40"
+    DCC_short_28 = "DCC_short_28"
+    DCC_short_14 = "DCC_short_14"
+    DCC_short_126 = "DCC_short_126"
+    DCC_long_28 = "DCC_long_28"
+    DCC_long_126 = "DCC_long_126"
+class RailProtocol(Enum):
+    MM2_2040 = 0x00
+    MM2_20 = 0x01
+    MM2_40 = 0x02
+    DCC_short_28 = 0x00
+    DCC_short_14 = 0x01
+    DCC_short_126 = 0x02
+    DCC_long_28 = 0x03
+    DCC_long_126 = 0x04
+class AbstractSystemCommand(AbstractCANMessage):
+    id: int
+    def get_command(self) -> CommandSchema:
+        return CommandSchema.SystemCommand
+    def get_other_data(self) -> bytes:
+        raise NotImplementedError()
+    def get_subcommand(self) -> SystemSubcommandSchema:
+        raise NotImplementedError()
+    def get_data(self) -> bytes:
+        data = bytes()
+        data += int_to_bytes(self.id, 4)
+        subcommand = SystemSubcommand[self.get_subcommand().value]
+        data += int_to_bytes(subcommand.value, 1)
+        data += self.get_other_data()
+        return data
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        abstract_message = AbstractCANMessage.from_can_message(message)
+        data = message.get_data_bytes()
+        assert len(data) >= 5
+        id = bytes_to_int(data[:4])
+        return AbstractSystemCommand(id=id, **vars(abstract_message))
+    def get_subcommand_from_data(data: bytes) -> SystemSubcommandSchema:
+        subcommand_number = bytes_to_int(data[4:5])
+        return SystemSubcommandSchema(SystemSubcommand(subcommand_number).name)
+class SystemStopCommand(AbstractSystemCommand):
+    def get_subcommand(self) -> SystemSubcommandSchema:
+        return SystemSubcommandSchema.SystemStop
+    def get_other_data(self) -> bytes:
+        return bytes()
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.SystemStop:
+            return None
+        return SystemStopCommand(**vars(abstract_message))
+class SystemGoCommand(AbstractSystemCommand):
+    def get_subcommand(self) -> SystemSubcommandSchema:
+        return SystemSubcommandSchema.SystemGo
+    def get_other_data(self) -> bytes:
+        return bytes()
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.SystemGo:
+            return None
+        return SystemGoCommand(**vars(abstract_message))
+class SystemHaltCommand(AbstractSystemCommand):
+    def get_subcommand(self) -> SystemSubcommandSchema:
+        return SystemSubcommandSchema.SystemHalt
+    def get_other_data(self) -> bytes:
+        return bytes()
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.SystemHalt:
+            return None
+        return SystemHaltCommand(**vars(abstract_message))
+class LocomotiveEmergencyStopCommand(AbstractSystemCommand):
+    def get_subcommand(self) -> SystemSubcommandSchema:
+        return SystemSubcommandSchema.LocomotiveEmergencyStop
+    def get_other_data(self) -> bytes:
+        return bytes()
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.LocomotiveEmergencyStop:
+            return None
+        return LocomotiveEmergencyStopCommand(**vars(abstract_message))
+class LocomotiveCycleStopCommand(AbstractSystemCommand):
+    def get_subcommand(self) -> SystemSubcommandSchema:
+        return SystemSubcommandSchema.LocomotiveCycleStop
+    def get_other_data(self) -> bytes:
+        return bytes()
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.LocomotiveCycleStop:
+            return None
+        return LocomotiveCycleStopCommand(**vars(abstract_message))
+class LocomotiveDataProtocolCommand(AbstractSystemCommand):
+    protocol: RailProtocolSchema
+    def get_subcommand(self) -> SystemSubcommandSchema:
+        return SystemSubcommandSchema.LocomotiveDataProtocol
+    def get_other_data(self) -> bytes:
+        return int_to_bytes(RailProtocol[self.protocol.value].value, 1)
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.LocomotiveDataProtocol:
+            return None
+        protocol_number = bytes_to_int(data[5:6])
+        protocol = RailProtocolSchema(RailProtocol(protocol_number).name)
+        return LocomotiveDataProtocolCommand(protocol=protocol, **vars(abstract_message))
+class AccessoryDecoderSwitchingTimeCommand(AbstractSystemCommand):
+    # time * 10ms
+    time: int
+    def get_subcommand(self) -> SystemSubcommandSchema:
+        return SystemSubcommandSchema.AccessoryDecoderSwitchingTime
+    def get_other_data(self) -> bytes:
+        return int_to_bytes(self.time, 2)
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.AccessoryDecoderSwitchingTime:
+            return None
+        time = bytes_to_int(data[5:7])
+        return AccessoryDecoderSwitchingTimeCommand(time=time, **vars(abstract_message))
+class MfxFastReadCommand(AbstractSystemCommand):
+    mfx_sid: int
+    def get_subcommand(self) -> SystemSubcommandSchema:
+        return SystemSubcommandSchema.MfxFastRead
+    def get_other_data(self) -> bytes:
+        return int_to_bytes(self.mfx_sid, 2)
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.MfxFastRead:
+            return None
+        mfx_sid = bytes_to_int(data[5:7])
+        return MfxFastReadCommand(mfx_sid=mfx_sid, **vars(abstract_message))
+class EnableRailProtocolCommand(AbstractSystemCommand):
+    # only bits 0-2 are relevant. Bit enables or disables protocol
+    # 0: MM2
+    # 1: MFX
+    # 2: DCC
+    bitset: int
+    def get_subcommand(self) -> SystemSubcommandSchema:
+        return SystemSubcommandSchema.EnableRailProtocol
+    def get_other_data(self) -> bytes:
+        return int_to_bytes(self.bitset, 1)
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.EnableRailProtocol:
+            return None
+        bitset = bytes_to_int(data[5:6])
+        return EnableRailProtocolCommand(bitset=bitset, **vars(abstract_message))
+class SetMfxRegisterCounterCommand(AbstractSystemCommand):
+    counter: int
+    def get_subcommand(self) -> SystemSubcommandSchema:
+        return SystemSubcommandSchema.SetMfxRegisterCounter
+    def get_other_data(self) -> bytes:
+        return int_to_bytes(self.counter, 2)
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.SetMfxRegisterCounter:
+            return None
+        counter = bytes_to_int(data[5:7])
+        return SetMfxRegisterCounterCommand(counter=counter, **vars(abstract_message))
+# Should always be a response
+class SystemOverloadCommand(AbstractSystemCommand):
+    # Who is responsible for overload
+    channel: int
+    def get_subcommand(self) -> SystemSubcommandSchema:
+        return SystemSubcommandSchema.SystemOverload
+    def get_other_data(self) -> bytes:
+        return int_to_bytes(self.channel, 1)
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.SystemOverload:
+            return None
+        channel = bytes_to_int(data[5:6])
+        return SystemOverloadCommand(channel=channel, **vars(abstract_message))
+class SystemStatusCommand(AbstractSystemCommand):
+    # Who is responsible for overload
+    channel: int
+    measured_value: int = None
+    def get_subcommand(self) -> SystemSubcommandSchema:
+        return SystemSubcommandSchema.SystemStatus
+    def get_other_data(self) -> bytes:
+        data = int_to_bytes(self.channel, 1)
+        if self.measured_value is not None:
+            data += int_to_bytes(self.measured_value, 2)
+        return data
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.SystemStatus:
+            return None
+        channel = bytes_to_int(data[5:6])
+        measured_value = None
+        if len(data) == 8:
+            measured_value = bytes_to_int(data[6:8])
+        if len(data) == 7:
+            measured_value = bool(data[6])
+        return SystemStatusCommand(channel=channel, measured_value=measured_value, **vars(abstract_message))
+class SetSystemIdentifierCommand(AbstractSystemCommand):
+    system_id: int = None
+    def get_subcommand(self) -> SystemSubcommandSchema:
+        return SystemSubcommandSchema.SetSystemIdentifier
+    def get_other_data(self) -> bytes:
+        if self.system_id is not None:
+            return int_to_bytes(self.system_id, 2)
+        return bytes()
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.SetSystemIdentifier:
+            return None
+        system_id = None
+        if len(data) > 5:
+            system_id = bytes_to_int(data[5:7])
+        return SetSystemIdentifierCommand(system_id=system_id, **vars(abstract_message))
+# Mfx Seek is a lie...
+# There is no Mfx Seek
+class MfxSeekCommand(AbstractSystemCommand):
+    def get_subcommand(self) -> SystemSubcommandSchema:
+        return SystemSubcommandSchema.MfxSeek
+    def get_other_data(self) -> bytes:
+        return bytes()
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.MfxSeek:
+            return None
+        return MfxSeekCommand(**vars(abstract_message))
+class SystemResetCommand(AbstractSystemCommand):
+    target: int
+    def get_subcommand(self) -> SystemSubcommandSchema:
+        return SystemSubcommandSchema.SystemReset
+    def get_other_data(self) -> bytes:
+        return int_to_bytes(self.target, 1)
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        command = message.message_id.command
+        if command != CommandSchema.SystemCommand:
+            return None
+        abstract_message = AbstractSystemCommand.from_can_message(message)
+        data = message.get_data_bytes()
+        subcommand = AbstractSystemCommand.get_subcommand_from_data(data)
+        if subcommand != SystemSubcommandSchema.SystemReset:
+            return None
+        target = bytes_to_int(data[5:6])
+        return SystemResetCommand(target=target, **vars(abstract_message))
+from .base import AbstractCANMessage
+from ..can import CommandSchema, CANMessage
+from ...utils.coding import int_to_bytes, bytes_to_int
+class AbstractMfxCommand(AbstractCANMessage):
+    mfx_uid: int
+    mfx_sid: int
+    def get_other_data(self) -> bytes:
+        raise NotImplementedError()
+    
+    def get_data(self) -> bytes:
+        data = bytes()
+        data += int_to_bytes(self.mfx_uid, 4)
+        data += int_to_bytes(self.mfx_sid, 2)
+        data += self.get_other_data()
+        return data
+    
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        abstract_message = AbstractCANMessage.from_can_message(message)
+        data = message.get_data_bytes()
+        assert len(data) >= 6
+        mfx_uid = bytes_to_int(data[:4])
+        mfx_sid = bytes_to_int(data[4:6])
+        return AbstractMfxCommand(mfx_uid=mfx_uid, mfx_sid=mfx_sid, **vars(abstract_message))
+class MfxBindCommand(AbstractMfxCommand):
+    def get_command(self) -> CommandSchema:
+        return CommandSchema.MFXBind
+    def get_other_data(self) -> bytes:
+        return bytes()
+    
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        if message.message_id.command != CommandSchema.MFXBind:
+            return None
+        abstract_message = AbstractMfxCommand.from_can_message(message)
+        
+        return MfxBindCommand(**vars(abstract_message))
+class MfxVerifyCommand(AbstractMfxCommand):
+    ask_ratio: int = None
+    def get_command(self) -> CommandSchema:
+        return CommandSchema.MFXVerify
+    def get_other_data(self) -> bytes:
+        if self.ask_ratio is not None:
+            return int_to_bytes(self.ask_ratio, 1)
+        return bytes()
+    
+    def from_can_message(message: CANMessage) -> AbstractCANMessage:
+        if message.message_id.command != CommandSchema.MFXVerify:
+            return None
+        abstract_message = AbstractMfxCommand.from_can_message(message)
+        
+        data = message.get_data_bytes()
+        ask_ratio = None
+        if len(data) > 6:
+            assert len(data) == 7
+            ask_ratio = bytes_to_int(data[6:7])
+        
+        return MfxVerifyCommand(ask_ratio = ask_ratio, **vars(abstract_message))# TODO: throw useful errors when asserts don't match
+from enum import Enum
+from pydantic import BaseModel, Field
+from ..utils.coding import bytes_to_str, int_to_bytes
+class CommandSchema(str, Enum):
+    SystemCommand = "SystemCommand"
+    LocomotiveDiscovery = "LocomotiveDiscovery"
+    MFXBind = "MFXBind"
+    MFXVerify = "MFXVerify"
+    LocomotiveSpeed = "LocomotiveSpeed"
+    LocomotiveDirection = "LocomotiveDirection"
+    LocomotiveFunction = "LocomotiveFunction"
+    ReadConfig = "ReadConfig"
+    WriteConfig = "WriteConfig"
+    SwitchingAccessories = "SwitchingAccessories"
+    AccessoriesConfig = "AccessoriesConfig"
+    S88Polling = "S88Polling"
+    S88Event = "S88Event"
+    SX1Event = "SX1Event"
+    ParticipantPing = "ParticipantPing"
+    UpdateOffer = "UpdateOffer"
+    ReadConfigData = "ReadConfigData"
+    BootloaderCANBound = "BootloaderCANBound"
+    BootloaderRailBound = "BootloaderRailBound"
+    ServiceStatusDataConfiguration = "ServiceStatusDataConfiguration"
+    RequestConfigData = "RequestConfigData"
+    ConfigDataStream = "ConfigDataStream"
+    DataStream60128 = "DataStream60128"
+    UnknownCommand = "UnknownCommand"
+class Command(Enum):
+    SystemCommand = 0x00
+    LocomotiveDiscovery = 0x01
+    MFXBind = 0x02
+    MFXVerify = 0x03
+    LocomotiveSpeed = 0x04
+    LocomotiveDirection = 0x05
+    LocomotiveFunction = 0x06
+    ReadConfig = 0x07
+    WriteConfig = 0x08
+    SwitchingAccessories = 0x0B
+    AccessoriesConfig = 0x0C
+    S88Polling = 0x10
+    S88Event = 0x11
+    SX1Event = 0x12
+    ParticipantPing = 0x18
+    UpdateOffer = 0x19
+    ReadConfigData = 0x1A
+    BootloaderCANBound = 0x1B
+    BootloaderRailBound = 0x1C
+    ServiceStatusDataConfiguration = 0x1D
+    RequestConfigData = 0x20
+    ConfigDataStream = 0x21
+    DataStream60128 = 0x22
+    UnknownCommand = 0x80
+class MessageIdentifier(BaseModel):
+    priority: int
+    command: CommandSchema
+    response: bool
+    hash_value: int
+    def to_bytes(self) -> bytes:
+        ret = bytearray(2)
+        assert self.priority < 5
+        assert self.get_command().value < 256
+        assert self.hash_value < (1 << 16)
+        ret[0] = self.get_first_byte()
+        ret[1] = self.get_second_byte()
+        ret += int_to_bytes(self.hash_value, 2)
+        return bytes(ret)
+    
+    def get_command(self) -> Command:
+        return Command[self.command.value]
+    
+    def get_first_byte(self) -> int:
+        ret = int(0)
+        ret |= self.priority << 4
+        ret |= self.get_command().value >> 7
+        return ret
+    
+    def get_second_byte(self) -> int:
+        ret = int(0)
+        ret |= (self.get_command().value << 1) & 0b1111_1110
+        ret |= (1 if self.response else 0)
+        return ret
+    
+    def from_bytes(data: bytes):
+        priority = data[0] >> 4
+        command = (data[0] & 0b1) << 7
+        command |= data[1] >> 1
+        command = Command(command)
+        command = CommandSchema[command.name]
+        response = (data[1] & 0b1) > 0
+        hash_value = int.from_bytes(data[2:], "big")
+        return MessageIdentifier(priority=priority, command=command, response=response, hash_value=hash_value)
+class CANMessage(BaseModel):
+    message_id: MessageIdentifier
+    data: str = Field("DE AD BE EF", description="String of hex values interpreted as bytes")
+    def to_bytes(self) -> bytes:
+        ret = bytearray()
+        ret += self.message_id.to_bytes()
+        
+        data = self.get_data_bytes()
+        
+        length = len(data)
+        assert length < 9
+        ret += int_to_bytes(length, 1)
+        
+        if len(data) < 8:
+            new_data = bytearray(8)
+            new_data[:len(data)] = data
+            data = bytes(new_data)
+        ret += data
+        return bytes(ret)
+    
+    def get_data_bytes(self) -> bytes:
+        return bytes.fromhex(self.data)
+    
+    def from_bytes(data: bytes):
+        message_id = MessageIdentifier.from_bytes(data[:4])
+        length = data[4]
+        data = data[5:5+length]
+        data = bytes_to_str(data)
+        return CANMessage(message_id=message_id, data=data)
+from fastapi import APIRouter, Header
+from typing import Type
+from ...utils.communication import send_can_message
+from .helper import connect, get_single_response_timeout, return204
+from ...schemas.can_commands.loc import LocomotiveSpeedCommand, LocomotiveDirectionCommand, LocomotiveFunctionCommand
+from ...schemas.can_commands import AbstractCANMessage, CommandSchema
+from .schemas.lok import FunctionValueModel, SpeedModel, DirectionModel
+from .configs import get_config
+router = APIRouter()
+@router.get("/{loc_id}/speed", response_model=SpeedModel)
+async def get_speed(loc_id: int, x_can_hash: str = Header(None)):
+    message = LocomotiveSpeedCommand(loc_id = loc_id, hash_value = x_can_hash, response = False)
+    def check(m):
+        if not m.response or m.get_command() != CommandSchema.LocomotiveSpeed:
+            return False
+        if m.loc_id != loc_id or m.speed is None:
+            return False
+        return True
+    async with connect() as connection:
+        await send_can_message(message)
+        return await get_single_response_timeout(connection, check, lambda m: SpeedModel(speed=m.speed))
+@router.post("/{loc_id}/speed", status_code=204)
+async def set_speed(loc_id: int, speed: SpeedModel, x_can_hash: str = Header(None)):
+    message = LocomotiveSpeedCommand(loc_id = loc_id, speed = speed.speed, hash_value = x_can_hash, response = False)
+    def check(m):
+        if not m.response or m.get_command() != CommandSchema.LocomotiveSpeed:
+            return False
+        if m.loc_id != loc_id or m.speed != speed.speed:
+            return False
+        return True
+    async with connect() as connection:
+        await send_can_message(message)
+        return await get_single_response_timeout(connection, check, return204)
+@router.get("/{loc_id}/direction", response_model=DirectionModel)
+async def get_direction(loc_id: int, x_can_hash: str = Header(None)):
+    message = LocomotiveDirectionCommand(loc_id = loc_id, hash_value = x_can_hash, response = False)
+    def check(m):
+        if not m.response or m.get_command() != CommandSchema.LocomotiveDirection:
+            return False
+        if m.loc_id != loc_id or m.direction is None:
+            return False
+        return True
+    async with connect() as connection:
+        await send_can_message(message)
+        return await get_single_response_timeout(connection, check, lambda m: DirectionModel(direction=m.direction.value))
+@router.post("/{loc_id}/direction", status_code=204)
+async def set_direction(loc_id: int, direction: DirectionModel, x_can_hash: str = Header(None)):
+    message = LocomotiveDirectionCommand(loc_id = loc_id, direction = direction.direction, hash_value = x_can_hash, response = False)
+    def check(m):
+        if not m.response or m.get_command() != CommandSchema.LocomotiveDirection:
+            return False
+        if m.loc_id != loc_id or m.direction != direction.direction:
+            return False
+        return True
+    async with connect() as connection:
+        await send_can_message(message)
+        return await get_single_response_timeout(connection, check, return204)
+@router.get("/{loc_id}/function/{function}", response_model=FunctionValueModel)
+async def get_function(loc_id: int, function: int, x_can_hash: str = Header(None)):
+    message = LocomotiveFunctionCommand(loc_id = loc_id, function = function, hash_value = x_can_hash, response = False)
+    def check(m):
+        if not m.response or m.get_command() != CommandSchema.LocomotiveFunction:
+            return False
+        if m.loc_id != loc_id or m.value is None:
+            return False
+        return True
+    async with connect() as connection:
+        await send_can_message(message)
+        return await get_single_response_timeout(connection, check, lambda m: FunctionValueModel(value=m.value))
+@router.post("/{loc_id}/function/{function}", status_code=204)
+async def set_function(loc_id: int, function: int, value: FunctionValueModel, x_can_hash: str = Header(None)):
+    message = LocomotiveFunctionCommand(loc_id = loc_id, function = function, value = value.value, hash_value = x_can_hash, response = False)
+    def check(m):
+        if not m.response or m.get_command() != CommandSchema.LocomotiveFunction:
+            return False
+        if m.loc_id != loc_id or m.value != value.value:
+            return False
+        return True
+    async with connect() as connection:
+        await send_can_message(message)
+        return await get_single_response_timeout(connection, check, return204)
+@router.get("/list")
+async def list_locs(x_can_hash: str = Header(None)):
+    loks_config = await get_config(["loks"], x_can_hash, is_compressed=True, is_config=True)
+    loks_list = loks_config["[lokomotive]"]["lokomotive"]
+    for lok in loks_list:
+        lok["loc_id"] = int(lok["uid"], 0)
+    return loks_list
+import zlib
+from typing import Type, List
+from fastapi import APIRouter, Header, Response
+from ...schemas.can_commands.general import RequestConfigDataCommand
+from ...schemas.can_commands import AbstractCANMessage, CommandSchema
+from ...utils.communication import send_can_message
+from .helper import get_single_response_timeout, connect, return204, parse_config
+router = APIRouter()
+async def get_config(request: List[str], hash_value: str, is_binary = False, is_compressed = False, is_config = False):
+    request_messages = [RequestConfigDataCommand(filename = s, hash_value = hash_value, response = False) for s in request]
+    def check_response(m):
+        if not m.response or m.get_command() != CommandSchema.RequestConfigData:
+            return False
+        if m.filename != request_messages[-1].filename:
+            return False
+        return True
+    def check_header(m):
+        if m.get_command() != CommandSchema.ConfigDataStream:
+            return False
+        if m.file_length is None:
+            return False
+        return True
+    
+    def check_body(m):
+        if m.get_command() != CommandSchema.ConfigDataStream:
+            return False
+        if m.file_length is not None:
+            return False
+        return True
+    async with connect() as connection:
+        for message in request_messages:
+            await send_can_message(message)
+        
+        response =  await get_single_response_timeout(connection, check_response, lambda m: None)
+        if response is not None:
+            return response
+        length = await get_single_response_timeout(connection, check_header, lambda m: m.file_length)
+        if not isinstance(length, int):
+            return length
+        
+        received_count = 0
+        received_data = ""
+        while received_count < length:
+            data = await get_single_response_timeout(connection, check_body, lambda m: m.data)
+            if not isinstance(data, str):
+                return message
+            received_count += 8
+            if received_count > 0:
+                received_data += " "
+            received_data += data
+        
+        data = bytes.fromhex(received_data)[:length]
+        if is_compressed:
+            data = zlib.decompress(data[4:])
+        if not is_binary:
+            data = data.decode("utf-8")
+            if is_config:
+                _, data = parse_config(data)
+        return data
+@router.get("/lokinfo/{loc_name}")
+async def get_lokinfo(loc_name: str = "", x_can_hash: str = Header(None)):
+    loc_name = loc_name[:16]
+    packet1 = loc_name[:8]
+    packet2 = loc_name[8:]
+    return await get_config(["lokinfo", packet1, packet2], x_can_hash, is_config=True)
+@router.get("/loknamen")
+async def get_loknamen(offset: int = 0, limit: int = 5, x_can_hash: str = Header(None)):
+    query_str = f"{offset} {limit}"
+    return await get_config(["loknamen", query_str], x_can_hash)
+@router.get("/maginfo")
+async def get_maginfo(offset: int = 0, limit: int = 5, x_can_hash: str = Header(None)):
+    query_str = f"{offset} {limit}"
+    return await get_config(["maginfo", query_str], x_can_hash, is_config=True)
+# TODO: needs parameter
+@router.get("/lokdb")
+async def get_lokdb(x_can_hash: str = Header(None)):
+    return await get_config(["lokdb"], x_can_hash, is_binary=True)
+# TODO: needs parameter
+@router.get("/lang")
+async def get_lang(x_can_hash: str = Header(None)):
+    return await get_config(["lang"], x_can_hash, is_binary=True)
+@router.get("/ldbver")
+async def get_ldbver(x_can_hash: str = Header(None)):
+    return await get_config(["ldbver"], x_can_hash)
+@router.get("/langver")
+async def get_langver(x_can_hash: str = Header(None)):
+    return await get_config(["langver"], x_can_hash)
+@router.get("/loks")
+async def get_loks(x_can_hash: str = Header(None)):
+    return await get_config(["loks"], x_can_hash, is_compressed=True, is_config=True)
+@router.get("/mags")
+async def get_mags(x_can_hash: str = Header(None)):
+    return await get_config(["mags"], x_can_hash, is_compressed=True, is_config=True)
+@router.get("/gbs")
+async def get_gbs(x_can_hash: str = Header(None)):
+    return await get_config(["gbs"], x_can_hash, is_compressed=True, is_config=True)
+@router.get("/gbs/{index}")
+async def get_gbs_page(index: int, x_can_hash: str = Header(None)):
+    return await get_config([f"gbs-{index}"], x_can_hash, is_compressed=True, is_config=True)
+@router.get("/fs")
+async def get_fs(x_can_hash: str = Header(None)):
+    return await get_config(["fs"], x_can_hash, is_compressed=True, is_config=True)
+@router.get("/lokstat")
+async def get_lokstat(x_can_hash: str = Header(None)):
+    return await get_config(["lokstat"], x_can_hash, is_compressed=True, is_config=True)
+@router.get("/magstat")
+async def get_magstat(x_can_hash: str = Header(None)):
+    return await get_config(["magstat"], x_can_hash, is_compressed=True, is_config=True)
+@router.get("/gbsstat")
+async def get_gbsstat(x_can_hash: str = Header(None)):
+    return await get_config(["gbsstat"], x_can_hash, is_compressed=True, is_config=True)
+from fastapi import APIRouter, Header, Response, HTTPException
+from typing import Type
+from ...schemas.can_commands.general import ParticipantPingCommand
+from ...schemas.can_commands import AbstractCANMessage, CommandSchema
+from ...utils.communication import send_can_message
+from .helper import get_single_response_timeout, connect, return204
+from random import randrange
+router = APIRouter()
+# TODO: Get state through database request
+used_hashes = set()
+async def try_hash(connection, message, hash):
+    global used_hashes
+    if hash in used_hashes:
+        return False
+    def check(m):
+        if not m.response or m.get_command() != CommandSchema.ParticipantPing:
+            return False
+        return True
+    await send_can_message(message)
+    try:
+        while True:
+            response = await get_single_response_timeout(connection, check)
+            used_hashes.add(response.hash_value)
+            if response.hash_value == hash:
+                return False
+    except HTTPException as e:
+        # No new ping response
+        used_hashes.add(hash)
+        return True
+@router.get("/hash")
+async def get_hash():
+    async with connect() as connection:
+        while True:
+        # 16 bit random hash
+        #hash = randrange(0, 65535)
+        #hash |= 0b0000001100000000
+        #hash &= 0b1111111101111111 
+            hash = randrange(0, 0x10000) & 0xff7f | 0x0300
+            message = ParticipantPingCommand(hash_value = hash, response = False)
+            if await try_hash(connection, message, hash):
+                return hash
+            from fastapi import APIRouter, Header, Response
+from typing import Type
+from ...schemas.can_commands.loc import SwitchingAccessoriesCommand
+from ...schemas.can_commands import AbstractCANMessage, CommandSchema
+from ...utils.communication import send_can_message
+from .helper import get_single_response_timeout, connect, return204
+from .schemas.accessory import SwitchingAccessoriesModel
+from .configs import get_config
+router = APIRouter()
+# TODO: Get state through database request
+@router.post("/{loc_id}", status_code=204)
+async def set_accessory(body: SwitchingAccessoriesModel, loc_id: int, x_can_hash: str = Header(None)):
+    message = SwitchingAccessoriesCommand(loc_id = loc_id, hash_value = x_can_hash, response = False, **vars(body))
+    def check(m):
+        if not m.response or m.get_command() != CommandSchema.SwitchingAccessories:
+            return False
+        if m.value != body.value or m.position != body.position or m.power != body.power:
+            return False
+        return True
+    async with connect() as connection:
+        await send_can_message(message)
+        return await get_single_response_timeout(connection, check, return204)
+@router.get("/list")
+async def list_mags(x_can_hash: str = Header(None)):
+    def mag_loc_id(dectyp, id):
+        id = int(id, 0)
+        if dectyp == "mm2":
+            return id + 0x3000 - 1 # Taken from the Märklin documentation. See 1.3.1.2 Einbindung bestehender Gleisprotokolle, Bildung der „Loc-ID“
+        else:
+            return id
+    mags_config = await get_config(["mags"], x_can_hash, is_compressed=True, is_config=True)
+    mags_list = mags_config["[magnetartikel]"]["artikel"]
+    for mag in mags_list:
+        mag["loc_id"] = mag_loc_id(mag["dectyp"], mag["id"])
+    return mags_list
+from pydantic import BaseModel
+from ....schemas.can_commands.loc import *
+class DirectionModel(BaseModel):
+    direction: LocomotiveDirection
+class SpeedModel(BaseModel):
+    speed: int
+class FunctionValueModel(BaseModel):
+    value: intfrom pydantic import BaseModel
+class SwitchingAccessoriesModel(BaseModel):
+    position: int
+    power: int
+    value: int = None # time or special value. Time: t*10 msfrom pydantic import BaseModel
+class SetS88Model(BaseModel):
+    parameter: int
+class GetS88Model(BaseModel):
+    state_old: int = None 
+    state_new: int = None 
+    time: int = None from pydantic import BaseModel
+from enum import Enum
+from ....schemas.can_commands.system import SystemResetCommand, SystemGoCommand, SystemHaltCommand, SystemStopCommand
+class SystemStatus(str, Enum):
+    STOP = "Stop"
+    HALT = "Halt"
+    RESET = "Reset"
+    GO = "Go"
+class SystemStatusCommand(Enum):
+    Stop = SystemStopCommand
+    Halt = SystemHaltCommand
+    Reset = SystemResetCommand
+    Go = SystemGoCommandfrom fastapi import APIRouter, Header, Response
+from typing import Type
+from ...schemas.can_commands.general import S88EventCommand
+from ...schemas.can_commands import AbstractCANMessage, CommandSchema
+from ...utils.communication import send_can_message
+from .helper import get_single_response_timeout, connect, return204
+from .schemas.s88 import SetS88Model, GetS88Model
+router = APIRouter()
+@router.get("/{device_id}/{contact_id}", response_model=GetS88Model)
+async def get_s88(device_id: int, contact_id: int, x_can_hash: str = Header(None)):
+    message = S88EventCommand(device_id = device_id, contact_id = contact_id, hash_value = x_can_hash, response = False)
+    def check(m):
+        if not m.response or m.get_command() != CommandSchema.S88Event:
+            return False
+        if m.device_id != device_id or m.contact_id != contact_id:
+            return False
+        return True
+    async with connect() as connection:
+        await send_can_message(message)
+        return await get_single_response_timeout(connection, check, lambda m: GetS88Model(state_old = m.state_old, state_new = m.state_new, time = m.time))
+@router.post("/{device_id}/{contact_id}", status_code=204)
+async def set_s88(body: SetS88Model, device_id: int, contact_id: int, x_can_hash: str = Header(None)):
+    message = S88EventCommand(device_id = device_id, contact_id = contact_id, hash_value = x_can_hash, response = False, **vars(body))
+    def check(m):
+        if not m.response or m.get_command() != CommandSchema.S88Event:
+            return False
+        if m.device_id != device_id or m.contact_id != contact_id:
+            return False
+        return True
+    async with connect() as connection:
+        await send_can_message(message)
+        return await get_single_response_timeout(connection, check, return204)from fastapi import APIRouter
+from . import lok
+from . import accessory
+from . import s88
+from . import configs
+from . import general
+from . import system
+router = APIRouter()
+router.include_router(
+    general.router,
+    prefix = "/general",
+    tags = ["general"]
+)
+router.include_router(
+    lok.router,
+    prefix = "/lok",
+    tags = ["lok"]
+)
+router.include_router(
+    accessory.router,
+    prefix = "/accessory",
+    tags = ["accessory"]
+)
+router.include_router(
+    s88.router,
+    prefix = "/s88",
+    tags = ["s88"]
+)
+router.include_router(
+    configs.router,
+    prefix = "/config",
+    tags = ["config"]
+)
+router.include_router(
+    system.router,
+    prefix = "/system",
+    tags = ["system"]
+)from fastapi import APIRouter, Header
+from typing import Type
+from ...utils.communication import send_can_message
+from .helper import connect, get_single_response_timeout, return204
+from ...schemas.can_commands.system import SystemGoCommand, SystemStopCommand, SystemHaltCommand, SystemResetCommand
+from ...schemas.can_commands import AbstractCANMessage, CommandSchema
+from .schemas.lok import FunctionValueModel, SpeedModel, DirectionModel
+from .configs import get_config
+from .schemas.system import *
+router = APIRouter()
+@router.post("/status", status_code=204)
+async def get_status(status: SystemStatus, x_can_hash: str = Header(None)):
+    clas = SystemStatusCommand[status.value].value
+    id = 0 # all devices
+    message = clas(hash_value = x_can_hash, response = False, id=id)
+    await send_can_message(message)
+import asyncio
+import websockets
+from collections import defaultdict
+from ...schemas.can_commands import AbstractCANMessage
+from ..high_level_can_recv.converter import type_map
+from fastapi import HTTPException, Response
+from typing import Tuple
+ 
+from config import get_settings
+settings = get_settings()
+HOST = settings.can_receiver_host
+PORT = settings.can_receiver_port
+TIMEOUT = settings.can_timeout
+def connect():
+    return websockets.connect(f"ws://{HOST}:{PORT}")
+def parse_high_level_message(message: str) -> AbstractCANMessage:
+    t = message[:message.find("{")]
+    payload = message[len(t):]
+    clas = type_map[t] # hacky
+    return clas.parse_raw(payload)
+async def get_single_response(connection, check):
+    async for message in connection:
+        message = parse_high_level_message(message)
+        if not check(message):
+            continue
+        return message
+async def get_single_response_timeout(connection, check, transform_result = None):
+    try:
+        result = await asyncio.wait_for(get_single_response(connection, check), TIMEOUT/1000)
+        if transform_result is None:
+            return result
+        return transform_result(result)
+    except Exception as e:
+        print(f"{e}")
+        raise HTTPException(status_code=504, detail="CAN timeout exceeded")
+def return204(m):
+    return Response(status_code=204)
+def get_tree():
+    return defaultdict(get_tree)
+def parse_config(text: str, level: int = -1, line: int = 0) -> Tuple[int, defaultdict]:
+    ret = get_tree()
+    def level_map(level: int) -> str:
+        if level == -1:
+            return "["
+        assert level >= 0
+        return "." * level
+    
+    def level_from_prefix(text: str) -> int:
+        text = text.strip()
+        if text[0] == "[":
+            assert text[-1] == "]"
+            return -1
+        for i, c in enumerate(text):
+            if c != ".":
+                return i
+    
+    def remove_prefix(text: str) -> str:
+        text = text.strip()
+        for i, c in enumerate(text):
+            if c != ".":
+                return text[i:]
+    
+    lines = text.splitlines()
+    line_num = line
+    while line_num < len(lines):
+        line = lines[line_num]
+        print(line, line_num, level, level_from_prefix(line))
+        if level_from_prefix(line) < level:
+            return (line_num, ret)
+        assert level_from_prefix(line) == level
+        line = remove_prefix(line)
+        if "=" in line:
+            ret[line.split("=")[0]] = line.split("=")[1]
+            line_num += 1
+        else:
+            line_num, inner = parse_config(text, level+1, line_num+1)
+            if line in ret:
+                if isinstance(ret[line], list):
+                    ret[line].append(inner)
+                else:
+                    ret[line] = [ret[line], inner]
+            else:
+                ret[line] = inner
+    return (line_num, ret)
+from typing import Type
+from ...schemas.can import CANMessage
+from ...schemas.can_commands.base import AbstractCANMessage
+from ...schemas.can_commands import *
+# registered_types: list[Type[AbstractCANMessage]] = list()
+registered_types = list()
+def convert_to_abstract(message: CANMessage) -> AbstractCANMessage:
+    for t in registered_types:
+        abstract_message = t.from_can_message(message)
+        if abstract_message is not None:
+            return abstract_message
+    return None
+# general.py
+registered_types.extend([
+    ParticipantPingCommand,
+    LocomotiveDiscoveryCommand,
+    S88EventCommand,
+    RequestConfigDataCommand,
+    ServiceStatusDataConfigurationCommand,
+    ConfigDataStreamCommand,
+    BootloaderCANBoundCommand
+])
+# loc.py
+registered_types.extend([
+    LocomotiveSpeedCommand,
+    LocomotiveDirectionCommand,
+    LocomotiveFunctionCommand,
+    ReadConfigCommand,
+    WriteConfigCommand,
+    SwitchingAccessoriesCommand,
+    S88PollingCommand
+])
+# mfx.py
+registered_types.extend([
+    MfxBindCommand,
+    MfxVerifyCommand
+])
+# system.py
+registered_types.extend([
+    SystemStopCommand,
+    SystemGoCommand,
+    SystemHaltCommand,
+    LocomotiveEmergencyStopCommand,
+    LocomotiveCycleStopCommand,
+    LocomotiveDataProtocolCommand,
+    AccessoryDecoderSwitchingTimeCommand,
+    MfxFastReadCommand,
+    EnableRailProtocolCommand,
+    SetMfxRegisterCounterCommand,
+    SystemOverloadCommand,
+    SystemStatusCommand,
+    SetSystemIdentifierCommand,
+    MfxSeekCommand,
+    SystemResetCommand
+])
+type_map = dict()
+# general.py
+type_map[ParticipantPingCommand.__name__] = ParticipantPingCommand
+type_map[LocomotiveDiscoveryCommand.__name__] = LocomotiveDiscoveryCommand
+type_map[S88EventCommand.__name__] = S88EventCommand
+type_map[RequestConfigDataCommand.__name__] = RequestConfigDataCommand
+type_map[ServiceStatusDataConfigurationCommand.__name__] = ServiceStatusDataConfigurationCommand
+type_map[ConfigDataStreamCommand.__name__] = ConfigDataStreamCommand
+type_map[BootloaderCANBoundCommand.__name__] = BootloaderCANBoundCommand
+# loc.py
+type_map[LocomotiveSpeedCommand.__name__] = LocomotiveSpeedCommand
+type_map[LocomotiveDirectionCommand.__name__] = LocomotiveDirectionCommand
+type_map[LocomotiveFunctionCommand.__name__] = LocomotiveFunctionCommand
+type_map[ReadConfigCommand.__name__] = ReadConfigCommand
+type_map[WriteConfigCommand.__name__] = WriteConfigCommand
+type_map[SwitchingAccessoriesCommand.__name__] = SwitchingAccessoriesCommand
+type_map[S88PollingCommand.__name__] = S88PollingCommand
+# mfx.py
+type_map[MfxBindCommand.__name__] = MfxBindCommand
+type_map[MfxVerifyCommand.__name__] = MfxVerifyCommand
+# system.py
+type_map[SystemStopCommand.__name__] = SystemStopCommand
+type_map[SystemGoCommand.__name__] = SystemGoCommand
+type_map[SystemHaltCommand.__name__] = SystemHaltCommand
+type_map[LocomotiveEmergencyStopCommand.__name__] = LocomotiveEmergencyStopCommand
+type_map[LocomotiveCycleStopCommand.__name__] = LocomotiveCycleStopCommand
+type_map[LocomotiveDataProtocolCommand.__name__] = LocomotiveDataProtocolCommand
+type_map[AccessoryDecoderSwitchingTimeCommand.__name__] = AccessoryDecoderSwitchingTimeCommand
+type_map[MfxFastReadCommand.__name__] = MfxFastReadCommand
+type_map[EnableRailProtocolCommand.__name__] = EnableRailProtocolCommand
+type_map[SetMfxRegisterCounterCommand.__name__] = SetMfxRegisterCounterCommand
+type_map[SystemOverloadCommand.__name__] = SystemOverloadCommand
+type_map[SystemStatusCommand.__name__] = SystemStatusCommand
+type_map[SetSystemIdentifierCommand.__name__] = SetSystemIdentifierCommand
+type_map[MfxSeekCommand.__name__] = MfxSeekCommand
+type_map[SystemResetCommand.__name__] = SystemResetCommandimport asyncio
+import websockets
+from ...schemas.can import CANMessage
+from ...utils.coding import obj_to_json
+from .converter import convert_to_abstract
+from config import get_settings
+settings = get_settings()
+HOST = settings.raw_can_receiver_host
+PORT = settings.raw_can_receiver_port
+class BackgroundReader(object):
+    def __init__(self, broadcaster):
+        self.broadcaster = broadcaster
+        self.connection = None
+    
+    async def connect(self):
+        return await websockets.connect(f"ws://{HOST}:{PORT}")
+    async def startup(self):
+        print("starting BackgroundReader")
+        self.connection = await self.connect()
+        print("Connected")
+    async def run_main(self):
+        while True:
+            try:
+                async for message in self.connection:
+                    can_message = CANMessage.parse_raw(message)
+                    abstract_message = convert_to_abstract(can_message)
+                    if abstract_message is None:
+                        print(f"got wrong message {can_message}")
+                    else:
+                        type_name = type(abstract_message).__name__
+                        str_data = type_name + obj_to_json(abstract_message)
+                        print(f"got message {str_data}")
+                        await self.broadcaster.broadcast(str_data)
+            except websockets.ConnectionClosed:
+                self.connection = await self.connect()
+                print("Reconnected")
+                continueimport asyncio
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from ...utils.communication import ConnectionManager
+from .reader import BackgroundReader
+router = APIRouter()
+manager = ConnectionManager()
+reader = BackgroundReader(manager)
+@router.on_event("startup")
+async def app_startup():
+    await reader.startup()
+    loop = asyncio.get_event_loop()
+    loop.create_task(reader.run_main())
+@router.websocket("/")
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+    try:
+        while True:
+            data = await websocket.receive_text()
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)from fastapi import APIRouter
+from ...schemas.can_commands.loc import *
+from .helper import create_endpoint
+router = APIRouter()
+create_endpoint(router, "speed", LocomotiveSpeedCommand)
+create_endpoint(router, "direction", LocomotiveDirectionCommand)
+create_endpoint(router, "function", LocomotiveFunctionCommand)
+create_endpoint(router, "read_config", ReadConfigCommand)
+create_endpoint(router, "switch_accessory", SwitchingAccessoriesCommand)
+create_endpoint(router, "s88_polling", S88PollingCommand)
+create_endpoint(router, "write_config", WriteConfigCommand)
+from fastapi import APIRouter
+from ...utils.communication import send_can_message
+from app.schemas.can_commands.general import *
+from .helper import create_endpoint
+router = APIRouter()
+create_endpoint(router, "participant_ping", ParticipantPingCommand)
+create_endpoint(router, "locomotive_discovery", LocomotiveDiscoveryCommand)
+create_endpoint(router, "s88_event", S88EventCommand)
+create_endpoint(router, "request_config_data", RequestConfigDataCommand)
+create_endpoint(router, "service_status_data_configuration", ServiceStatusDataConfigurationCommand)
+create_endpoint(router, "bootloader_can_bound", BootloaderCANBoundCommand)from fastapi import APIRouter
+from . import loc
+from . import system
+from . import general
+from . import mfx
+router = APIRouter()
+router.include_router(
+    loc.router,
+    prefix = "/loc",
+    tags = ["loc"]
+)
+router.include_router(
+    system.router,
+    prefix = "/system",
+    tags = ["system"]
+)
+router.include_router(
+    mfx.router,
+    prefix = "/mfx",
+    tags = ["mfx"]
+)
+router.include_router(
+    general.router
+)from fastapi import APIRouter
+from ...schemas.can_commands.system import *
+from .helper import create_endpoint
+router = APIRouter()
+create_endpoint(router, "stop", SystemStopCommand)
+create_endpoint(router, "halt", SystemHaltCommand)
+create_endpoint(router, "go", SystemGoCommand)
+create_endpoint(router, "locomotive_emergency_stop", LocomotiveEmergencyStopCommand)
+create_endpoint(router, "locomotive_cycle_stop", LocomotiveCycleStopCommand)
+create_endpoint(router, "locomotive_data_protocol", LocomotiveDataProtocolCommand)
+create_endpoint(router, "accessory_decoder_switching_time", AccessoryDecoderSwitchingTimeCommand)
+create_endpoint(router, "mfx_fast_read", MfxFastReadCommand)
+create_endpoint(router, "enable_rail_protocol", EnableRailProtocolCommand)
+create_endpoint(router, "set_mfx_register_counter", SetMfxRegisterCounterCommand)
+create_endpoint(router, "overload", SystemOverloadCommand)
+create_endpoint(router, "status", SystemStatusCommand)
+create_endpoint(router, "set_system_identifier", SetSystemIdentifierCommand)
+create_endpoint(router, "mfx_seek", MfxSeekCommand)
+create_endpoint(router, "reset", SystemResetCommand)from fastapi import APIRouter
+from ...schemas.can_commands.mfx import *
+from .helper import create_endpoint
+router = APIRouter()
+create_endpoint(router, "bind", MfxBindCommand)
+create_endpoint(router, "verify", MfxVerifyCommand)from typing import Type
+from fastapi import Response
+from ...schemas.can_commands import AbstractCANMessage
+from ...utils.communication import send_can_message
+#def transform_name(name: str):
+#    return name.lower().replace("command", "")
+def create_endpoint(app, name: str, schema : Type[AbstractCANMessage]):
+    @app.post(f"/" + name, status_code=204)
+    async def post(message: schema):
+        await send_can_message(message)
+        return Response(status_code=204)from typing import Optional
+from fastapi import APIRouter, Depends
+from fastapi_pagination import LimitOffsetPage, add_pagination
+from fastapi_pagination.ext.async_sqlalchemy import paginate
+from sqlalchemy.future import select
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import sessionmaker
+from pydantic_sqlalchemy import sqlalchemy_to_pydantic
+from odata_query.sqlalchemy import apply_odata_query
+from app.models.can_message import Base
+from app.models.can_message_converter import registered_models
+from app.models.raw_can_message import CANMessage
+from config import get_settings
+router = APIRouter()
+settings = get_settings()
+DB = settings.high_level_db_dump_database
+RAW_DB = settings.raw_db_dump_database
+engine = create_async_engine(
+    DB, connect_args={"check_same_thread": False}
+)
+raw_engine = create_async_engine(
+    RAW_DB, connect_args={"check_same_thread": False}
+)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession, expire_on_commit=False)
+SessionLocalRaw = sessionmaker(autocommit=False, autoflush=False, bind=raw_engine, class_=AsyncSession, expire_on_commit=False)
+@router.on_event("startup")
+async def on_startup() -> None:
+    async with engine.begin() as conn:
+        for model in registered_models:
+            await conn.run_sync(model.metadata.create_all)
+    async with raw_engine.begin() as conn:
+        await conn.run_sync(CANMessage.metadata.create_all)
+async def get_db():
+    async with SessionLocal() as session:
+        yield session
+async def get_raw_db():
+    async with SessionLocalRaw() as session:
+        yield session
+def make_get(model, db_getter=get_db):
+    @router.get(f"/get{model.__name__}/", response_model=LimitOffsetPage[sqlalchemy_to_pydantic(model)])
+    async def get(filter: Optional[str] = None, db: AsyncSession = Depends(db_getter)):
+        query = select(model)
+        if filter is not None and len(filter) > 0:
+            query = apply_odata_query(query, filter)
+        return await paginate(db, query)
+for model in registered_models:
+    make_get(model)
+make_get(CANMessage, get_raw_db)
+add_pagination(router)from fastapi import APIRouter, Response
+from ...utils.communication import send_raw_can_message
+from ...schemas.can import CANMessage
+router = APIRouter()
+@router.post("/", status_code=204)
+async def can_message(message: CANMessage):
+    await send_raw_can_message(message)
+    return Response(status_code=204)import asyncio
+from ...schemas.can import CANMessage
+from ...utils.communication import recv_raw_can_message
+from ...utils.coding import obj_to_json
+from config import get_settings
+settings = get_settings()
+IP = settings.raw_can_ip
+PORT = settings.raw_can_port
+class BackgroundReader(object):
+    def __init__(self, broadcaster):
+        self.broadcaster = broadcaster
+        self.reader = None
+        self.writer = None
+    
+    async def startup(self):
+        print("starting BackgroundReader")
+        self.reader, self.writer = await asyncio.open_connection(IP, PORT)
+        print("Connected")
+    async def run_main(self):
+        while True:
+            can_message = await recv_raw_can_message(self.reader)
+            if can_message is None:
+                # received wrong message
+                continue
+            str_data = obj_to_json(can_message)
+            print(f"got message {str_data}")
+            await self.broadcaster.broadcast(str_data)import asyncio
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from ...utils.communication import ConnectionManager
+from .reader import BackgroundReader
+router = APIRouter()
+manager = ConnectionManager()
+reader = BackgroundReader(manager)
+@router.on_event("startup")
+async def app_startup():
+    await reader.startup()
+    loop = asyncio.get_event_loop()
+    loop.create_task(reader.run_main())
+@router.websocket("/")
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+    try:
+        while True:
+            data = await websocket.receive_text()
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+from fastapi import FastAPI
+from app.utils.tcp import send_async
+from app.services import raw_can_send
+from app.services import high_level_can_send
+from app.services import raw_can_recv
+from app.services import high_level_can_recv
+from app.services import high_level_can
+from app.services import database_read
+raw_can_sender = FastAPI()
+raw_can_sender.include_router(raw_can_send.router)
+can_sender = FastAPI()
+can_sender.include_router(high_level_can_send.router)
+raw_can_receiver = FastAPI()
+raw_can_receiver.include_router(raw_can_recv.router)
+can_receiver = FastAPI()
+can_receiver.include_router(high_level_can_recv.router)
+can = FastAPI()
+can.include_router(high_level_can.router)
+database = FastAPI()
+database.include_router(database_read.router)from config import get_settings
+import sys
+import subprocess
+import os
+import signal
+import time
+settings = get_settings()
+FILE_DIR = os.path.dirname(os.path.realpath(__file__))
+SCRIPT_DIR = os.path.join(FILE_DIR, "app", "scripts")
+EXTERNAL_SERVICE_DIR = os.path.join(FILE_DIR, "app", "external_services")
+SCRIPT_POSTFIX = ".py"
+ASGI_SERVICES = ["raw_can_receiver", "raw_can_sender", "can_receiver", "can_sender", "can", "database"]
+EXTERNAL_SERVICES = ["grafana"]
+SCRIPTS = ["dummy_central_station", "websocket_logger", "websocket_printer", "high_level_db_dump", \
+    "raw_db_dump", "websocket_config_stream", "websocket_replay"]
+WORKFLOW_TERMINAL_COMMAND = settings.workflow_terminal_command
+WORKFLOW_INTERVAL = settings.workflow_terminal_interval
+WORKFLOWS = dict()
+WORKFLOWS["dummy_central_station"] = ["dummy_central_station", "raw_can_receiver", "can_receiver"]
+WORKFLOWS["grafana"] = ["raw_can_receiver", "can_receiver", "high_level_db_dump", "grafana"]
+HELP = """A start script to run various ASGI routers and scripts, which work with the Märklin CAN interface.
+Usage:
+python start.py <router or script>
+ or
+python start.py _ <workflow>
+Routers:
+"""+ ", ".join(ASGI_SERVICES) + """
+External Services:
+"""+ ", ".join(EXTERNAL_SERVICES) + """
+Scripts:
+"""+ ", ".join(SCRIPTS) + """
+Workflows:
+""" + ", ".join(WORKFLOWS.keys())
+active_process = None
+def supported_services():
+    return ASGI_SERVICES + SCRIPTS + EXTERNAL_SERVICES
+def print_help():
+    print(HELP)
+    sys.exit(0)
+def run(command, spawn_new):
+    global active_process
+    if spawn_new:
+        command = WORKFLOW_TERMINAL_COMMAND + command
+    print(f'\'{" ".join(command)}\'' )
+    print()
+    active_process = subprocess.Popen(command, stdout=sys.stdout, stderr=sys.stderr, cwd=FILE_DIR)
+    if not spawn_new:
+        active_process.wait()
+def start_script(script, spawn_new):
+    global settings
+    command = [settings.script_command, os.path.join(SCRIPT_DIR, script) + SCRIPT_POSTFIX]
+    run(command, spawn_new)
+def start_asgi(name, spawn_new):
+    global settings
+    port = getattr(settings, name + '_port')
+    host = getattr(settings, name + '_host')
+    command = [settings.asgi_command, f'main:{name}', f'--port={port}', f'--host={host}', '--reload']
+    run(command, spawn_new)
+def start_external(script, spawn_new):
+    global settings
+    command = [settings.script_command, os.path.join(EXTERNAL_SERVICE_DIR, script, "__init__") + SCRIPT_POSTFIX]
+    run(command, spawn_new)
+def start_service(service, spawn_new=False):
+    if service in SCRIPTS:
+        start_script(service, spawn_new)
+    elif service in ASGI_SERVICES:
+        start_asgi(service, spawn_new)
+    else:
+        start_external(service, spawn_new)
+def start_workflow(workflow):
+    for item in WORKFLOWS[workflow]:
+        start_service(item, True)
+        time.sleep(WORKFLOW_INTERVAL)
+def signal_handler(sig, frame):
+    global active_process
+    if not active_process is None:
+        active_process.kill()
+    sys.exit(0)
+if __name__ == '__main__':
+    args = sys.argv[1:]
+    if not len(args) == 1 and not len(args) == 2:
+        print(f'Invalid number of arguments {len(args)}. 1-2 expected.')
+        print_help()
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+    
+    os.chdir(os.path.dirname(os.path.realpath(__file__)))
+    if len(args) == 2:
+        workflow = args[1]
+        if not workflow in WORKFLOWS:
+            print(f'Invalid workflow {workflow}')
+            print_help()
+        start_workflow(workflow)
+    else:
+        service = args[0]
+        if not service in supported_services():
+            print(f'Invalid service {service}')
+            print_help()
+        start_service(service)
+# Usage:
+# 1. Copy this file to config.py
+# 2. Change the DEFAULT_ values
+# 3. Enjoy and use the scripts / ASGI routers
+import os
+from pydantic import BaseSettings
+from functools import lru_cache
+from typing import List
+FILE_DIR = os.path.dirname(os.path.realpath(__file__))
+# Router configs
+DEFAULT_ASGI_COMMAND = "uvicorn"
+# DEFAULT_SCRIPT_COMMAND = os.path.join(os.path.dirname(FILE_DIR), "venv", "Scripts", "python.exe")     # For windows
+DEFAULT_SCRIPT_COMMAND = os.path.join(os.path.dirname(FILE_DIR), "venv", "bin", "python")       # For unix
+# IP from which packages are received and sent to
+DEFAULT_RAW_CAN_IP = "192.168.1.3"
+DEFAULT_RAW_CAN_PORT = 15731
+# On which the raw_can_recv is hosted
+DEFAULT_RAW_CAN_RECV_PORT = 8888
+DEFAULT_RAW_CAN_RECV_HOST = "127.0.0.1"
+# On which the raw_can_send is hosted
+DEFAULT_RAW_CAN_SEND_PORT = 8000
+DEFAULT_RAW_CAN_SEND_HOST = "127.0.0.1"
+# On which the can_recv is hosted
+DEFAULT_CAN_RECV_PORT = 8001
+DEFAULT_CAN_RECV_HOST = "127.0.0.1"
+# On which the can_send is hosted
+DEFAULT_CAN_SEND_PORT = 8002
+DEFAULT_CAN_SEND_HOST = "127.0.0.1"
+DEFAULT_CAN_PORT = 8042
+DEFAULT_CAN_HOST = "127.0.0.1"
+DEFAULT_DATABASE_PORT = 8043
+DEFAULT_DATABASE_HOST = "127.0.0.1"
+# Timeout in millis
+DEFAULT_CAN_TIMEOUT = 300
+DEFAULT_HIGH_LEVEL_DB_DUMP_DATABASE = f'sqlite+aiosqlite:///{os.path.join(os.path.dirname(FILE_DIR), "out", "high_level_dump.sqlite3")}'
+DEFAULT_RAW_DB_DUMP_DATABASE = f'sqlite+aiosqlite:///{os.path.join(os.path.dirname(FILE_DIR), "out", "raw_dump.sqlite3")}'
+DEFAULT_WORKFLOW_TERMINAL_COMMAND = ["cmd.exe", "/c"]
+DEFAULT_WORKFLOW_TERMINAL_INTERVAL = 1
+DEFAULT_GRAFANA_PORT = 8044
+DEFAULT_GRAFANA_DIR = os.path.join("/usr", "share", "grafana")
+DEFAULT_GRAFANA_API_KEY = "REPLACE WITH YOUR OWN CREATED API KEY!"
+DEFAULT_GRAFANA_UPDATE_INTERVAL = 300
+# Scripts config
+DEFAULT_WEBSOCKET_LOGGER_PORT = DEFAULT_CAN_RECV_PORT
+DEFAULT_WEBSOCKET_LOGGER_HOST = DEFAULT_CAN_RECV_HOST
+DEFAULT_WEBSOCKET_PRINTER_PORT = DEFAULT_CAN_RECV_PORT
+DEFAULT_WEBSOCKET_PRINTER_HOST = DEFAULT_CAN_RECV_HOST
+# Resample interval in seconds
+DEFAULT_HIGH_LEVEL_DB_DUMP_RESAMPLE_INTERVAL = 30
+DEFAULT_HIGH_LEVEL_DB_DUMP_REFRESH_INTERVAL = 10
+class Settings(BaseSettings):
+    asgi_command: str = DEFAULT_ASGI_COMMAND
+    script_command: str = DEFAULT_SCRIPT_COMMAND
+    raw_can_ip: str = DEFAULT_RAW_CAN_IP
+    raw_can_port: int = DEFAULT_RAW_CAN_PORT
+    raw_can_receiver_port: int = DEFAULT_RAW_CAN_RECV_PORT
+    raw_can_sender_port: int = DEFAULT_RAW_CAN_SEND_PORT
+    can_receiver_port: int = DEFAULT_CAN_RECV_PORT
+    can_sender_port: int = DEFAULT_CAN_SEND_PORT
+    can_port: int = DEFAULT_CAN_PORT
+    database_port: int = DEFAULT_DATABASE_PORT
+    raw_can_receiver_host: str = DEFAULT_RAW_CAN_RECV_HOST
+    raw_can_sender_host: str = DEFAULT_RAW_CAN_SEND_HOST
+    can_receiver_host: str = DEFAULT_CAN_RECV_HOST
+    can_sender_host: str = DEFAULT_CAN_SEND_HOST
+    can_host: str = DEFAULT_CAN_HOST
+    database_host: str = DEFAULT_DATABASE_HOST
+    can_timeout: int = DEFAULT_CAN_TIMEOUT
+    high_level_db_dump_database: str = DEFAULT_HIGH_LEVEL_DB_DUMP_DATABASE
+    raw_db_dump_database: str = DEFAULT_RAW_DB_DUMP_DATABASE
+    
+    websocket_printer_host: str = DEFAULT_WEBSOCKET_PRINTER_HOST
+    websocket_printer_port: int = DEFAULT_WEBSOCKET_PRINTER_PORT
+    websocket_logger_host: str = DEFAULT_WEBSOCKET_LOGGER_HOST
+    websocket_logger_port: int = DEFAULT_WEBSOCKET_LOGGER_PORT
+    workflow_terminal_command: List[str] = DEFAULT_WORKFLOW_TERMINAL_COMMAND
+    workflow_terminal_interval: int = DEFAULT_WORKFLOW_TERMINAL_INTERVAL
+    grafana_port: int = DEFAULT_GRAFANA_PORT
+    grafana_dir: str = DEFAULT_GRAFANA_DIR
+    grafana_api_key: str = DEFAULT_GRAFANA_API_KEY
+    grafana_update_interval: int = DEFAULT_GRAFANA_UPDATE_INTERVAL
+    high_level_db_dump_resample_interval: int = DEFAULT_HIGH_LEVEL_DB_DUMP_RESAMPLE_INTERVAL
+    high_level_db_dump_refresh_interval: int = DEFAULT_HIGH_LEVEL_DB_DUMP_REFRESH_INTERVAL
+    class Config():
+        fields = {
+            'asgi_command': {'env': 'asgi_command'},
+            'script_command': {'env': 'script_command'},
+            'raw_can_ip': {'env': 'raw_can_ip'},
+            'raw_can_port': {'env': 'raw_can_port'},
+            'raw_can_receiver_port': {'env': 'raw_can_recv_port'},
+            'raw_can_sender_port': {'env': 'raw_can_sender_port'},
+            'can_receiver_port': {'env': 'can_receiver_port'},
+            'can_sender_port': {'env': 'can_sender_port'},
+            'can_port': {'env': 'can_port'},
+            'database_port': {'env': 'database_port'},
+            'raw_can_receiver_host': {'env': 'raw_can_recv_host'},
+            'raw_can_sender_host': {'env': 'raw_can_sender_host'},
+            'can_receiver_host': {'env': 'can_receiver_host'},
+            'can_sender_host': {'env': 'can_sender_host'},
+            'can_host': {'env': 'can_host'},
+            'database_host': {'env': 'database_host'},
+            'can_timeout': {'env': 'can_timeout'},
+            'websocket_printer_host': {'env': 'websocket_printer_host'},
+            'websocket_printer_port': {'env': 'websocket_printer_port'},
+            'websocket_logger_host': {'env': 'websocket_logger_host'},
+            'websocket_logger_port': {'env': 'websocket_logger_port'},
+            
+            'high_level_db_dump_database': {'env': 'high_level_db_dump_database'},
+            'raw_db_dump_database': {'env': 'raw_db_dump_database'},
+            'workflow_terminal_command': {'env': 'workflow_terminal_command'},
+            'workflow_terminal_interval': {'env': 'workflow_terminal_interval'},
+            'grafana_port': {'env': 'grafana_port'},
+            'grafana_dir': {'env': 'grafana_dir'},
+            'grafana_api_key': {'env': 'grafana_api_key'},
+            'grafana_update_interval': {'env': 'grafana_update_interval'},
+            'high_level_db_dump_resample_interval': {'env': 'high_level_db_dump_resample_interval'},
+            'high_level_db_dump_refresh_interval': {'env': 'high_level_db_dump_refresh_interval'}
+        }
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()
+import os
+from utils import write_uml_file, is_valid_class
+from app.schemas import can_commands
+SUBDIAGRAM_CLASSES = [ \
+    can_commands.AbstractLocIDCommand, \
+    can_commands.AbstractSystemCommand,  \
+    can_commands.AbstractMfxCommand \
+]
+base_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out")
+general_path = os.path.join(base_dir, "schemas.puml")
+subdiagram_paths = {clas.__name__ : os.path.join(base_dir, f"{clas.__name__}.puml") \
+    for clas in SUBDIAGRAM_CLASSES}
+def belongs_to_subdiagram(clas):
+    return any(issubclass(clas, c) and not clas is c for c in SUBDIAGRAM_CLASSES)
+if __name__ == "__main__":
+    general = list()
+    subdiagrams = {clas.__name__:list() for clas in SUBDIAGRAM_CLASSES}
+    for attr, value in can_commands.__dict__.items():
+        if not is_valid_class(value):
+            continue
+        if not belongs_to_subdiagram(value):
+            general.append(value)
+        for clas in SUBDIAGRAM_CLASSES:
+            if issubclass(value, clas):
+                subdiagrams[clas.__name__].append(value)
+    write_uml_file(general_path, general)
+    for clas in SUBDIAGRAM_CLASSES:
+        write_uml_file(subdiagram_paths[clas.__name__], subdiagrams[clas.__name__])
+import os
+import sys
+import inspect
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "src/"))
+FILTER_CLASSES = [
+    "Enum",
+    "object",
+    "Representation",
+    "Base"
+]
+STYLE = """
+<style>
+    classDiagram{
+        FontColor Black
+        BackgroundColor White
+        LineThickness 2
+        LineColor Black
+        RoundCorner 10
+    }
+</style>
+"""
+def is_class_variable(var, value):
+    return type(value) != "function" and not inspect.isclass(value) and not var.startswith("__") and not var.endswith("__")
+def find_class_variables(clas):
+    if "__table__" in clas.__dict__:
+        return clas.__dict__["__table__"].columns
+    if "__fields__" in clas.__dict__:
+        return [vardef for var, vardef in clas.__dict__["__fields__"].items()]
+    return []
+def find_class_table_name(clas):
+    if "__table__" in clas.__dict__:
+        return '"' + clas.__name__ + " - " + clas.__dict__["__table__"].name + '"'
+    return clas.__name__
+def is_enum(clas):
+    for base in clas.__bases__:
+        if base.__name__ == "Enum":
+            return True
+    return False
+def write_class(f, clas, classes):
+    name = find_class_table_name(clas)
+    f.write(f"class {name} {{\n")
+    for vardef in find_class_variables(clas):
+        if hasattr(vardef, "type_"):
+            f.write(f"{vardef.name}: {vardef.type_.__name__}\n")
+        else:
+            f.write(f"{vardef.name}: {vardef.type}\n")
+    f.write(f"}}\n")
+    if inspect.isabstract(clas) or clas.__name__.startswith("Abstract"):
+        f.write(f"abstract class {name}\n")
+    for base in clas.__bases__:
+        if not base in classes:
+            continue
+        f.write(f"{base.__name__} <|-- {name}\n")
+def is_table(clas):
+    return ("__table__" in clas.__dict__ or "__abstract__" in clas.__dict__)
+def is_valid_class(clas):
+    return inspect.isclass(clas) and not (is_enum(clas) or clas.__name__ in FILTER_CLASSES)
+def write_uml_file(filename, classes):
+    f = open(filename, "w")
+    f.write(f"@startuml\n")
+    f.write("skinparam useBetaStyle true\n")
+    f.write("skinparam linetype ortho\n")
+    f.write(STYLE)
+    for clas in classes:
+        write_class(f, clas, classes)
+    f.write(f"@enduml")
+    f.close()
+    os.system(f"plantuml -tsvg {filename}")import ast
+import os
+import re
+import functools
+import utils
+from start import SCRIPTS, EXTERNAL_SERVICES
+source_dir = "../../src/"
+base_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out")
+general_path = os.path.join(base_dir, "imports.puml")
+# patched from src/start.py
+ASGI_SERVICES = ["raw_can_recv", "raw_can_send", "high_level_can_recv", "high_level_can_send", "high_level_can", "database_read"]
+STYLE = """
+<style>
+    classDiagram{
+        FontColor Black
+        BackgroundColor White
+        LineThickness 2
+        LineColor Black
+        RoundCorner 10
+    }
+</style>
+"""
+def path_from_import(import_):
+    subpath = import_.replace(".", os.sep)
+    subpath = os.path.join(source_dir, subpath)
+    if not "app" in import_.split("."):
+        return None
+    if os.path.exists(subpath + ".py"):
+        subpath += ".py"
+    if not os.path.exists(subpath):
+        subpath = os.path.dirname(subpath)
+        if os.path.exists(subpath + ".py"):
+            subpath += ".py"
+    if not os.path.exists(subpath):
+        return None
+    return subpath
+class ImportListVisitor(ast.NodeVisitor):
+    def __init__(self):
+        super()
+        self.imports = set()
+        self.current_path = list()
+        self.stack = set()
+    def visit_Import(self, node):
+        self.imports.update(alias.name for alias in node.names)
+    def visit_ImportFrom(self, node):
+        prefix = ""
+        if node.level is not None and node.level > 0:
+            prefix += ".".join(self.current_path[:-node.level])
+            if len(prefix) > 0:
+                prefix += "."
+        if node.module is not None:
+            prefix += node.module+"."
+        self.imports.update(prefix+alias.name for alias in node.names)
+    
+    @functools.lru_cache(maxsize=None)
+    def get_all_imports_from(self, path):
+        self.stack = set()
+        if os.path.isfile(path):
+            return self.get_all_imports_from_file(path)
+        else:
+            # assume it is a directory
+            imports = set()
+            for name in os.listdir(path):
+                subpath = os.path.join(path, name)
+                self.stack.add(subpath)
+                subimports = self.get_all_imports_from(subpath,)
+                imports.update(subimports)
+            return imports
+    
+    @functools.lru_cache(maxsize=None)
+    def get_all_imports_from_file(self, path):
+        self.current_path = path[len(source_dir):].replace(os.sep, "/").split("/")
+        if path.split(".")[-1] != "py":
+            return []
+        with open(path, "r") as f:
+            root = ast.parse(f.read())
+        self.imports = set()
+        self.visit(root)
+        now_imports = set(self.imports)
+        for import_ in now_imports:
+            subpath = path_from_import(import_)
+            if subpath is None or subpath in self.stack:
+                continue
+            self.stack.add(subpath)
+            subimports = self.get_all_imports_from(subpath)
+            self.imports.update(subimports)
+        return self.imports
+def print_tree(tree, f):
+    for key in tree:
+        f.write(f"namespace {key} {{\n")
+        print_tree(tree[key], f)
+        f.write(f"}}\n")
+if __name__ == "__main__":
+    f = open(general_path, "w")
+    f.write(f"@startuml\n")
+    f.write("skinparam useBetaStyle true\n")
+    f.write("skinparam linetype ortho\n")
+    f.write(STYLE)
+    interesting_points = {}
+    for service in EXTERNAL_SERVICES:
+        external_services_path = os.path.join(source_dir, "app", "external_services")
+        interesting_points[service] = os.path.join(external_services_path, service)
+    for service in ASGI_SERVICES:
+        services_path = os.path.join(source_dir, "app", "services")
+        interesting_points[service] = os.path.join(services_path, service)
+    interesting_points["schemas"] = os.path.join(source_dir, "app", "schemas")
+    interesting_points["models"] = os.path.join(source_dir, "app", "models")
+    interesting_points["utils"] = os.path.join(source_dir, "app", "utils")
+    print(interesting_points)
+    visitor = ImportListVisitor()
+    def is_interesting(path):
+        return any(point in path for point in interesting_points.keys())
+    def what_interesting(path):
+        return [point for point in interesting_points.keys() if point in path.split(".")][0]
+    tree = dict()
+    for point, path in interesting_points.items():
+        print(point + " depends on:")
+        clean_path = path[path.find("app"):].replace("/", ".")
+        last_branch = tree
+        for part in clean_path.split("."):
+            if part not in last_branch:
+                last_branch[part] = dict()
+            last_branch = last_branch[part]
+        print(tree)
+        imports = visitor.get_all_imports_from(path)
+        # print(set(import_ for import_ in imports if not is_interesting(import_)))
+        # print(set(what_interesting(import_) for import_ in imports if is_interesting(import_)))
+        for dependency in set(path_from_import(import_)[len(source_dir):].replace(os.sep, ".") for import_ in imports if "app" in import_.split(".")):
+            
+            f.write(f'{dependency.replace(".py","")} <|-- {clean_path}\n')
+    print_tree(tree, f)
+        #print(set(path_from_import(import_)[len(source_dir):].replace(os.sep, ".") for import_ in imports if "app" in import_.split(".")))
+    f.write(f"@enduml")
+    f.close()
+    os.system(f"plantuml -tsvg {general_path}")import os
+from utils import write_uml_file, is_valid_class, is_table
+from app.models import can_message
+SUBDIAGRAM_CLASSES = [ \
+    can_message.AbstractLocomotiveMessage, \
+    can_message.AbstractSystemMessage,  \
+    can_message.AbstractMfxMessage \
+]
+base_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out")
+general_path = os.path.join(base_dir, "models.puml")
+subdiagram_paths = {clas.__name__ : os.path.join(base_dir, f"{clas.__name__}.puml") \
+    for clas in SUBDIAGRAM_CLASSES}
+def belongs_to_subdiagram(clas):
+    return any(issubclass(clas, c) and not clas is c for c in SUBDIAGRAM_CLASSES)
+if __name__ == "__main__":
+    general = list()
+    subdiagrams = {clas.__name__:list() for clas in SUBDIAGRAM_CLASSES}
+    for attr, value in can_message.__dict__.items():
+        if not is_valid_class(value):
+            continue
+        if not is_table(value):
+            continue
+        if not belongs_to_subdiagram(value):
+            general.append(value)
+        for clas in SUBDIAGRAM_CLASSES:
+            if issubclass(value, clas):
+                subdiagrams[clas.__name__].append(value)
+    write_uml_file(general_path, general)
+    for clas in SUBDIAGRAM_CLASSES:
+        write_uml_file(subdiagram_paths[clas.__name__], subdiagrams[clas.__name__])
