@@ -57,7 +57,7 @@ class Command(Enum):
     RequestConfigData = 0x20
     ConfigDataStream = 0x21
     DataStream60128 = 0x22
-    UnknownCommand = 0x80
+    UnknownCommand = -1
 
 class MessageIdentifier(BaseModel):
     priority: int
@@ -102,7 +102,10 @@ class MessageIdentifier(BaseModel):
         priority = data[0] >> 4
         command = (data[0] & 0b1) << 7
         command |= data[1] >> 1
-        command = Command(command)
+        try:
+            command = Command(command)
+        except ValueError:
+            command = Command.UnknownCommand
         command = CommandSchema[command.name]
         response = (data[1] & 0b1) > 0
         hash_value = int.from_bytes(data[2:], "big")
