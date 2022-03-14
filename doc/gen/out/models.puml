@@ -1,0 +1,154 @@
+@startuml
+skinparam useBetaStyle true
+skinparam linetype ortho
+
+<style>
+    classDiagram{
+        FontColor Black
+        BackgroundColor White
+        LineThickness 2
+        LineColor Black
+        RoundCorner 10
+    }
+</style>
+
+class AbstractCANMessage {
+}
+abstract class AbstractCANMessage
+class AbstractLocomotiveMessage {
+}
+abstract class AbstractLocomotiveMessage
+AbstractCANMessage <|-- AbstractLocomotiveMessage
+class AbstractSystemMessage {
+}
+abstract class AbstractSystemMessage
+AbstractCANMessage <|-- AbstractSystemMessage
+class "ConfigMessage - config" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+config: TEXT
+length: INTEGER
+}
+AbstractCANMessage <|-- "ConfigMessage - config"
+class "LocomotiveMetricMessage - locomotive_metrics" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+mfxuid: INTEGER
+loc_id: INTEGER
+fuelA: INTEGER
+fuelB: INTEGER
+sand: INTEGER
+distance: INTEGER
+}
+class "ConfigUsageMessage - config_usage" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+mfxuid: INTEGER
+maxFuelA: INTEGER
+maxFuelB: INTEGER
+maxSand: INTEGER
+faktorFuelA: INTEGER
+fuelA: INTEGER
+fuelB: INTEGER
+sand: INTEGER
+alter: INTEGER
+}
+AbstractCANMessage <|-- "ConfigUsageMessage - config_usage"
+class "ConfigLocomotiveMessage - config_locomotive" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+name: TEXT
+vorname: TEXT
+uid: INTEGER
+mfxuid: INTEGER
+adresse: INTEGER
+icon: TEXT
+typ: TEXT
+sid: INTEGER
+symbol: INTEGER
+tachomax: INTEGER
+vmax: INTEGER
+vmin: INTEGER
+av: INTEGER
+bv: INTEGER
+volume: INTEGER
+spa: INTEGER
+spm: INTEGER
+ft: INTEGER
+velocity: INTEGER
+richtung: INTEGER
+mfxtyp: INTEGER
+blocks: TEXT
+}
+AbstractCANMessage <|-- "ConfigLocomotiveMessage - config_locomotive"
+class "RequestConfigDataMessage - request_config_data" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+filename: TEXT
+}
+AbstractCANMessage <|-- "RequestConfigDataMessage - request_config_data"
+class "ParticipantPingMessage - participant_ping" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+sender_id: INTEGER
+software_version: INTEGER
+device_id: INTEGER
+}
+AbstractCANMessage <|-- "ParticipantPingMessage - participant_ping"
+class "LocomotiveDiscoveryMessage - locomotive_discovery" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+loc_id: INTEGER
+protocol: TEXT
+mfx_range: INTEGER
+ask_ratio: INTEGER
+}
+AbstractCANMessage <|-- "LocomotiveDiscoveryMessage - locomotive_discovery"
+class "S88EventMessage - s88_event" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+device_id: INTEGER
+contact_id: INTEGER
+state_old: INTEGER
+state_new: INTEGER
+time: INTEGER
+}
+AbstractCANMessage <|-- "S88EventMessage - s88_event"
+class "ServiceStatusDataConfigurationMessage - service_status_data_configuration" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+device_id: INTEGER
+index: INTEGER
+count: INTEGER
+data: TEXT
+}
+AbstractCANMessage <|-- "ServiceStatusDataConfigurationMessage - service_status_data_configuration"
+class "BootloaderCANBoundMessage - bootloader_can_bound" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+data: TEXT
+}
+AbstractCANMessage <|-- "BootloaderCANBoundMessage - bootloader_can_bound"
+class AbstractMfxMessage {
+}
+abstract class AbstractMfxMessage
+AbstractCANMessage <|-- AbstractMfxMessage
+@enduml

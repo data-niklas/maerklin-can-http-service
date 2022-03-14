@@ -1,0 +1,83 @@
+@startuml
+skinparam useBetaStyle true
+skinparam linetype ortho
+
+<style>
+    classDiagram{
+        FontColor Black
+        BackgroundColor White
+        LineThickness 2
+        LineColor Black
+        RoundCorner 10
+    }
+</style>
+
+class AbstractLocIDCommand {
+hash_value: int
+response: bool
+loc_id: int
+}
+abstract class AbstractLocIDCommand
+class LocomotiveSpeedCommand {
+hash_value: int
+response: bool
+loc_id: int
+speed: int
+}
+AbstractLocIDCommand <|-- LocomotiveSpeedCommand
+class LocomotiveDirectionCommand {
+hash_value: int
+response: bool
+loc_id: int
+direction: LocomotiveDirection
+}
+AbstractLocIDCommand <|-- LocomotiveDirectionCommand
+class LocomotiveFunctionCommand {
+hash_value: int
+response: bool
+loc_id: int
+function: int
+value: int
+function_value: int
+}
+AbstractLocIDCommand <|-- LocomotiveFunctionCommand
+class ReadConfigCommand {
+hash_value: int
+response: bool
+loc_id: int
+index: int
+number: int
+count: int
+value: int
+}
+AbstractLocIDCommand <|-- ReadConfigCommand
+class WriteConfigCommand {
+hash_value: int
+response: bool
+loc_id: int
+index: int
+number: int
+value: int
+control: WriteConfigControlByte
+result: WriteConfigResultByte
+}
+AbstractLocIDCommand <|-- WriteConfigCommand
+class SwitchingAccessoriesCommand {
+hash_value: int
+response: bool
+loc_id: int
+position: int
+power: int
+value: int
+}
+AbstractLocIDCommand <|-- SwitchingAccessoriesCommand
+class S88PollingCommand {
+hash_value: int
+response: bool
+loc_id: int
+module_count: int
+module: int
+state: int
+}
+AbstractLocIDCommand <|-- S88PollingCommand
+@enduml

@@ -1,0 +1,97 @@
+@startuml
+skinparam useBetaStyle true
+skinparam linetype ortho
+
+<style>
+    classDiagram{
+        FontColor Black
+        BackgroundColor White
+        LineThickness 2
+        LineColor Black
+        RoundCorner 10
+    }
+</style>
+
+class AbstractLocomotiveMessage {
+}
+abstract class AbstractLocomotiveMessage
+class "LocomotiveSpeedMessage - locomotive_speed" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+loc_id: INTEGER
+speed: INTEGER
+}
+AbstractLocomotiveMessage <|-- "LocomotiveSpeedMessage - locomotive_speed"
+class "LocomotiveDirectionMessage - locomotive_direction" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+loc_id: INTEGER
+direction: TEXT
+}
+AbstractLocomotiveMessage <|-- "LocomotiveDirectionMessage - locomotive_direction"
+class "LocomotiveFunctionMessage - locomotive_function" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+loc_id: INTEGER
+function: INTEGER
+value: INTEGER
+function_value: INTEGER
+}
+AbstractLocomotiveMessage <|-- "LocomotiveFunctionMessage - locomotive_function"
+class "SwitchingAccessoriesMessage - switching_accessories" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+loc_id: INTEGER
+position: INTEGER
+power: INTEGER
+value: INTEGER
+}
+AbstractLocomotiveMessage <|-- "SwitchingAccessoriesMessage - switching_accessories"
+class "S88PollingMessage - s88_polling" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+loc_id: INTEGER
+module_count: INTEGER
+module: INTEGER
+state: INTEGER
+}
+AbstractLocomotiveMessage <|-- "S88PollingMessage - s88_polling"
+class "ReadConfigMessage - read_config" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+loc_id: INTEGER
+index: INTEGER
+number: INTEGER
+count: INTEGER
+value: INTEGER
+}
+AbstractLocomotiveMessage <|-- "ReadConfigMessage - read_config"
+class "WriteConfigMessage - write_config" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+loc_id: INTEGER
+index: INTEGER
+number: INTEGER
+value: INTEGER
+is_main: BOOLEAN
+is_multi_byte: BOOLEAN
+dcc_programming: TEXT
+is_write_successful: BOOLEAN
+is_verify_successful: BOOLEAN
+}
+AbstractLocomotiveMessage <|-- "WriteConfigMessage - write_config"
+@enduml

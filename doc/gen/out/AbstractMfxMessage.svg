@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="310px" preserveAspectRatio="none" style="width:515px;height:310px;background:#FFFFFF;" version="1.1" viewBox="0 0 515 310" width="515px" zoomAndPan="magnify"><defs><filter height="300%" id="f1sm5suul93xib" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0"/><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0"/><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3"/><feBlend in="SourceGraphic" in2="blurOut3" mode="normal"/></filter></defs><g><!--MD5=[b7bd7b1eb059282bb7162de165c5a835]
+class AbstractMfxMessage--><rect codeLine="16" fill="#FFFFFF" filter="url(#f1sm5suul93xib)" height="48" id="AbstractMfxMessage" rx="5" ry="5" style="stroke:#000000;stroke-width:1.5;" width="161" x="170" y="7"/><ellipse cx="185" cy="23" fill="#A9DCDF" rx="11" ry="11" style="stroke:#A80036;stroke-width:1.0;"/><path d="M180.1719,28.75 L183.5156,16.5625 L186.6563,16.5625 L190.0313,28.75 L187.5625,28.75 L186.8281,25.7344 L183.3125,25.7344 L182.5625,28.75 L180.1719,28.75 Z M184.5781,20.7031 L183.8281,23.7031 L186.3438,23.7031 L185.625,20.7031 Q185.4844,20.125 185.3594,19.5781 Q185.2344,19.0156 185.0938,18.4375 Q184.9844,19.0156 184.8438,19.5781 Q184.7031,20.125 184.5781,20.7031 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing" textLength="129" x="199" y="28.432">AbstractMfxMessage</text><line style="stroke:#000000;stroke-width:1.5;" x1="171" x2="330" y1="39" y2="39"/><line style="stroke:#000000;stroke-width:1.5;" x1="171" x2="330" y1="47" y2="47"/><!--MD5=[0a187859d3bf6ee6397e7465547f28fd]
+class MfxBindMessage - mfx_bind--><rect codeLine="17" fill="#FFFFFF" filter="url(#f1sm5suul93xib)" height="162.4075" id="MfxBindMessage - mfx_bind" rx="5" ry="5" style="stroke:#000000;stroke-width:1.5;" width="223" x="7" y="124.5"/><ellipse cx="22" cy="140.5" fill="#ADD1B2" rx="11" ry="11" style="stroke:#A80036;stroke-width:1.0;"/><path d="M21.4688,147.4219 Q19.7188,147.4219 18.5781,146.6875 Q17.4531,145.9375 16.8906,144.5938 Q16.3438,143.2344 16.3438,141.4375 Q16.3438,139.4063 17,137.9531 Q17.6563,136.5 18.9375,135.7188 Q20.2188,134.9375 22.0938,134.9375 Q22.9844,134.9375 23.6563,135.125 Q24.3281,135.2969 25.0156,135.6406 L24.2031,137.6563 Q23.5781,137.3438 23.0313,137.2188 Q22.5,137.0938 22.0156,137.0938 Q20.8438,137.0938 20.1406,137.625 Q19.4375,138.1563 19.1406,139.1094 Q18.8438,140.0625 18.8438,141.3281 Q18.8438,143.3438 19.5625,144.3125 Q20.2813,145.2656 21.875,145.2656 Q22.4688,145.2656 23.0938,145.1094 Q23.7188,144.9531 24.5469,144.5781 L24.5469,146.7969 Q23.8125,147.1094 23.0156,147.2656 Q22.2344,147.4219 21.4688,147.4219 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="191" x="36" y="145.932">MfxBindMessage - mfx_bind</text><line style="stroke:#000000;stroke-width:1.5;" x1="8" x2="229" y1="156.5" y2="156.5"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="149" x="13" y="175.4659">timestamp: DATETIME</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="164" x="13" y="194.5339">timestamp_iso: INTEGER</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="142" x="13" y="213.6018">hash_value: INTEGER</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="136" x="13" y="232.6697">response: BOOLEAN</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="120" x="13" y="251.7376">mfx_uid: INTEGER</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="118" x="13" y="270.8055">mfx_sid: INTEGER</text><line style="stroke:#000000;stroke-width:1.5;" x1="8" x2="229" y1="278.9075" y2="278.9075"/><!--MD5=[cad7e8223ff7d0d5e473acd25e83d6f4]
+class MfxVerifyMessage - mfx_verify--><rect codeLine="26" fill="#FFFFFF" filter="url(#f1sm5suul93xib)" height="181.4754" id="MfxVerifyMessage - mfx_verify" rx="5" ry="5" style="stroke:#000000;stroke-width:1.5;" width="236" x="265.5" y="115"/><ellipse cx="280.5" cy="131" fill="#ADD1B2" rx="11" ry="11" style="stroke:#A80036;stroke-width:1.0;"/><path d="M279.9688,137.9219 Q278.2188,137.9219 277.0781,137.1875 Q275.9531,136.4375 275.3906,135.0938 Q274.8438,133.7344 274.8438,131.9375 Q274.8438,129.9063 275.5,128.4531 Q276.1563,127 277.4375,126.2188 Q278.7188,125.4375 280.5938,125.4375 Q281.4844,125.4375 282.1563,125.625 Q282.8281,125.7969 283.5156,126.1406 L282.7031,128.1563 Q282.0781,127.8438 281.5313,127.7188 Q281,127.5938 280.5156,127.5938 Q279.3438,127.5938 278.6406,128.125 Q277.9375,128.6563 277.6406,129.6094 Q277.3438,130.5625 277.3438,131.8281 Q277.3438,133.8438 278.0625,134.8125 Q278.7813,135.7656 280.375,135.7656 Q280.9688,135.7656 281.5938,135.6094 Q282.2188,135.4531 283.0469,135.0781 L283.0469,137.2969 Q282.3125,137.6094 281.5156,137.7656 Q280.7344,137.9219 279.9688,137.9219 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="204" x="294.5" y="136.432">MfxVerifyMessage - mfx_verify</text><line style="stroke:#000000;stroke-width:1.5;" x1="266.5" x2="500.5" y1="147" y2="147"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="149" x="271.5" y="165.9659">timestamp: DATETIME</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="164" x="271.5" y="185.0339">timestamp_iso: INTEGER</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="142" x="271.5" y="204.1018">hash_value: INTEGER</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="136" x="271.5" y="223.1697">response: BOOLEAN</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="120" x="271.5" y="242.2376">mfx_uid: INTEGER</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="118" x="271.5" y="261.3055">mfx_sid: INTEGER</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="126" x="271.5" y="280.3734">ask_ratio: INTEGER</text><line style="stroke:#000000;stroke-width:1.5;" x1="266.5" x2="500.5" y1="288.4754" y2="288.4754"/><!--MD5=[a6a044b135b763fa14270807945fef97]
+reverse link AbstractMfxMessage to MfxBindMessage - mfx_bind--><path codeLine="25" d="M200,75.26 C200,75.26 200,124.26 200,124.26 " fill="none" id="AbstractMfxMessage-backto-MfxBindMessage - mfx_bind" style="stroke:#000000;stroke-width:2.0;"/><polygon fill="none" points="193,75.26,200,55.26,207,75.26,193,75.26" style="stroke:#000000;stroke-width:2.0;"/><!--MD5=[8eb7c0311872739a74219ca2a97f992f]
+reverse link AbstractMfxMessage to MfxVerifyMessage - mfx_verify--><path codeLine="35" d="M298.25,75.26 C298.25,75.26 298.25,114.87 298.25,114.87 " fill="none" id="AbstractMfxMessage-backto-MfxVerifyMessage - mfx_verify" style="stroke:#000000;stroke-width:2.0;"/><polygon fill="none" points="291.25,75.26,298.25,55.26,305.25,75.26,291.25,75.26" style="stroke:#000000;stroke-width:2.0;"/><!--MD5=[6c84d74495d710b30194c62eb9fd22be]
+@startuml
+skinparam useBetaStyle true
+skinparam linetype ortho
+
+<style>
+    classDiagram{
+        FontColor Black
+        BackgroundColor White
+        LineThickness 2
+        LineColor Black
+        RoundCorner 10
+    }
+</style>
+
+class AbstractMfxMessage {
+}
+abstract class AbstractMfxMessage
+class "MfxBindMessage - mfx_bind" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+mfx_uid: INTEGER
+mfx_sid: INTEGER
+}
+AbstractMfxMessage <|- - "MfxBindMessage - mfx_bind"
+class "MfxVerifyMessage - mfx_verify" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+mfx_uid: INTEGER
+mfx_sid: INTEGER
+ask_ratio: INTEGER
+}
+AbstractMfxMessage <|- - "MfxVerifyMessage - mfx_verify"
+@enduml
+
+PlantUML version 1.2021.16(Wed Dec 08 18:25:22 CET 2021)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>

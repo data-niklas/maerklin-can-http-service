@@ -1,0 +1,133 @@
+@startuml
+skinparam useBetaStyle true
+skinparam linetype ortho
+
+<style>
+    classDiagram{
+        FontColor Black
+        BackgroundColor White
+        LineThickness 2
+        LineColor Black
+        RoundCorner 10
+    }
+</style>
+
+class AbstractSystemMessage {
+}
+abstract class AbstractSystemMessage
+class "SystemStateMessage - system_state" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+id: INTEGER
+state: TEXT
+}
+AbstractSystemMessage <|-- "SystemStateMessage - system_state"
+class "LocomotiveEmergencyStopMessage - locomotive_emergency_stop" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+id: INTEGER
+}
+AbstractSystemMessage <|-- "LocomotiveEmergencyStopMessage - locomotive_emergency_stop"
+class "LocomotiveCycleStopMessage - locomotive_cycle_stop" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+id: INTEGER
+}
+AbstractSystemMessage <|-- "LocomotiveCycleStopMessage - locomotive_cycle_stop"
+class "LocomotiveDataProtocolMessage - locomotive_data_protocol" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+id: INTEGER
+protocol: TEXT
+}
+AbstractSystemMessage <|-- "LocomotiveDataProtocolMessage - locomotive_data_protocol"
+class "AccessoryDecoderSwitchingTimeMessage - accessory_decoder_switching_time" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+id: INTEGER
+time: INTEGER
+}
+AbstractSystemMessage <|-- "AccessoryDecoderSwitchingTimeMessage - accessory_decoder_switching_time"
+class "MfxFastReadMessage - mfx_fast_read" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+id: INTEGER
+mfx_sid: INTEGER
+}
+AbstractSystemMessage <|-- "MfxFastReadMessage - mfx_fast_read"
+class "EnableRailProtocolCommand - enable_rail_protocol" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+id: INTEGER
+bitset: INTEGER
+}
+AbstractSystemMessage <|-- "EnableRailProtocolCommand - enable_rail_protocol"
+class "SetMfxRegisterCounterMessage - set_mfx_register_counter" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+id: INTEGER
+counter: INTEGER
+}
+AbstractSystemMessage <|-- "SetMfxRegisterCounterMessage - set_mfx_register_counter"
+class "SystemOverloadMessage - system_overload" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+id: INTEGER
+channel: INTEGER
+}
+AbstractSystemMessage <|-- "SystemOverloadMessage - system_overload"
+class "SystemStatusMessage - system_status" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+id: INTEGER
+channel: INTEGER
+measured_value: INTEGER
+}
+AbstractSystemMessage <|-- "SystemStatusMessage - system_status"
+class "SetSystemIdentifierMessage - set_system_identifier" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+id: INTEGER
+system_id: INTEGER
+}
+AbstractSystemMessage <|-- "SetSystemIdentifierMessage - set_system_identifier"
+class "MfxSeekMessage - mfx_seek" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+id: INTEGER
+}
+AbstractSystemMessage <|-- "MfxSeekMessage - mfx_seek"
+class "SystemResetMessage - system_reset" {
+timestamp: DATETIME
+timestamp_iso: INTEGER
+hash_value: INTEGER
+response: BOOLEAN
+id: INTEGER
+target: INTEGER
+}
+AbstractSystemMessage <|-- "SystemResetMessage - system_reset"
+@enduml

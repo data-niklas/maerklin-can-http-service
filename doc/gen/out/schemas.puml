@@ -1,0 +1,119 @@
+@startuml
+skinparam useBetaStyle true
+skinparam linetype ortho
+
+<style>
+    classDiagram{
+        FontColor Black
+        BackgroundColor White
+        LineThickness 2
+        LineColor Black
+        RoundCorner 10
+    }
+</style>
+
+class BaseModel {
+}
+class AbstractCANMessage {
+hash_value: int
+response: bool
+}
+abstract class AbstractCANMessage
+BaseModel <|-- AbstractCANMessage
+class CANMessage {
+message_id: MessageIdentifier
+data: str
+}
+BaseModel <|-- CANMessage
+class AbstractLocIDCommand {
+hash_value: int
+response: bool
+loc_id: int
+}
+abstract class AbstractLocIDCommand
+AbstractCANMessage <|-- AbstractLocIDCommand
+class WriteConfigControlByte {
+is_main: bool
+is_multi_byte: bool
+dcc_programming: DCCProgramming
+}
+BaseModel <|-- WriteConfigControlByte
+class WriteConfigResultByte {
+is_write_successful: bool
+is_verify_successful: bool
+}
+BaseModel <|-- WriteConfigResultByte
+class AbstractSystemCommand {
+hash_value: int
+response: bool
+id: int
+}
+abstract class AbstractSystemCommand
+AbstractCANMessage <|-- AbstractSystemCommand
+class ParticipantPingCommand {
+hash_value: int
+response: bool
+sender_id: int
+software_version: int
+device_id: int
+}
+AbstractCANMessage <|-- ParticipantPingCommand
+class LocomotiveDiscoveryCommand {
+hash_value: int
+response: bool
+loc_id: int
+protocol: ProtocolSchema
+mfx_range: int
+ask_ratio: int
+}
+AbstractCANMessage <|-- LocomotiveDiscoveryCommand
+class S88EventCommand {
+hash_value: int
+response: bool
+device_id: int
+contact_id: int
+parameter: int
+state_old: int
+state_new: int
+time: int
+}
+AbstractCANMessage <|-- S88EventCommand
+class RequestConfigDataCommand {
+hash_value: int
+response: bool
+filename: str
+}
+AbstractCANMessage <|-- RequestConfigDataCommand
+class ServiceStatusDataConfigurationCommand {
+hash_value: int
+response: bool
+device_id: int
+index: int
+count: int
+data: str
+}
+AbstractCANMessage <|-- ServiceStatusDataConfigurationCommand
+class ConfigDataStreamCommand {
+hash_value: int
+response: bool
+file_length: int
+crc: int
+byte6: int
+data: str
+}
+AbstractCANMessage <|-- ConfigDataStreamCommand
+class BootloaderCANBoundCommand {
+hash_value: int
+response: bool
+data: str
+}
+AbstractCANMessage <|-- BootloaderCANBoundCommand
+class AbstractMfxCommand {
+hash_value: int
+response: bool
+mfx_uid: int
+mfx_sid: int
+}
+abstract class AbstractMfxCommand
+AbstractCANMessage <|-- AbstractMfxCommand
+@enduml
