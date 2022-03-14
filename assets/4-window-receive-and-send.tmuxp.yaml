@@ -5,7 +5,7 @@ windows:
     shell_command_before:
       - source ./venv/bin/activate
     panes:
-      - python src/start.py raw_can_receiver && echo "Press ENTER or CTRL+C to quit" && read && exit
-      - python src/start.py raw_can_sender && echo "Press ENTER or CTRL+C to quit" && read && exit
-      - python src/start.py can_receiver && echo "Press ENTER or CTRL+C to quit" && read && exit
-      - python src/start.py can_sender && echo "Press ENTER or CTRL+C to quit" && read && exit
+      - python src/start.py raw_can_receiver ; echo "Press ENTER or CTRL+C to quit" ; read ; exit
+      - python src/start.py raw_can_sender ; echo "Press ENTER or CTRL+C to quit" ; read ; exit
+      - sleep 3 ; python src/start.py can_receiver ; echo "Press ENTER or CTRL+C to quit" ; read ; exit
+      - sleep 3 ; python src/start.py can_sender ; echo "Press ENTER or CTRL+C to quit" ; read ; exit
