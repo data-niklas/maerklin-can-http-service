@@ -24,10 +24,13 @@ async def init_db():
     async with engine.begin() as conn:
         for model in registered_models:
             await conn.run_sync(model.metadata.create_all)
-    
 
 
-# Calculates 'distance points' = duration (in s) * speed
+async def dump_model(session, abstract_model):
+    session.add(abstract_model)
+    await session.commit()
+
+    # Calculates 'distance points' = duration (in s) * speed
 async def resample_speed_for_loc(session, start, end, loc_id):
     base_query = select(LocomotiveSpeedMessage.timestamp, LocomotiveSpeedMessage.speed) \
         .filter(LocomotiveSpeedMessage.loc_id == loc_id)
@@ -69,7 +72,6 @@ async def resample_speed_for_loc(session, start, end, loc_id):
 
     duration = (in_interval[0][0] - start).total_seconds()
     distance_sum += previous_value * duration
-
 
     for i, (timestamp, distance) in enumerate(in_interval):
         if i == number_points - 1:
@@ -150,8 +152,6 @@ async def resample(session, start, end):
         timestamp_iso = time.mktime(end.timetuple())
         await dump_model(session, \
             LocomotiveMetricMessage(timestamp=end, timestamp_iso=timestamp_iso, mfxuid=mfxuid, loc_id=loc_id, fuelA=fuel_a, fuelB=fuel_b, sand=sand, distance=distance))
-
-
 
 
 async def start_resampler():

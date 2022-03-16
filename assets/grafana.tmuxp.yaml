@@ -12,5 +12,5 @@ windows:
       - sleep 4;python src/start.py high_level_db_dump
       - sleep 4;python src/start.py database_resampler
       - sleep 4;python src/start.py database_refresher
-      - sleep 6;python src/start.py database
+      - sleep 6;python src/start.py database_read
       - sleep 12;echo "pkill grafana;source ./venv/bin/activate; python src/start.py grafana" | sudo su

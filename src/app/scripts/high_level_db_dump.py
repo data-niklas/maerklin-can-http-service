@@ -89,7 +89,7 @@ async def init_db():
     async with engine.begin() as conn:
         for model in registered_models:
             await conn.run_sync(model.metadata.create_all)
-    
+
 
 
 async def save_config_message(session, data, length, pydantic_abstract_message):
@@ -118,8 +118,8 @@ async def process_config_stream(session, websocket, pydantic_abstract_message):
             break
         if received_count > 0:
             received_data += " "
-        received_count += 8
-        received_data += data
+            received_count += 8
+            received_data += data
 
     data = bytes.fromhex(received_data)[:length]
     try:
@@ -147,6 +147,8 @@ async def start_websocket_listener():
                         await process_config_stream(session, websocket, pydantic_abstract_message)
                     else:
                         await dump(session, pydantic_abstract_message)
+    except KeyboardInterrupt:
+        print("KeyboardInterrupt")
     except Exception as e:
         print("restarting websocket listener")
         await start_websocket_listener()
@@ -155,6 +157,7 @@ def main():
     loop = asyncio.get_event_loop()
     loop.run_until_complete(init_db())
     loop.run_until_complete(start_websocket_listener())
+
 
 if __name__ == "__main__":
     main()
