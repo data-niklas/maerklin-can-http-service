@@ -21,7 +21,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -199,16 +198,16 @@
         "contentType": "application/json",
         "icon": "pause",
         "isAuth": false,
-        "method": "GET",
+        "method": "POST",
         "orientation": "center",
         "text": "Pause System",
         "type": "header",
-        "url": "http://CAN_HOST:CAN_PORT/system/status",
+        "url": "http://CAN_HOST:CAN_PORT/system/status?status=Stop",
         "variant": "primary",
-        "payload": "Stop",
+        "payload": "",
         "params": [
           [
-            "x_can_hash",
+            "x-can-hash",
             "HASH"
           ]
         ]
@@ -232,12 +231,12 @@
         "orientation": "center",
         "text": "Unpause System",
         "type": "header",
-        "url": "http://CAN_HOST:CAN_PORT/system/status",
+        "url": "http://CAN_HOST:CAN_PORT/system/status?status=Go",
         "variant": "primary",
-        "payload": "Go",
+        "payload": "",
         "params": [
           [
-            "x_can_hash",
+            "x-can-hash",
             "HASH"
           ]
         ]
@@ -405,7 +404,7 @@
     "list": []
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {},

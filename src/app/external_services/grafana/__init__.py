@@ -40,6 +40,8 @@ DEFAULT_FUELA_MAX = 255
 DEFAULT_FUELB_MAX = 255
 DEFAULT_SAND_MAX = 255
 
+DISTANCE_MAX = 1024 * settings.high_level_db_dump_resample_interval
+
 LOG_LIMIT = 200
 
 def apply_config(port):
@@ -60,7 +62,6 @@ def apply_template(template_path, url, fill_template_callback):
         template = f.read()
         template = fill_template_callback(template)
         print(url)
-        print(template)
         result = requests.post(url, data=template, headers=AUTHORIZATION_HEADER)
         print(result.content)
 
@@ -83,7 +84,10 @@ def get_hash():
     return str(requests.get(CAN_GET_HASH).json())
 
 def get_locs():
-    return requests.get(CAN_LOC_LIST, headers={'x-can-hash': get_hash()}).json()
+    res = requests.get(CAN_LOC_LIST, headers={'x-can-hash': get_hash()}).json()
+    if isinstance(res, list):
+        return res
+    return None
 
 def apply_loc(loc, max_fuel_a, max_fuel_b, max_sand):
     loc_template_path = os.path.join(VIEWS_DIR, "loc.json.template")
@@ -98,6 +102,7 @@ def apply_loc(loc, max_fuel_a, max_fuel_b, max_sand):
     loc_map["DATASOURCE_TYPE"] = DATASOURCE_TYPE
     loc_map["CAN_PORT"] = str(settings.can_port)
     loc_map["CAN_HOST"] = settings.can_host
+    loc_map["DISTANCE_MAX"] = str(DISTANCE_MAX)
     loc_map["HASH"] = get_hash()
 
     def map_data(data):
@@ -146,7 +151,13 @@ def read_loc_usage(mfxuid):
 
 
 def update():
-    for loc in get_locs():
+    locs = get_locs()
+    if locs is None:
+        print("Got no locs, retrying")
+        update()
+        return
+    for loc in locs:
+        print(f"Applying dashboard for {loc['name']}")
         max_fuel_a, max_fuel_b, max_sand = read_loc_usage(int(loc["mfxuid"], 0))
         apply_loc(loc, max_fuel_a, max_fuel_b, max_sand)
 
