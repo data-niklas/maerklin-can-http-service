@@ -35,5 +35,5 @@ can_receiver.include_router(high_level_can_recv.router)
 can = get_base()
 can.include_router(high_level_can.router)
 
-database = get_base()
-database.include_router(database_read.router)
+database_read = get_base()
+database_read.include_router(database_read.router)
