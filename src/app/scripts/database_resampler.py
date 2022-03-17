@@ -142,10 +142,10 @@ async def resample_fuel_for_loc(session, start, end, mfxuid):
 
 
 async def resample(session, start, end):
-    print("resampling")
     loc_ids = (await session.execute(select(ConfigLocomotiveMessage.uid, ConfigLocomotiveMessage.mfxuid))).fetchall()
     loc_ids = set((t[0], t[1]) for t in loc_ids) # deduplicate
     for (loc_id, mfxuid) in loc_ids:
+        print(f"resampling {loc_id}")
         distance = await resample_speed_for_loc(session, start, end, loc_id)
         fuel_a, fuel_b, sand = await resample_fuel_for_loc(session, start, end, mfxuid)
 

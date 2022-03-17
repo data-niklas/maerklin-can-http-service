@@ -4,6 +4,7 @@ import websockets
 from datetime import datetime, timedelta
 import time
 import requests
+import traceback
 
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm.session import sessionmaker
@@ -118,8 +119,8 @@ async def process_config_stream(session, websocket, pydantic_abstract_message):
             break
         if received_count > 0:
             received_data += " "
-            received_count += 8
-            received_data += data
+        received_count += 8
+        received_data += data
 
     data = bytes.fromhex(received_data)[:length]
     try:
@@ -150,7 +151,8 @@ async def start_websocket_listener():
     except KeyboardInterrupt:
         print("KeyboardInterrupt")
     except Exception as e:
-        print("restarting websocket listener")
+        traceback.print_exc()
+        print(f"restarting websocket listener")
         await start_websocket_listener()
 
 def main():

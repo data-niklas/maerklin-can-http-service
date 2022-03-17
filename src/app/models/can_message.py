@@ -502,14 +502,14 @@ class ConfigUsageMessage(AbstractCANMessage):
     }
     __tablename__ = 'config_usage'
     mfxuid = Column(Integer, primary_key=True)
-    maxFuelA = Column(Integer)
-    maxFuelB = Column(Integer)
-    maxSand = Column(Integer)
-    faktorFuelA = Column(Integer)
-    fuelA = Column(Integer)
-    fuelB = Column(Integer)
-    sand = Column(Integer)
-    alter = Column(Integer)
+    maxFuelA = Column(Integer, nullable=True)
+    maxFuelB = Column(Integer, nullable=True)
+    maxSand = Column(Integer, nullable=True)
+    faktorFuelA = Column(Integer, nullable=True)
+    fuelA = Column(Integer, nullable=True)
+    fuelB = Column(Integer, nullable=True)
+    sand = Column(Integer, nullable=True)
+    alter = Column(Integer, nullable=True)
 
     def from_schema(abstract_pydantic_message):
         return None
@@ -558,8 +558,8 @@ class ConfigLocomotiveMessage(AbstractCANMessage):
     tachomax = Column(Integer)
     vmax = Column(Integer, nullable=False)
     vmin = Column(Integer, nullable=False)
-    av = Column(Integer, nullable=False)
-    bv = Column(Integer, nullable=False)
+    av = Column(Integer, nullable=True)
+    bv = Column(Integer, nullable=True)
     volume = Column(Integer, nullable=False)
     spa = Column(Integer)
     spm = Column(Integer)
@@ -587,8 +587,8 @@ class ConfigLocomotiveMessage(AbstractCANMessage):
         tachomax = to_int_safe(lok.get("tachomax", None))
         vmax = int(lok["vmax"], 0)
         vmin = int(lok["vmin"], 0)
-        av = int(lok["av"], 0)
-        bv = int(lok["bv"], 0)
+        av = to_int_safe(lok.get("av", None))
+        bv = to_int_safe(lok.get("bv", None))
         volume = lok["volume"]
         spa = lok.get("spa", None) # TODO determine types
         spm = lok.get("spm", None)
