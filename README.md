@@ -49,6 +49,8 @@ key=value python ./src/start.py starting_something_useful
 can_timeout=10000 python ./src/start.py can
 ```
 
+The `config.py` will be ignored by Git and can be modified freely. The config serves as a single point of truth and will be used by services to determine the `URI` of other services. Services might break if e.g.: the port of the `raw_can_receiver` is only temporarily changed for the `raw_can_receiver`, due to the difference between the declared port in the config and the actual port. 
+
 
 ## Usage
 > Don't forget the venv<br>
