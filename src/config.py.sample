@@ -39,8 +39,8 @@ DEFAULT_CAN_SEND_HOST = "127.0.0.1"
 DEFAULT_CAN_PORT = 8042
 DEFAULT_CAN_HOST = "127.0.0.1"
 
-DEFAULT_DATABASE_PORT = 8043
-DEFAULT_DATABASE_HOST = "127.0.0.1"
+DEFAULT_DATABASE_READ_PORT = 8043
+DEFAULT_DATABASE_READ_HOST = "127.0.0.1"
 
 # Timeout in millis
 DEFAULT_CAN_TIMEOUT = 300
@@ -84,14 +84,14 @@ class Settings(BaseSettings):
     can_receiver_port: int = DEFAULT_CAN_RECV_PORT
     can_sender_port: int = DEFAULT_CAN_SEND_PORT
     can_port: int = DEFAULT_CAN_PORT
-    database_port: int = DEFAULT_DATABASE_PORT
+    database_read_port: int = DEFAULT_DATABASE_READ_PORT
 
     raw_can_receiver_host: str = DEFAULT_RAW_CAN_RECV_HOST
     raw_can_sender_host: str = DEFAULT_RAW_CAN_SEND_HOST
     can_receiver_host: str = DEFAULT_CAN_RECV_HOST
     can_sender_host: str = DEFAULT_CAN_SEND_HOST
     can_host: str = DEFAULT_CAN_HOST
-    database_host: str = DEFAULT_DATABASE_HOST
+    database_read_host: str = DEFAULT_DATABASE_READ_HOST
 
     can_timeout: int = DEFAULT_CAN_TIMEOUT
 
@@ -129,14 +129,14 @@ class Settings(BaseSettings):
             'can_receiver_port': {'env': 'can_receiver_port'},
             'can_sender_port': {'env': 'can_sender_port'},
             'can_port': {'env': 'can_port'},
-            'database_port': {'env': 'database_port'},
+            'database_read_port': {'env': 'database_read_port'},
 
             'raw_can_receiver_host': {'env': 'raw_can_recv_host'},
             'raw_can_sender_host': {'env': 'raw_can_sender_host'},
             'can_receiver_host': {'env': 'can_receiver_host'},
             'can_sender_host': {'env': 'can_sender_host'},
             'can_host': {'env': 'can_host'},
-            'database_host': {'env': 'database_host'},
+            'database_read_host': {'env': 'database_read_host'},
 
             'can_timeout': {'env': 'can_timeout'},
 

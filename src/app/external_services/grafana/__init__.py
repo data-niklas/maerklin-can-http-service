@@ -26,8 +26,8 @@ CAN_BASE_URL = f"http://{settings.can_host}:{settings.can_port}/"
 CAN_GET_HASH = CAN_BASE_URL + "general/hash"
 CAN_LOC_LIST = CAN_BASE_URL + "lok/list"
 
-DATABASE_PORT = settings.database_port
-DATABASE_HOST = settings.database_host
+DATABASE_PORT = settings.database_read_port
+DATABASE_HOST = settings.database_read_host
 
 GRAFANA_UPDATE_INTERVAL = settings.grafana_update_interval
 
