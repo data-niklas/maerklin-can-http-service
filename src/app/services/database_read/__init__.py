@@ -18,7 +18,7 @@ router = APIRouter()
 
 settings = get_settings()
 
-DB = settings.high_level_db_dump_database
+DB = settings.db_dump_database
 RAW_DB = settings.raw_db_dump_database
 
 engine = create_async_engine(

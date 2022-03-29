@@ -25,7 +25,7 @@ CAN_SENDER_BASE_URL = f"http://{settings.can_sender_host}:{settings.can_sender_p
 CAN_SENDER_GET_LOC_SPEED = CAN_SENDER_BASE_URL + "loc/speed"
 CAN_SENDER_GET_LOC_DIRECTION = CAN_SENDER_BASE_URL + "loc/direction"
 
-DB = settings.high_level_db_dump_database
+DB = settings.db_dump_database
 engine = create_async_engine(
     DB, connect_args={"check_same_thread": False}
 )
@@ -67,7 +67,7 @@ def get_locs():
 async def start_refresher():
     print("started refresher")
     last = datetime.now()
-    refresh_interval = settings.high_level_db_dump_refresh_interval
+    refresh_interval = settings.db_dump_refresh_interval
     refresh_delta = timedelta(seconds = refresh_interval)
     while True:
         now = datetime.now()

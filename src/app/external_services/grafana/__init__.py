@@ -18,7 +18,7 @@ PORT = settings.grafana_port
 HOMEFOLDER = settings.grafana_dir
 API_KEY = settings.grafana_api_key
 # Only works if a sqlite3 database was used and the path starts with an 'sqlite:///'
-DATASOURCE_PATH = settings.high_level_db_dump_database.split("///")[1]
+DATASOURCE_PATH = settings.db_dump_database.split("///")[1]
 DATASOURCE_UID = "yyAw0-bnz"
 DATASOURCE_TYPE = "frser-sqlite-datasource"
 
@@ -40,7 +40,7 @@ DEFAULT_FUELA_MAX = 255
 DEFAULT_FUELB_MAX = 255
 DEFAULT_SAND_MAX = 255
 
-DISTANCE_MAX = 1024 * settings.high_level_db_dump_resample_interval
+DISTANCE_MAX = 1024 * settings.resample_interval
 
 LOG_LIMIT = 200
 

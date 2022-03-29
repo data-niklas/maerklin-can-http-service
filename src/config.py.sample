@@ -45,7 +45,7 @@ DEFAULT_DATABASE_READ_HOST = "127.0.0.1"
 # Timeout in millis
 DEFAULT_CAN_TIMEOUT = 300
 
-DEFAULT_HIGH_LEVEL_DB_DUMP_DATABASE = f'sqlite+aiosqlite:///{os.path.join(os.path.dirname(FILE_DIR), "out", "high_level_dump.sqlite3")}'
+DEFAULT_DB_DUMP_DATABASE = f'sqlite+aiosqlite:///{os.path.join(os.path.dirname(FILE_DIR), "out", "high_level_dump.sqlite3")}'
 DEFAULT_RAW_DB_DUMP_DATABASE = f'sqlite+aiosqlite:///{os.path.join(os.path.dirname(FILE_DIR), "out", "raw_dump.sqlite3")}'
 
 DEFAULT_WORKFLOW_TERMINAL_COMMAND = ["cmd.exe", "/c"]
@@ -64,8 +64,8 @@ DEFAULT_WEBSOCKET_PRINTER_PORT = DEFAULT_CAN_RECV_PORT
 DEFAULT_WEBSOCKET_PRINTER_HOST = DEFAULT_CAN_RECV_HOST
 
 # Resample interval in seconds
-DEFAULT_HIGH_LEVEL_DB_DUMP_RESAMPLE_INTERVAL = 30
-DEFAULT_HIGH_LEVEL_DB_DUMP_REFRESH_INTERVAL = 10
+DEFAULT_RESAMPLE_INTERVAL = 30
+DEFAULT_REFRESH_INTERVAL = 10
 
 
 
@@ -95,7 +95,7 @@ class Settings(BaseSettings):
 
     can_timeout: int = DEFAULT_CAN_TIMEOUT
 
-    high_level_db_dump_database: str = DEFAULT_HIGH_LEVEL_DB_DUMP_DATABASE
+    db_dump_database: str = DEFAULT_DB_DUMP_DATABASE
     raw_db_dump_database: str = DEFAULT_RAW_DB_DUMP_DATABASE
     
 
@@ -113,8 +113,8 @@ class Settings(BaseSettings):
     grafana_api_key: str = DEFAULT_GRAFANA_API_KEY
     grafana_update_interval: int = DEFAULT_GRAFANA_UPDATE_INTERVAL
 
-    high_level_db_dump_resample_interval: int = DEFAULT_HIGH_LEVEL_DB_DUMP_RESAMPLE_INTERVAL
-    high_level_db_dump_refresh_interval: int = DEFAULT_HIGH_LEVEL_DB_DUMP_REFRESH_INTERVAL
+    resample_interval: int = DEFAULT_DB_DUMP_RESAMPLE_INTERVAL
+    refresh_interval: int = DEFAULT_DB_DUMP_REFRESH_INTERVAL
 
     class Config():
         fields = {
@@ -145,7 +145,7 @@ class Settings(BaseSettings):
             'websocket_logger_host': {'env': 'websocket_logger_host'},
             'websocket_logger_port': {'env': 'websocket_logger_port'},
             
-            'high_level_db_dump_database': {'env': 'high_level_db_dump_database'},
+            'db_dump_database': {'env': 'db_dump_database'},
             'raw_db_dump_database': {'env': 'raw_db_dump_database'},
 
             'workflow_terminal_command': {'env': 'workflow_terminal_command'},
@@ -156,8 +156,8 @@ class Settings(BaseSettings):
             'grafana_api_key': {'env': 'grafana_api_key'},
             'grafana_update_interval': {'env': 'grafana_update_interval'},
 
-            'high_level_db_dump_resample_interval': {'env': 'high_level_db_dump_resample_interval'},
-            'high_level_db_dump_refresh_interval': {'env': 'high_level_db_dump_refresh_interval'}
+            'resample_interval': {'env': 'resample_interval'},
+            'refresh_interval': {'env': 'refresh_interval'}
         }
 
 
