@@ -95,6 +95,4 @@ python ./src/start.py dummy_central_station
 
 ## Documentation
 Documentation for the various services can be found in the `./doc` folder:
-- [Raw Can Receiver](./doc/raw_can_receiver.md)
-- [Can Receiver](./doc/can_receiver.md)
-- [High level CAN interface](./doc/high_level_can.md)
+- [Services](./doc/services.md)
