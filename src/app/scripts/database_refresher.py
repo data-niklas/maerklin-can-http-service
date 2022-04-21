@@ -67,7 +67,7 @@ def get_locs():
 async def start_refresher():
     print("started refresher")
     last = datetime.now()
-    refresh_interval = settings.db_dump_refresh_interval
+    refresh_interval = settings.refresh_interval
     refresh_delta = timedelta(seconds = refresh_interval)
     while True:
         now = datetime.now()
