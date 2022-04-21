@@ -4,7 +4,7 @@ import websockets
 from collections import defaultdict
 
 from ...schemas.can_commands import AbstractCANMessage
-from ..high_level_can_recv.converter import type_map
+from ..can_recv.converter import type_map
 
 from fastapi import HTTPException, Response
 

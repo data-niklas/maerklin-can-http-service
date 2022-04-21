@@ -14,7 +14,7 @@ SCRIPT_POSTFIX = ".py"
 
 ASGI_SERVICES = ["raw_can_receiver", "raw_can_sender", "can_receiver", "can_sender", "can", "database_read"]
 EXTERNAL_SERVICES = ["grafana"]
-SCRIPTS = ["dummy_central_station", "websocket_logger", "websocket_printer", "high_level_db_dump", \
+SCRIPTS = ["dummy_central_station", "websocket_logger", "websocket_printer", "db_dump", \
     "raw_db_dump", "websocket_config_stream", "websocket_replay", "database_refresher", "database_resampler"]
 
 WORKFLOW_TERMINAL_COMMAND = settings.workflow_terminal_command
@@ -22,7 +22,7 @@ WORKFLOW_INTERVAL = settings.workflow_terminal_interval
 
 WORKFLOWS = dict()
 WORKFLOWS["dummy_central_station"] = ["dummy_central_station", "raw_can_receiver", "can_receiver"]
-WORKFLOWS["grafana"] = ["raw_can_receiver", "can_receiver", "high_level_db_dump", "grafana"]
+WORKFLOWS["grafana"] = ["raw_can_receiver", "can_receiver", "db_dump", "grafana"]
 
 HELP = """A start script to run various ASGI routers and scripts, which work with the Märklin CAN interface.
 

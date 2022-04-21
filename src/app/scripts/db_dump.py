@@ -16,16 +16,16 @@ from config_wrapper import get_settings
 from app.schemas.can import CANMessage as PydanticCANMessage
 from app.models.can_message import Base, ConfigMessage, ConfigUsageMessage, ConfigLocomotiveMessage, LocomotiveMetricMessage, LocomotiveSpeedMessage
 from app.models.can_message_converter import registered_models, convert_to_model
-from app.services.high_level_can_recv.converter import type_map as pydantic_type_map
+from app.services.can_recv.converter import type_map as pydantic_type_map
 from app.schemas.can_commands import CommandSchema, LocomotiveDirectionCommand, LocomotiveDirection, LocomotiveSpeedCommand
-from app.services.high_level_can.helper import parse_config
+from app.services.can.helper import parse_config
 
 settings = get_settings()
 
 HOST = settings.can_receiver_host
 PORT = settings.can_receiver_port
 
-DB = settings.high_level_db_dump_database
+DB = settings.db_dump_database
 
 engine = create_async_engine(
     DB, connect_args={"check_same_thread": False}

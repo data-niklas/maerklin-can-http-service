@@ -14,7 +14,7 @@ from app.models.can_message_converter import registered_models
 
 settings = get_settings()
 
-DB = settings.high_level_db_dump_database
+DB = settings.db_dump_database
 engine = create_async_engine(
     DB, connect_args={"check_same_thread": False}
 )
@@ -156,7 +156,7 @@ async def resample(session, start, end):
 
 async def start_resampler():
     last = datetime.now()
-    resample_interval = settings.high_level_db_dump_resample_interval
+    resample_interval = settings.resample_interval
     resample_delta = timedelta(seconds = resample_interval)
     async with SessionLocal() as session:
         while True:

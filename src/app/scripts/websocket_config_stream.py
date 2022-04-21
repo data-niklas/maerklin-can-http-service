@@ -5,7 +5,7 @@ import websockets
 from config_wrapper import get_settings
 
 from app.schemas.can_commands import *
-from app.services.high_level_can_recv.converter import type_map
+from app.services.can_recv.converter import type_map
 
 settings = get_settings()
 

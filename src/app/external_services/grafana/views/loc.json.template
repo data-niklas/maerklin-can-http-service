@@ -429,6 +429,7 @@
           },
           "mappings": [],
           "max": LOC_FUELA_MAX,
+	  "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
