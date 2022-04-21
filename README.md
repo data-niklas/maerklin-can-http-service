@@ -96,3 +96,8 @@ python ./src/start.py dummy_central_station
 ## Documentation
 Documentation for the various services can be found in the `./doc` folder:
 - [Services](./doc/services.md)
+
+## Troubleshooting
+- Verify that the `venv` is active and all packages were installed inside of the `venv`
+- Check if `config.py.sample` was updated. `config.py` might be outdated and changes from `config.py.sample` might need to be applied.
+- Verify the configured IP's
