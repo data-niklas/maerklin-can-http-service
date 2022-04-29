@@ -113,8 +113,8 @@ class Settings(BaseSettings):
     grafana_api_key: str = DEFAULT_GRAFANA_API_KEY
     grafana_update_interval: int = DEFAULT_GRAFANA_UPDATE_INTERVAL
 
-    resample_interval: int = DEFAULT_DB_DUMP_RESAMPLE_INTERVAL
-    refresh_interval: int = DEFAULT_DB_DUMP_REFRESH_INTERVAL
+    resample_interval: int = DEFAULT_RESAMPLE_INTERVAL
+    refresh_interval: int = DEFAULT_REFRESH_INTERVAL
 
     class Config():
         fields = {
