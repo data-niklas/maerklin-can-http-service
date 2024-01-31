@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  raw_can_receiver:
+    build:
+      context: .
+      dockerfile: Dockerfile.raw_can_receiver
+    hostname: raw_can_recv
+    ports:
+      - "8888:8888"  # Port 8888 auf dem Host zu Port 8888 im Container
+
+  can_receiver:
+    build:
+      context: .
+      dockerfile: Dockerfile.can_receiver
+    hostname: can_recv
+    ports:
+      - "8001:8001"  # Port 8001 auf dem Host zu Port 8001 im Container
+    depends_on:
+      - raw_can_receiver
+
+  can:
+    build:
+      context: .
+      dockerfile: Dockerfile.can
+    hostname: can
+    ports:
+      - "8042:8042"  # Port 8042 auf dem Host zu Port 8042 im Container
+

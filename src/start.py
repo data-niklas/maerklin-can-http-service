@@ -72,7 +72,7 @@ def start_asgi(name, spawn_new):
     global settings
     port = getattr(settings, name + '_port')
     host = getattr(settings, name + '_host')
-    command = [settings.asgi_command, f'main:{name}', f'--port={port}', f'--host={host}', '--reload']
+    command = [settings.asgi_command, f'main:{name}', f'--port={port}', f'--host=0.0.0.0', '--reload']
     run(command, spawn_new)
 
 def start_external(script, spawn_new):
