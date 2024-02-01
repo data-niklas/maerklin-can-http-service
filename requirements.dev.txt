@@ -9,4 +9,4 @@ aiosqlite==0.17.0
 requests==2.27.1
 greenlet==1.1.2
 configparser==6.0.0
-
+tmuxp==1.5.5

@@ -6,5 +6,6 @@ COPY ./src /app/src
 COPY ./requirements.txt /app/requirements.txt
 
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir uvicorn==0.15.0
 
-CMD ["python", "./src/start.py", "raw_can_receiver"]
+CMD ["python", "./src/start.py", "can_receiver"]

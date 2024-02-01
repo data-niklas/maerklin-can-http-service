@@ -7,8 +7,12 @@ import os
 from pydantic import BaseSettings
 from functools import lru_cache
 from typing import List
+import configparser
 
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))
+
+config = configparser.ConfigParser()
+config.read(os.path.join(FILE_DIR, "../config/config.ini"))
 
 # Router configs
 DEFAULT_ASGI_COMMAND = "uvicorn"
@@ -17,33 +21,39 @@ DEFAULT_ASGI_COMMAND = "uvicorn"
 DEFAULT_SCRIPT_COMMAND = os.path.join(os.path.dirname(FILE_DIR), "venv", "bin", "python")       # For unix
 
 # IP from which packages are received and sent to
-DEFAULT_RAW_CAN_IP = "192.168.1.3"
+DEFAULT_RAW_CAN_IP = "192.168.178.84"
 DEFAULT_RAW_CAN_PORT = 15731
 
 # On which the raw_can_recv is hosted
 DEFAULT_RAW_CAN_RECV_PORT = 8888
 DEFAULT_RAW_CAN_RECV_HOST = "127.0.0.1"
+DEFAULT_RAW_CAN_RECV_LISTEN_HOST = "127.0.0.1"
 
 # On which the raw_can_send is hosted
 DEFAULT_RAW_CAN_SEND_PORT = 8000
 DEFAULT_RAW_CAN_SEND_HOST = "127.0.0.1"
+DEFAULT_RAW_CAN_SEND_LISTEN_HOST = "127.0.0.1"
 
 # On which the can_recv is hosted
 DEFAULT_CAN_RECV_PORT = 8001
 DEFAULT_CAN_RECV_HOST = "127.0.0.1"
+DEFAULT_CAN_RECV_LISTEN_HOST = "127.0.0.1"
 
 # On which the can_send is hosted
 DEFAULT_CAN_SEND_PORT = 8002
 DEFAULT_CAN_SEND_HOST = "127.0.0.1"
+DEFAULT_CAN_SEND_LISTEN_HOST = "127.0.0.1"
 
 DEFAULT_CAN_PORT = 8042
-DEFAULT_CAN_HOST = "127.0.0.1"
+DEFAULT_CAN_HOST = "can"
+DEFAULT_CAN_LISTEN_HOST = "127.0.0.1"
 
 DEFAULT_DATABASE_READ_PORT = 8043
 DEFAULT_DATABASE_READ_HOST = "127.0.0.1"
+DEFAULT_DATABASE_READ_LISTEN_HOST = "127.0.0.1"
 
 # Timeout in millis
-DEFAULT_CAN_TIMEOUT = 300
+DEFAULT_CAN_TIMEOUT = 6000
 
 DEFAULT_DB_DUMP_DATABASE = f'sqlite+aiosqlite:///{os.path.join(os.path.dirname(FILE_DIR), "out", "high_level_dump.sqlite3")}'
 DEFAULT_RAW_DB_DUMP_DATABASE = f'sqlite+aiosqlite:///{os.path.join(os.path.dirname(FILE_DIR), "out", "raw_dump.sqlite3")}'
@@ -76,45 +86,52 @@ class Settings(BaseSettings):
     asgi_command: str = DEFAULT_ASGI_COMMAND
     script_command: str = DEFAULT_SCRIPT_COMMAND
 
-    raw_can_ip: str = DEFAULT_RAW_CAN_IP
-    raw_can_port: int = DEFAULT_RAW_CAN_PORT
+    raw_can_ip: str = config.get("Raw_CAN", "IP", fallback=DEFAULT_RAW_CAN_IP)
+    raw_can_port: int = config.get("Raw_CAN", "Port", fallback=DEFAULT_RAW_CAN_PORT)
 
-    raw_can_receiver_port: int = DEFAULT_RAW_CAN_RECV_PORT
-    raw_can_sender_port: int = DEFAULT_RAW_CAN_SEND_PORT
-    can_receiver_port: int = DEFAULT_CAN_RECV_PORT
-    can_sender_port: int = DEFAULT_CAN_SEND_PORT
-    can_port: int = DEFAULT_CAN_PORT
-    database_read_port: int = DEFAULT_DATABASE_READ_PORT
+    raw_can_receiver_port: int = config.get("Raw_CAN_Recv", "Port", fallback=DEFAULT_RAW_CAN_RECV_PORT)
+    raw_can_sender_port: int = config.get("Raw_CAN_Send", "Port", fallback=DEFAULT_RAW_CAN_SEND_PORT)
+    can_receiver_port: int = config.get("CAN_Recv", "Port", fallback=DEFAULT_CAN_RECV_PORT)
+    can_sender_port: int = config.get("CAN_Send", "Port", fallback=DEFAULT_CAN_SEND_PORT)
+    can_port: int = config.get("CAN", "Port", fallback=DEFAULT_CAN_PORT)
+    database_read_port: int = config.get("Database_Read", "Port", fallback=DEFAULT_DATABASE_READ_PORT)
 
-    raw_can_receiver_host: str = DEFAULT_RAW_CAN_RECV_HOST
-    raw_can_sender_host: str = DEFAULT_RAW_CAN_SEND_HOST
-    can_receiver_host: str = DEFAULT_CAN_RECV_HOST
-    can_sender_host: str = DEFAULT_CAN_SEND_HOST
-    can_host: str = DEFAULT_CAN_HOST
-    database_read_host: str = DEFAULT_DATABASE_READ_HOST
+    raw_can_receiver_host: str = config.get("Raw_CAN_Recv", "Host", fallback=DEFAULT_RAW_CAN_RECV_HOST)
+    raw_can_sender_host: str = config.get("Raw_CAN_Send", "Host", fallback=DEFAULT_RAW_CAN_SEND_HOST)
+    can_receiver_host: str = config.get("CAN_Recv", "Host", fallback=DEFAULT_CAN_RECV_HOST)
+    can_sender_host: str = config.get("CAN_Send", "Host", fallback=DEFAULT_CAN_SEND_HOST)
+    can_host: str = config.get("CAN", "Host", fallback=DEFAULT_CAN_HOST)
+    database_read_host: str = config.get("Database_Read", "Host", fallback=DEFAULT_DATABASE_READ_HOST)
 
-    can_timeout: int = DEFAULT_CAN_TIMEOUT
+    raw_can_receiver_listen_host: str = config.get("Raw_CAN_Recv", "Listen_Host", fallback=DEFAULT_RAW_CAN_RECV_LISTEN_HOST)
+    raw_can_sender_listen_host: str = config.get("Raw_CAN_Send", "Listen_Host", fallback=DEFAULT_RAW_CAN_SEND_LISTEN_HOST)
+    can_receiver_listen_host: str = config.get("CAN_Recv", "Listen_Host", fallback=DEFAULT_CAN_RECV_LISTEN_HOST)
+    can_sender_listen_host: str = config.get("CAN_Send", "Listen_Host", fallback=DEFAULT_CAN_SEND_LISTEN_HOST)
+    can_listen_host: str = config.get("CAN", "Listen_Host", fallback=DEFAULT_CAN_LISTEN_HOST)
+    database_read_listen_host: str = config.get("Database_Read", "Listen_Host", fallback=DEFAULT_DATABASE_READ_LISTEN_HOST)
 
-    db_dump_database: str = DEFAULT_DB_DUMP_DATABASE
-    raw_db_dump_database: str = DEFAULT_RAW_DB_DUMP_DATABASE
+    can_timeout: int = config.get("CAN_Settings", "Timeout", fallback=DEFAULT_CAN_TIMEOUT)
+
+    db_dump_database: str = config.get("DB_Dump", "Database_Dump", fallback=DEFAULT_DB_DUMP_DATABASE)
+    raw_db_dump_database: str = config.get("Raw_DB_Dump", "Raw_Dump", fallback=DEFAULT_RAW_DB_DUMP_DATABASE)
     
 
-    websocket_printer_host: str = DEFAULT_WEBSOCKET_PRINTER_HOST
-    websocket_printer_port: int = DEFAULT_WEBSOCKET_PRINTER_PORT
+    websocket_printer_host: str = config.get("Websocket_Printer", "Host", fallback=DEFAULT_WEBSOCKET_PRINTER_HOST)
+    websocket_printer_port: int = config.get("Websocket_Printer", "Port", fallback=DEFAULT_WEBSOCKET_PRINTER_PORT)
 
-    websocket_logger_host: str = DEFAULT_WEBSOCKET_LOGGER_HOST
-    websocket_logger_port: int = DEFAULT_WEBSOCKET_LOGGER_PORT
+    websocket_logger_host: str = config.get("Websocket_Logger", "Host", fallback=DEFAULT_WEBSOCKET_LOGGER_HOST)
+    websocket_logger_port: int = config.get("Websocket_Logger", "Port", fallback=DEFAULT_WEBSOCKET_LOGGER_PORT)
 
     workflow_terminal_command: List[str] = DEFAULT_WORKFLOW_TERMINAL_COMMAND
     workflow_terminal_interval: int = DEFAULT_WORKFLOW_TERMINAL_INTERVAL
 
-    grafana_port: int = DEFAULT_GRAFANA_PORT
-    grafana_dir: str = DEFAULT_GRAFANA_DIR
-    grafana_api_key: str = DEFAULT_GRAFANA_API_KEY
-    grafana_update_interval: int = DEFAULT_GRAFANA_UPDATE_INTERVAL
+    grafana_port: int = config.get("Grafana", "Port", fallback=DEFAULT_GRAFANA_PORT)
+    grafana_dir: str = config.get("Grafana", "Dir", fallback=DEFAULT_GRAFANA_DIR)
+    grafana_api_key: str = config.get("Grafana", "API_Key", fallback=DEFAULT_GRAFANA_API_KEY)
+    grafana_update_interval: int = config.get("Grafana", "Update_Interval", fallback=DEFAULT_GRAFANA_UPDATE_INTERVAL)
 
-    resample_interval: int = DEFAULT_RESAMPLE_INTERVAL
-    refresh_interval: int = DEFAULT_REFRESH_INTERVAL
+    resample_interval: int = config.get("Resample", "Interval", fallback=DEFAULT_RESAMPLE_INTERVAL)
+    refresh_interval: int = config.get("Resample", "Refresh_Interval", fallback=DEFAULT_REFRESH_INTERVAL)
 
     class Config():
         fields = {
@@ -137,6 +154,13 @@ class Settings(BaseSettings):
             'can_sender_host': {'env': 'can_sender_host'},
             'can_host': {'env': 'can_host'},
             'database_read_host': {'env': 'database_read_host'},
+
+            'raw_can_receiver_listen_host': {'env': 'raw_can_recv_listen_host'},
+            'raw_can_sender_listen_host': {'env': 'raw_can_sender_listen_host'},
+            'can_receiver_listen_host': {'env': 'can_receiver_listen_host'},
+            'can_sender_listen_host': {'env': 'can_sender_listen_host'},
+            'can_listen_host': {'env': 'can_listen_host'},
+            'database_read_listen_host': {'env': 'database_read_listen_host'},
 
             'can_timeout': {'env': 'can_timeout'},
 
@@ -162,5 +186,5 @@ class Settings(BaseSettings):
 
 
 @lru_cache
-def get_settings() -> Settings:
+def  get_settings() -> Settings:
     return Settings()

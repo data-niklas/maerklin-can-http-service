@@ -1,0 +1,58 @@
+[Raw_CAN]
+IP = 192.168.178.84
+Port = 15731
+
+[Raw_CAN_Recv]
+Port = 8888
+Host = raw_can_recv
+Listen_Host = 0.0.0.0
+
+[Raw_CAN_Send]
+Port = 8000
+Host = 127.0.0.1
+Listen_Host = 0.0.0.0
+
+[CAN_Recv]
+Port = 8001
+Host = can_recv
+Listen_Host = 0.0.0.0
+
+[CAN_Send]
+Port = 8002
+Host = 127.0.0.1
+Listen_Host = 0.0.0.0
+
+[CAN]
+Port = 8042
+Host = can
+Listen_Host = 0.0.0.0
+
+[Database_Read]
+Port = 8043
+Host = 127.0.0.1
+Listen_Host = 0.0.0.0
+
+[CAN_Settings]
+Timeout = 6000
+
+[Grafana]
+Port = 8044
+Dir = /usr/share/grafana
+API_Key = REPLACE WITH YOUR OWN CREATED API KEY!
+Update_Interval = 300
+
+[Database]
+Database_Dump = sqlite+aiosqlite:///path/to/out/high_level_dump.sqlite3
+Raw_Dump = sqlite+aiosqlite:///path/to/out/raw_dump.sqlite3
+
+[Websocket_Logger]
+Port = 8001
+Host = can_recv
+
+[Websocket_Printer]
+Port = 8001
+Host = can_recv
+
+[Resample]
+Interval = 30
+Refresh_Interval = 10
