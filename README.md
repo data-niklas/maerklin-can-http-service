@@ -47,13 +47,13 @@ pip install uvicorn
 5. Setup the config
 ```sh
 cd src
-cp config.py.sample config.py
+cp config.py config.py
 ```
 
 6. Change the default configuration according to your setup
 
 ## Configuration
-Ports, host addresses and other configs for the services (and some scripts) can be changed in the configuration file `config.py`.<br>
+Ports, host addresses and other configs for the services (and some scripts) can be changed in the configuration file `config.py` or in a highler level in the `config.ini` .<br>
 Values can temporarily be changed through the environment:
 ```sh
 key=value python ./src/start.py starting_something_useful
@@ -63,7 +63,10 @@ can_timeout=10000 python ./src/start.py can
 
 The `config.py` will be ignored by Git and can be modified freely. The config serves as a single point of truth and will be used by services to determine the `URI` of other services. Services might break if e.g.: the port of the `raw_can_receiver` is only temporarily changed for the `raw_can_receiver`, due to the difference between the declared port in the config and the actual port.
 
-
+The `config.ini` is ment for productive deployment via docker. <br>
+The `config.ini` will be linked into the docker container and will be used by the services to determine the `URI` , `PORTS` and other formost network stuff  of other services. 
+it will be ignored by Git and can be modified freely. <br>
+The `config.ini` is not required for development and all fields not set in the `config.ini` will be set to the default value in the `config.py`.
 ### Important values
 1. `DEFAULT_GRAFANA_API_KEY`
 - This value needs to be changed after installing the software!

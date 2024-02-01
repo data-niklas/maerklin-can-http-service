@@ -40,7 +40,6 @@ async def list_mags(x_can_hash: str = Header(None)):
             return id + 0x3000 - 1 # Taken from the Märklin documentation. See 1.3.1.2 Einbindung bestehender Gleisprotokolle, Bildung der „Loc-ID“
         else:
             return id
-
     mags_config = await get_config(["mags"], x_can_hash, is_compressed=True, is_config=True)
     mags_list = mags_config["[magnetartikel]"]["artikel"]
     for mag in mags_list:
